@@ -22,6 +22,7 @@ use App\Http\Controllers\FormulirPesananController;
 use App\Http\Controllers\DetailAcaraController;
 use App\Http\Controllers\KonfirmasiPesananController;
 use App\Http\Controllers\CheckOutController;
+use App\Http\Controllers\MetodePembayaranUserController;
 use App\Http\Controllers\Admin\AdminStokBahanController;
 use App\Http\Controllers\Admin\AdminKelolaMakananController;
 use App\Http\Controllers\Admin\AdminDaftarPesananController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\Admin\AdminLaporanController;
 use App\Http\Controllers\Admin\AdminTransaksiController;
 use App\Http\Controllers\Admin\AdminMetodePembayaran;
 use App\Http\Controllers\Admin\AdminStatusPembayaranController;
+use App\Http\Controllers\Admin\AdminStatusPengirimanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -60,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/detailacara', [DetailAcaraController::class, 'index'])->name('detailacara.index');
     Route::get('/konfirmasipesanan', [KonfirmasiPesananController::class, 'index'])->name('konfirmasipesanan.index');
     Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
+    Route::get('/metodepembayaranuser', [MetodePembayaranUserController::class, 'index'])->name('metodepembayaranuser.index');
 });
 
 // Admin
@@ -87,6 +90,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
         
         // Metode Pembayaran
         Route::resource('statuspembayaran', AdminStatusPembayaranController::class);
+
+        // Status Pengiriman
+        Route::resource('statuspengiriman', AdminStatusPengirimanController::class);
 
     });
 });

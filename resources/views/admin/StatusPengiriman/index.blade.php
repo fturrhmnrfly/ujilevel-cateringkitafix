@@ -1,3 +1,4 @@
+@section('content')
 <div class="sidebar">
     <div class="logo-container">
         <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
@@ -50,47 +51,35 @@
         Logout
     </button>
 </div>
-
 <div class="container">
-    <h1>Status Pembayaran</h1>
-    <a href="{{ route('admin.statuspembayaran.create') }}" class="btn btn-primary mb-3">Tambah Status</a>
-    <table class="table">
+    <h2>Status Pengiriman</h2>
+    <a href="{{ route('admin.statuspengiriman.create') }}" class="btn btn-primary">Tambah Status</a>
+
+    <table class="table mt-3">
         <thead>
             <tr>
-                <th>No</th>
+                <th>ID</th>
                 <th>Nama Pembeli</th>
                 <th>Nama Produk</th>
                 <th>Tanggal Transaksi</th>
-                <th>Status Transaksi</th>
-                <th>Bukti Transaksi</th>
-                <th>Action</th>
+                <th>Status Pengiriman</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($statuses as $status)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $status->namapembeli }}</td>
-                    <td>{{ $status->namaproduk }}</td>
-                    <td>{{ $status->tanggaltransaksi }}</td>
-                    <td>{{ $status->statustransaksi }}</td>
+                    <td>{{ $status->id }}</td>
+                    <td>{{ $status->nama_pembeli }}</td>
+                    <td>{{ $status->nama_produk }}</td>
+                    <td>{{ $status->tanggal_transaksi }}</td>
+                    <td>{{ $status->status_pengiriman }}</td>
                     <td>
-                        @if ($status->buktitransaksi)
-                            <a href="{{ asset('storage/' . $status->buktitransaksi) }}" target="_blank"
-                                class="btn btn-secondary">View File</a>
-                        @else
-                            Tidak Ada File
-                        @endif
-                    </td>
-                    <td>
-                        <a href="{{ route('admin.statuspembayaran.edit', $status->id) }}"
-                            class="btn btn-warning">Edit</a>
-                        <form action="{{ route('admin.statuspembayaran.destroy', $status->id) }}" method="POST"
-                            class="d-inline">
+                        <a href="{{ route('admin.statuspengiriman.edit', $status->id) }}" class="btn btn-warning">Edit</a>
+                        <form action="{{ route('admin.statuspengiriman.destroy', $status->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger"
-                                onclick="return confirm('Yakin ingin menghapus?')">Delete</button>
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
                         </form>
                     </td>
                 </tr>
@@ -98,3 +87,4 @@
         </tbody>
     </table>
 </div>
+@endsection

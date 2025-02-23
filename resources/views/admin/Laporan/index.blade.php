@@ -211,22 +211,52 @@
             <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
             <span class="brand-name">CATERING KITA</span>
         </div>
-    
-        <a href="{{ route('admin.dashboard') }}" class="menu-item">Dashboard</a>
-        <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">Kelola Makanan</a>
-        <a href="{{ route('admin.stokbahan.index') }}" class="menu-item">Stok Bahan</a>
-        <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">Daftar Pesanan</a>
-        <a href="{{ route('admin.laporan.index') }}" class="menu-item">Laporan</a>
-        <a href="{{ route('admin.transaksi.index') }}" class="menu-item">Transaksi</a>
-        <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">Metode Pembayaran</a>
-        {{-- <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">Status Pembayaran</a>
-        <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">Status Pengiriman</a>
-        <a href="{{ route('admin.penilaian.index') }}" class="menu-item">Penilaian</a> --}}
-    
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline;">
-            @csrf
-            <button type="submit" class="logout-btn">Logout</button>
-        </form>
+
+        <a href="{{ route('admin.dashboard') }}" class="menu-item active">
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+        </a>
+        <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">
+            <i class="fa-solid fa-mug-hot"></i>
+            Kelola Makanan
+        </a>
+        <a href="{{ route('admin.stokbahan.index') }}" class="menu-item">
+            <i class="fa-solid fa-box-open"></i>
+            Stok Bahan
+        </a>
+        <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">
+            <i class="fa-solid fa-clipboard-list"></i>
+            Daftar Pesanan
+        </a>
+        <a href="{{ route('admin.laporan.index') }}" class="menu-item">
+            <i class="fa-solid fa-file"></i>
+            Laporan
+        </a>
+        <a href="{{ route('admin.transaksi.index') }}" class="menu-item">
+            <i class="fa-solid fa-credit-card"></i>
+            Transaksi
+        </a>
+        <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">
+            <i class="fa-solid fa-circle-dollar-to-slot"></i>
+            Metode Pembayaran
+        </a>
+        <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">
+            <i class="fa-solid fa-box-open"></i>
+            Status Pembayaran
+        </a>
+        <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">
+            <i class="fa-solid fa-truck-fast"></i>
+            Status Pengiriman
+        </a>
+        {{-- <a href="{{ route('admin.penilaian.index') }}" class="menu-item">
+            <i class="fa-solid fa-medal"></i>
+            Penilaian
+        </a> --}}
+
+        <button class="logout-btn">
+            <i data-lucide="log-out"></i>
+            Logout
+        </button>
     </div>
 
     <div class="main-content">

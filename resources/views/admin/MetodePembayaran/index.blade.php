@@ -1,6 +1,56 @@
-@extends('layouts.admin')
-
 @section('content')
+<div class="sidebar">
+    <div class="logo-container">
+        <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
+        <span class="brand-name">CATERING KITA</span>
+    </div>
+
+    <a href="{{ route('admin.dashboard') }}" class="menu-item active">
+        <i class="fa-solid fa-house"></i>
+        Dashboard
+    </a>
+    <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">
+        <i class="fa-solid fa-mug-hot"></i>
+        Kelola Makanan
+    </a>
+    <a href="{{ route('admin.stokbahan.index') }}" class="menu-item">
+        <i class="fa-solid fa-box-open"></i>
+        Stok Bahan
+    </a>
+    <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">
+        <i class="fa-solid fa-clipboard-list"></i>
+        Daftar Pesanan
+    </a>
+    <a href="{{ route('admin.laporan.index') }}" class="menu-item">
+        <i class="fa-solid fa-file"></i>
+        Laporan
+    </a>
+    <a href="{{ route('admin.transaksi.index') }}" class="menu-item">
+        <i class="fa-solid fa-credit-card"></i>
+        Transaksi
+    </a>
+    <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">
+        <i class="fa-solid fa-circle-dollar-to-slot"></i>
+        Metode Pembayaran
+    </a>
+    <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">
+        <i class="fa-solid fa-box-open"></i>
+        Status Pembayaran
+    </a>
+    <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">
+        <i class="fa-solid fa-truck-fast"></i>
+        Status Pengiriman
+    </a>
+    {{-- <a href="{{ route('admin.penilaian.index') }}" class="menu-item">
+        <i class="fa-solid fa-medal"></i>
+        Penilaian
+    </a> --}}
+
+    <button class="logout-btn">
+        <i data-lucide="log-out"></i>
+        Logout
+    </button>
+</div>
 <div class="container mx-auto p-6">
     <h1 class="text-2xl font-bold mb-4">Metode Pembayaran</h1>
     <a href="{{ route('admin.metodepembayaran.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Buat Metode Pembayaran</a>

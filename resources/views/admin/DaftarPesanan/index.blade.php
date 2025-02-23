@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catering Kita Admin - Daftar Pesanan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
             margin: 0;
@@ -28,7 +32,6 @@
             position: fixed;
             left: 0;
             top: 0;
-            bottom: 0;
         }
 
         .logo-container {
@@ -42,6 +45,8 @@
         .logo {
             width: 40px;
             height: 40px;
+            border-radius: 50%;
+            padding: 5px;
         }
 
         .brand-name {
@@ -50,7 +55,9 @@
         }
 
         .menu-item {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             text-decoration: none;
             color: white;
             padding: 12px 15px;
@@ -59,12 +66,14 @@
             transition: background-color 0.3s;
         }
 
-        .menu-item:hover {
+        .menu-item:hover,
+        .menu-item.active {
             background-color: #2d2a77;
         }
 
-        .menu-item.active {
-            background-color: #2d2a77;
+        .menu-item i {
+            width: 20px;
+            height: 20px;
         }
 
         .main-content {
@@ -80,7 +89,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -104,7 +113,7 @@
             border-radius: 25px;
             text-decoration: none;
             border: none;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s;
         }
 
@@ -113,13 +122,13 @@
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             width: 300px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .table-container {
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -187,46 +196,80 @@
         }
 
         .logout-btn {
-            display: block;
-            text-decoration: none;
-            color: white;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-top: auto;
-            transition: background-color 0.3s;
             position: absolute;
             bottom: 20px;
             left: 20px;
             right: 20px;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
         }
 
         .logout-btn:hover {
             background-color: #2d2a77;
         }
-    </style>    
+    </style>
 </head>
+
 <body>
     <div class="sidebar">
         <div class="logo-container">
             <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
             <span class="brand-name">CATERING KITA</span>
         </div>
-    
-        <a href="{{ route('admin.dashboard') }}" class="menu-item">Dashboard</a>
-        <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">Kelola Makanan</a>
-        <a href="{{ route('admin.stokbahan.index') }}" class="menu-item">Stok Bahan</a>
-        <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">Daftar Pesanan</a>
-        <a href="{{ route('admin.laporan.index') }}" class="menu-item">Laporan</a>
-        <a href="{{ route('admin.transaksi.index') }}" class="menu-item">Transaksi</a>
-        <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">Metode Pembayaran</a>
-        {{-- <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">Status Pembayaran</a>
-        <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">Status Pengiriman</a>
-        <a href="{{ route('admin.penilaian.index') }}" class="menu-item">Penilaian</a> --}}
-    
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline;">
-            @csrf
-            <button type="submit" class="logout-btn">Logout</button>
-        </form>
+
+        <a href="{{ route('admin.dashboard') }}" class="menu-item active">
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+        </a>
+        <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">
+            <i class="fa-solid fa-mug-hot"></i>
+            Kelola Makanan
+        </a>
+        <a href="{{ route('admin.stokbahan.index') }}" class="menu-item">
+            <i class="fa-solid fa-box-open"></i>
+            Stok Bahan
+        </a>
+        <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">
+            <i class="fa-solid fa-clipboard-list"></i>
+            Daftar Pesanan
+        </a>
+        <a href="{{ route('admin.laporan.index') }}" class="menu-item">
+            <i class="fa-solid fa-file"></i>
+            Laporan
+        </a>
+        <a href="{{ route('admin.transaksi.index') }}" class="menu-item">
+            <i class="fa-solid fa-credit-card"></i>
+            Transaksi
+        </a>
+        <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">
+            <i class="fa-solid fa-circle-dollar-to-slot"></i>
+            Metode Pembayaran
+        </a>
+        <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">
+            <i class="fa-solid fa-box-open"></i>
+            Status Pembayaran
+        </a>
+        <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">
+            <i class="fa-solid fa-truck-fast"></i>
+            Status Pengiriman
+        </a>
+        {{-- <a href="{{ route('admin.penilaian.index') }}" class="menu-item">
+            <i class="fa-solid fa-medal"></i>
+            Penilaian
+        </a> --}}
+
+        <button class="logout-btn">
+            <i data-lucide="log-out"></i>
+            Logout
+        </button>
     </div>
 
 
@@ -238,7 +281,7 @@
                 <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
             </div>
         </div><br>
-        
+
         <div class="content">
             <div class="content-header">
                 <a href="{{ route('admin.daftarpesanan.create') }}" class="btn-primary">Tambah Pesanan</a>
@@ -264,7 +307,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($pesanans as $index => $pesanan)
+                        @foreach ($pesanans as $index => $pesanan)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $pesanan->nama_pesanan }}</td>
@@ -278,8 +321,10 @@
                                     {{ ucfirst($pesanan->status_pengiriman) }}
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.daftarpesanan.edit', $pesanan) }}" class="btn-warning">Edit</a>
-                                    <form action="{{ route('admin.daftarpesanan.destroy', $pesanan) }}" method="POST" style="display: inline;">
+                                    <a href="{{ route('admin.daftarpesanan.edit', $pesanan) }}"
+                                        class="btn-warning">Edit</a>
+                                    <form action="{{ route('admin.daftarpesanan.destroy', $pesanan) }}" method="POST"
+                                        style="display: inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn-danger" type="submit">Delete</button>
@@ -293,4 +338,5 @@
         </div>
     </div>
 </body>
+
 </html>

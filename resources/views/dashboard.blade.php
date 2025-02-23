@@ -694,6 +694,65 @@
                 padding: 0;
             }
         }
+
+        /* Base animation classes */
+        .animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .animate.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Specific animations for different elements */
+        .hero-content.animate {
+            transform: translateX(-50px);
+        }
+
+        .hero-image.animate {
+            transform: translateX(50px);
+        }
+
+        .feature-card.animate {
+            transform: translateY(40px);
+            transition-delay: calc(var(--delay) * 0.2s);
+        }
+
+        .category.animate {
+            transform: scale(0.9);
+        }
+
+        .menu-item.animate,
+        .menu-item-p.animate {
+            transform: translateY(30px);
+            transition-delay: calc(var(--delay) * 0.15s);
+        }
+
+        .promo-banner.animate {
+            transform: scale(0.95);
+        }
+
+        /* Animated states */
+        .hero-content.animate.fade-in,
+        .hero-image.animate.fade-in {
+            transform: translateX(0);
+        }
+
+        .feature-card.animate.fade-in {
+            transform: translateY(0);
+        }
+
+        .category.animate.fade-in {
+            transform: scale(1);
+        }
+
+        .menu-item.animate.fade-in,
+        .menu-item-p.animate.fade-in {
+            transform: translateY(0);
+        }
     </style>
 </head>
 
@@ -1017,6 +1076,48 @@
             } else {
                 navbar.classList.remove('scrolled');
             }
+        });
+        // Add animation classes to elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animate class to elements
+            const heroContent = document.querySelector('.hero-content');
+            const heroImage = document.querySelector('.hero-image');
+            const featureCards = document.querySelectorAll('.feature-card');
+            const categories = document.querySelectorAll('.category');
+            const menuItems = document.querySelectorAll('.menu-item, .menu-item-p');
+            const promoBanner = document.querySelector('.promo-banner');
+
+            // Add animate class and delay attributes
+            [heroContent, heroImage].forEach(el => el?.classList.add('animate'));
+
+            featureCards.forEach((card, index) => {
+                card.classList.add('animate');
+                card.style.setProperty('--delay', index);
+            });
+
+            categories.forEach(category => category.classList.add('animate'));
+
+            menuItems.forEach((item, index) => {
+                item.classList.add('animate');
+                item.style.setProperty('--delay', index);
+            });
+
+            if (promoBanner) promoBanner.classList.add('animate');
+
+            // Intersection Observer for scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            // Observe all animated elements
+            document.querySelectorAll('.animate').forEach(el => observer.observe(el));
         });
     </script>
     <main>
