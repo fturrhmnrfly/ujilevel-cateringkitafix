@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\AdminTransaksiController;
 use App\Http\Controllers\Admin\AdminMetodePembayaran;
 use App\Http\Controllers\Admin\AdminStatusPembayaranController;
 use App\Http\Controllers\Admin\AdminStatusPengirimanController;
+use App\Http\Controllers\Admin\AdminPenilaianController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -95,6 +96,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
         // Status Pengiriman
         Route::resource('statuspengiriman', AdminStatusPengirimanController::class);
+
+        // Penilaian
+        Route::resource('penilaian', AdminPenilaianController::class);
 
     });
 });

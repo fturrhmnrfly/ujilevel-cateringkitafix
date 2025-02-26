@@ -1,3 +1,4 @@
+{{-- <x-sidebar></x-sidebar> --}}
 <div class="form-container">
     <h2>Edit Makanan</h2>
     <form action="{{ route('admin.kelolamakanan.update', $kelolamakanan->id) }}" method="POST" enctype="multipart/form-data">

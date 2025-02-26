@@ -6,83 +6,6 @@
     <title>Catering Kita Admin - Laporan</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            display: flex;
-            background-color: #f3f4f6;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: #1e1b4b;
-            min-height: 100vh;
-            padding: 20px;
-            color: white;
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 30px;
-            padding: 10px;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-        }
-
-        .brand-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .menu-item {
-            display: block;
-            text-decoration: none;
-            color: white;
-            padding: 12px 15px;
-            margin: 8px 0;
-            border-radius: 8px;
-            transition: background-color 0.3s;
-        }
-
-        .menu-item:hover {
-            background-color: #2d2a77;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            width: calc(100% - 250px);
-            min-height: 100vh;
-        }
-
-        .header {
-            background-color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
         .content {
             padding: 20px;
         }
@@ -182,79 +105,11 @@
             font-weight: bold;
             color: #333;
         }
-
-        .logout-btn {
-            display: block;
-            text-decoration: none;
-            color: white;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-top: auto;
-            transition: background-color 0.3s;
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-        }
-
-        .logout-btn:hover {
-            background-color: #2d2a77;
-        }
     </style>    
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo-container">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
-            <span class="brand-name">CATERING KITA</span>
-        </div>
-
-        <a href="{{ route('admin.dashboard') }}" class="menu-item active">
-            <i class="fa-solid fa-house"></i>
-            Dashboard
-        </a>
-        <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">
-            <i class="fa-solid fa-mug-hot"></i>
-            Kelola Makanan
-        </a>
-        <a href="{{ route('admin.stokbahan.index') }}" class="menu-item">
-            <i class="fa-solid fa-box-open"></i>
-            Stok Bahan
-        </a>
-        <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">
-            <i class="fa-solid fa-clipboard-list"></i>
-            Daftar Pesanan
-        </a>
-        <a href="{{ route('admin.laporan.index') }}" class="menu-item">
-            <i class="fa-solid fa-file"></i>
-            Laporan
-        </a>
-        <a href="{{ route('admin.transaksi.index') }}" class="menu-item">
-            <i class="fa-solid fa-credit-card"></i>
-            Transaksi
-        </a>
-        <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">
-            <i class="fa-solid fa-circle-dollar-to-slot"></i>
-            Metode Pembayaran
-        </a>
-        <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">
-            <i class="fa-solid fa-box-open"></i>
-            Status Pembayaran
-        </a>
-        <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">
-            <i class="fa-solid fa-truck-fast"></i>
-            Status Pengiriman
-        </a>
-        {{-- <a href="{{ route('admin.penilaian.index') }}" class="menu-item">
-            <i class="fa-solid fa-medal"></i>
-            Penilaian
-        </a> --}}
-
-        <button class="logout-btn">
-            <i data-lucide="log-out"></i>
-            Logout
-        </button>
-    </div>
+    
+    <x-sidebar></x-sidebar>
 
     <div class="main-content">
         <div class="header">

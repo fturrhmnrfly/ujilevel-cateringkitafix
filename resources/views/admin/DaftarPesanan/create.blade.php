@@ -3,77 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catering Kita - Admin</title>
+    <title>Catering Kita - Create Daftar Pesanan</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            display: flex;
-            background-color: #f3f4f6;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: #1e1b4b;
-            min-height: 100vh;
-            padding: 20px;
-            color: white;
-            position: fixed;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        .brand-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .menu-item {
-            padding: 12px 15px;
-            margin: 5px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .menu-item:hover {
-            background-color: #2d2a77;
-        }
-
-        .menu-item.active {
-            background-color: #2d2a77;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            width: calc(100% - 250px);
-        }
-
-        .header {
-            background-color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
         .page-title {
             font-size: 1.5rem;
             font-weight: bold;
@@ -182,24 +113,7 @@
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo-container">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
-            <span class="brand-name">CATERING KITA</span>
-        </div>
-
-        <div class="menu-item">Dashboard</div>
-        <div class="menu-item">Kelola Makanan</div>
-        <div class="menu-item active">Daftar Pesanan</div>
-        <div class="menu-item">Laporan</div>
-        <div class="menu-item">Transaksi</div>
-        <div class="menu-item">Metode Pembayaran</div>
-        <div class="menu-item">Status Pembayaran</div>
-        <div class="menu-item">Status Pengiriman</div>
-        <div class="menu-item">Penilaian</div>
-
-        <div class="logout-btn">Logout</div>
-    </div>
+    <x-sidebar></x-sidebar>
 
     <div class="main-content">
         <div class="header">

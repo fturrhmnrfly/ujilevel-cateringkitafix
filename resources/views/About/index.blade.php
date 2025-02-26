@@ -253,35 +253,7 @@
         }
     }
 </style>
-<nav class="navbar">
-    <!-- Logo -->
-    <div class="logo">
-        <img src="{{ asset('assets/logo.png') }}" alt="Logo">
-        <div class="text-navbar">
-            <p>CATERING</p>
-            <p>KITA</p>
-        </div>
-    </div>
-
-    <!-- Search Bar -->
-    <form class="search-bar">
-        <input type="text" placeholder="Search products...">
-        <button type="submit"><i class="fas fa-search"></i></button>
-    </form>
-
-    <!-- Navigation Links -->
-    <ul class="nav-links">
-        <li><a href="{{ route('dashboard') }}">Home</a></li>
-        <li><a href="{{ route('about.index') }}">About</a></li>
-        <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
-        <li><a href="{{ route('contact.index') }}">Contact</a></li>
-    </ul>
-
-    <!-- Profile Section -->
-    <div class="profile">
-        <img src="{{ asset('assets/profil.png') }}" alt="Profile">
-    </div>
-</nav>
+<x-navbar></x-navbar>
 <div class="breadcrumb-container">
     <div class="breadcrumb">
     </div>
@@ -300,7 +272,6 @@
             tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat, porsi
             pas,
             dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
-        <a href="#" class="btn-shop">Competely</a>
     </div>
 </div>
 <div class="features-container">
