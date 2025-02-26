@@ -23,6 +23,8 @@ use App\Http\Controllers\DetailAcaraController;
 use App\Http\Controllers\KonfirmasiPesananController;
 use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\MetodePembayaranUserController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\AdminStokBahanController;
 use App\Http\Controllers\Admin\AdminKelolaMakananController;
 use App\Http\Controllers\Admin\AdminDaftarPesananController;
@@ -96,5 +98,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     });
 });
+
+// Cart routes
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::patch('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
+Route::delete('/cart/remove/{itemId}', [CartController::class, 'removeItem'])->name('cart.remove');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+Route::post('/checkout', [CartController::class, 'processOrder'])->name('checkout.process');
+
+// Order routes
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
 require __DIR__.'/auth.php';

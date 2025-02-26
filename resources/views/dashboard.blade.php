@@ -768,7 +768,7 @@
 
             <!-- Navigation Links -->
             <ul class="nav-links">
-                <li><a href="{{ route('home') }}">Home</a></li>
+                <li><a href="{{ route('dashboard') }}">Home</a></li>
                 <li><a href="{{ route('about.index') }}">About</a></li>
                 <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
                 <li><a href="{{ route('contact.index') }}">Contact</a></li>
@@ -787,7 +787,6 @@
             <div class="hero-content">
                 <h1>Catering <span class="highlight">Kita</span></h1>
                 <p>Delicious food delivered to your door.</p>
-                <a href="#" class="btn-shop">Shop Now</a>
             </div>
             <div class="hero-image">
                 <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box">
@@ -854,13 +853,6 @@
             <div class="category-description">Paket nasi lengkap dengan lauk dalam kemasan praktis</div>
             <a href="/menunasibox" class="menu-link">50+ Menu</a>
         </div>
-
-        <div class="category">
-            <img src="{{ asset('assets/kategoriassets3.png') }}" alt="Perusahaan" class="category-image">
-            <div class="category-title">Perusahaan</div>
-            <div class="category-description">Nasi tumpeng tradisional untuk acara spesial</div>
-            <a href="#" class="menu-link">50+ Menu</a>
-        </div>
         </div>
 
         <div class="menu-section">
@@ -905,18 +897,25 @@
             <h2 class="section-title">Prasmanan</h2>
             <div class="menu-grid">
                 <div class="menu-item">
-                    <img src="{{ asset('assets/homeassets3.jpg') }}" alt="Paket Prasmanan Silver">
+                    <img src="{{ asset('assets/homeassets3.jpg') }}" alt="Ayam Geprek">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Ayam Geprek</h3>
                         <div class="menu-item-details">
                             <p class="menu-item-price">Rp 12.000</p>
                             <div class="counter">
-                                <button class="minus">-</button>
+                                <button type="button" class="minus">-</button>
                                 <span class="count">0</span>
-                                <button class="plus">+</button>
+                                <button type="button" class="plus">+</button>
                             </div>
                         </div>
-                        <a href="menuprasmanan" class="menu-item-button">Pesan</a>
+                        <form class="add-to-cart-form" method="POST" action="{{ route('cart.add') }}">
+                            @csrf
+                            <input type="hidden" name="item_id" value="1">
+                            <input type="hidden" name="item_name" value="Ayam Geprek">
+                            <input type="hidden" name="item_price" value="12000">
+                            <input type="hidden" name="quantity" class="quantity-input" value="0">
+                            <button type="submit" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                        </form>
                     </div>
                 </div>
                 <div class="menu-item">
@@ -957,7 +956,7 @@
                 <p class="promo-description">Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi
                     menu
                     yang sesuai dengan acara Anda.</p>
-                <a href="#" class="promo-button">Hubungi Kami</a>
+                
             </div>
 
             <footer class="footer">
@@ -1110,6 +1109,134 @@
 
             // Observe all animated elements
             document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+        });
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('searchForm');
+            const searchInput = document.getElementById('searchInput');
+
+            // Prevent empty searches
+            searchForm.addEventListener('submit', function(e) {
+                if (searchInput.value.trim() === '') {
+                    e.preventDefault();
+                    alert('Please enter a search term');
+                }
+            });
+
+            // Optional: Add live search as you type (for enhanced UX)
+            searchInput.addEventListener('input', function() {
+                // You can implement AJAX search here if desired
+                // This would show results as the user types
+
+                // Example placeholder for AJAX functionality:
+                /*
+                if (this.value.length > 2) {
+                    fetch(`/api/search?query=${this.value}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Display search suggestions
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+                */
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle all menu items (both standard and premium)
+            const menuItems = document.querySelectorAll('.menu-item, .menu-item-p');
+
+            menuItems.forEach(item => {
+                // Get elements
+                const countSpan = item.querySelector(".count");
+                const minusButton = item.querySelector(".minus");
+                const plusButton = item.querySelector(".plus");
+                const quantityInput = item.querySelector(".quantity-input");
+                const addToCartBtn = item.querySelector(".add-to-cart-btn");
+
+                let count = 0;
+
+                // Minus button click
+                minusButton.addEventListener("click", () => {
+                    if (count > 0) {
+                        count--;
+                        countSpan.textContent = count;
+                        quantityInput.value = count;
+
+                        // Disable the order button if count is 0
+                        if (count === 0) {
+                            addToCartBtn.disabled = true;
+                        }
+                    }
+                });
+
+                // Plus button click
+                plusButton.addEventListener("click", () => {
+                    count++;
+                    countSpan.textContent = count;
+                    quantityInput.value = count;
+
+                    // Enable the order button when count is > 0
+                    if (addToCartBtn.disabled && count > 0) {
+                        addToCartBtn.disabled = false;
+                    }
+                });
+
+                // Form submission handling (optional: for immediate feedback)
+                const form = item.querySelector('.add-to-cart-form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        // Only allow submission if quantity > 0
+                        if (count === 0) {
+                            e.preventDefault();
+                            alert('Please select a quantity first');
+                            return false;
+                        }
+
+                        // Optional: you can add AJAX submission here to avoid page refresh
+                        // This is just an example of how you might do it
+                        /*
+                        e.preventDefault();
+                        
+                        fetch(this.action, {
+                            method: 'POST',
+                            body: new FormData(this),
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Show success message or update cart counter
+                                alert('Item added to cart successfully!');
+                                
+                                // Reset counter after successful addition
+                                count = 0;
+                                countSpan.textContent = count;
+                                quantityInput.value = count;
+                                addToCartBtn.disabled = true;
+                            } else {
+                                alert('Error adding item to cart');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                        */
+                    });
+                }
+            });
+
+            // Add cart counter to navbar if not already present
+            const navbar = document.querySelector('.nav-links');
+            if (navbar && !document.querySelector('.cart-count')) {
+                const cartLi = document.createElement('li');
+                cartLi.innerHTML = `
+            <a href="{{ route('cart.index') }}">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>
+        `;
+                navbar.appendChild(cartLi);
+            }
         });
     </script>
     <main>

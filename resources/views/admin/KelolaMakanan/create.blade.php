@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 <style>
     * {
         margin: 0;
@@ -54,10 +63,6 @@
     }
 
     .menu-item:hover {
-        background-color: #2d2a77;
-    }
-
-    .menu-item.active {
         background-color: #2d2a77;
     }
 
@@ -183,7 +188,6 @@
     .logout-btn {
         display: block;
         text-decoration: none;
-        color: white;
         padding: 12px 15px;
         border-radius: 8px;
         margin-top: auto;
@@ -198,28 +202,58 @@
         background-color: #2d2a77;
     }
 </style>
-<div class="sidebar">
+{{-- <div class="sidebar">
     <div class="logo-container">
         <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
         <span class="brand-name">CATERING KITA</span>
     </div>
 
-    <a href="{{ route('admin.dashboard') }}" class="menu-item">Dashboard</a>
-    <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">Kelola Makanan</a>
-    <a href="{{ route('admin.stokbahan.index') }}" class="menu-item">Stok Bahan</a>
-    <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">Daftar Pesanan</a>
-    <a href="{{ route('admin.laporan.index') }}" class="menu-item">Laporan</a>
-    <a href="{{ route('admin.transaksi.index') }}" class="menu-item">Transaksi</a>
-    <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">Metode Pembayaran</a>
-    {{-- <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">Status Pembayaran</a>
-    <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">Status Pengiriman</a>
-    <a href="{{ route('admin.penilaian.index') }}" class="menu-item">Penilaian</a> --}}
+    <a href="{{ route('admin.dashboard') }}" class="menu-item active">
+        <i class="fa-solid fa-house"></i>
+        Dashboard
+    </a>
+    <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">
+        <i class="fa-solid fa-mug-hot"></i>
+        Kelola Makanan
+    </a>
+    <a href="{{ route('admin.stokbahan.index') }}" class="menu-item">
+        <i class="fa-solid fa-box-open"></i>
+        Stok Bahan
+    </a>
+    <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">
+        <i class="fa-solid fa-clipboard-list"></i>
+        Daftar Pesanan
+    </a>
+    <a href="{{ route('admin.laporan.index') }}" class="menu-item">
+        <i class="fa-solid fa-file"></i>
+        Laporan
+    </a>
+    <a href="{{ route('admin.transaksi.index') }}" class="menu-item">
+        <i class="fa-solid fa-credit-card"></i>
+        Transaksi
+    </a>
+    <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">
+        <i class="fa-solid fa-circle-dollar-to-slot"></i>
+        Metode Pembayaran
+    </a>
+    <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">
+        <i class="fa-solid fa-box-open"></i>
+        Status Pembayaran
+    </a>
+    <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">
+        <i class="fa-solid fa-truck-fast"></i>
+        Status Pengiriman
+    </a>
+    {{-- <a href="{{ route('admin.penilaian.index') }}" class="menu-item">
+        <i class="fa-solid fa-medal"></i>
+        Penilaian
+    </a> --}}
 
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline;">
-        @csrf
-        <button type="submit" class="logout-btn">Logout</button>
-    </form>
-</div>
+    <button class="logout-btn">
+        <i data-lucide="log-out"></i>
+        Logout
+    </button>
+</div> 
 <div class="form-container">
     <h2>Tambah Makanan</h2>
     <form action="{{ route('admin.kelolamakanan.store') }}" method="POST" enctype="multipart/form-data">

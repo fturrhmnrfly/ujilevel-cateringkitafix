@@ -98,7 +98,7 @@
             background-color: #2d2a77;
         }
 </style>
-<div class="sidebar">
+{{-- <div class="sidebar">
     <div class="logo-container">
         <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
         <span class="brand-name">CATERING KITA</span>

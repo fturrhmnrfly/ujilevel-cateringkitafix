@@ -31,10 +31,10 @@ class AdminStatusPembayaranController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_pembeli' => 'required|string|max:255',
-            'nama_produk' => 'required|string|max:255',
-            'tanggal_transaksi' => 'required|date',
-            'status_transaksi' => 'required|string',
+            'nama_pembeli' => 'required',
+            'nama_produk' => 'required',
+            'tanggal_transaksi' => 'required',
+            'status_transaksi' => 'required',
             'bukti_transaksi' => 'nullable|file|mimes:jpg,jpeg,png,pdf'
         ]);
 
@@ -63,10 +63,10 @@ class AdminStatusPembayaranController extends Controller
     public function update(Request $request, StatusPembayaran $statuspembayaran)
     {
         $request->validate([
-            'nama_pembeli' => 'required|string|max:255',
-            'nama_produk' => 'required|string|max:255',
-            'tanggal_transaksi' => 'required|date',
-            'status_transaksi' => 'required|string',
+            'nama_pembeli' => 'required',
+            'nama_produk' => 'required',
+            'tanggal_transaksi' => 'required',
+            'status_transaksi' => 'required',
             'bukti_transaksi' => 'nullable|file|mimes:jpg,jpeg,png,pdf'
         ]);
 
