@@ -69,7 +69,7 @@
             transition: background-color 0.3s;
         }
 
-        .menu-item:hover, .menu-item.active {
+        .menu-item:hover{
             background-color: #2d2a77;
         }
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,11 +8,12 @@ class StatusPengiriman extends Model
 {
     use HasFactory;
 
-    protected $fillable = 
-    [
-    'nama_pembeli',
-    'nama_produk',
-    'tanggal_transaksi',
-    'status_pengiriman'
+    protected $table = 'status_pengirimen';
+
+    protected $fillable = [
+        'nama_pembeli',
+        'nama_produk',
+        'tanggal_transaksi',
+        'status_pengiriman',
     ];
 }

@@ -1,12 +1,27 @@
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* Navbar Styles */
     nav.navbar {
         display: flex;
         justify-content: space-between;
         align-items: center;
         background-color: #2c2c77;
-        /* Warna biru navbar */
         padding: 15px 30px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
     }
 
     .navbar .logo {
@@ -66,6 +81,20 @@
         list-style: none;
         margin: 0;
         padding: 0;
+    }
+
+    @media (max-width: 768px) {
+        nav.navbar {
+            padding: 10px 15px;
+        }
+
+        body {
+            padding-top: 60px;
+        }
+
+        .breadcrumb-container {
+            margin-top: 60px;
+        }
     }
 
     .navbar .nav-links li {
@@ -224,78 +253,78 @@
         }
     }
 </style>
-    <nav class="navbar">
-        <!-- Logo -->
-        <div class="logo">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo">
-            <div class="text-navbar">
-                <p>CATERING</p>
-                <p>KITA</p>
-            </div>
-        </div>
-
-        <!-- Search Bar -->
-        <form class="search-bar">
-            <input type="text" placeholder="Search products...">
-            <button type="submit"><i class="fas fa-search"></i></button>
-        </form>
-
-        <!-- Navigation Links -->
-        <ul class="nav-links">
-            <li><a href="{{ route('home') }}">Home</a></li>
-            <li><a href="{{ route('about.index') }}">About</a></li>
-            <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
-            <li><a href="{{ route('contact.index') }}">Contact</a></li>
-        </ul>
-
-        <!-- Profile Section -->
-        <div class="profile">
-            <img src="{{ asset('assets/profil.png') }}" alt="Profile">
-        </div>
-    </nav>
-    <div class="breadcrumb-container">
-        <div class="breadcrumb">
+<nav class="navbar">
+    <!-- Logo -->
+    <div class="logo">
+        <img src="{{ asset('assets/logo.png') }}" alt="Logo">
+        <div class="text-navbar">
+            <p>CATERING</p>
+            <p>KITA</p>
         </div>
     </div>
-    <div class="about">
-        <div class="about-image">
-            <img src="{{ asset('assets/homeassets2.png') }}" alt="Nasi Box">
-        </div>
-        <div class="about-content">
-            <h1>About us</h1>
-            <h3>Always the Best Choice - SoDelicious, You'll Crave for More!</h3>
-            <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun, arisan,
-                syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek, nasi
-                kebuli, nasi tumpeng, dan banyak lagi, lengkap dengan sayur dan sambal khas. Dengan pengalaman lebih
-                dari 10
-                tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat, porsi
-                pas,
-                dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
-            <a href="#" class="btn-shop">Competely</a>
-        </div>
+
+    <!-- Search Bar -->
+    <form class="search-bar">
+        <input type="text" placeholder="Search products...">
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+
+    <!-- Navigation Links -->
+    <ul class="nav-links">
+        <li><a href="{{ route('home') }}">Home</a></li>
+        <li><a href="{{ route('about.index') }}">About</a></li>
+        <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
+        <li><a href="{{ route('contact.index') }}">Contact</a></li>
+    </ul>
+
+    <!-- Profile Section -->
+    <div class="profile">
+        <img src="{{ asset('assets/profil.png') }}" alt="Profile">
     </div>
-    <div class="features-container">
-        <!-- Fast Delivery Feature -->
-        <div class="feature-card">
-            <img src="{{ asset('assets/homeassets11.png') }}" alt="Fast Delivery" class="feature-icon">
-            <h3 class="feature-title">fast delivery</h3>
-        </div>
-
-        <!-- Halal Certificate Feature -->
-        <div class="feature-card">
-            <img src="{{ asset('assets/homeassets12.png') }}" alt="Halal Certificate" class="feature-icon">
-            <h3 class="feature-title">bersertifikat halal</h3>
-        </div>
-
-        <!-- Free Box Feature -->
-        <div class="feature-card">
-            <img src="{{ asset('assets/homeassets13.png') }}" alt="Free Box" class="feature-icon">
-            <h3 class="feature-title">Free box</h3>
-        </div>
-
-        <!-- Payment Feature -->
-        <div class="feature-card">
-            <img src="{{ asset('assets/homeassets14.png') }}" alt="Payment Methods" class="feature-icon">
-            <h3 class="feature-title">Pembayaran</h3>
-        </div>
+</nav>
+<div class="breadcrumb-container">
+    <div class="breadcrumb">
     </div>
+</div>
+<div class="about">
+    <div class="about-image">
+        <img src="{{ asset('assets/homeassets2.png') }}" alt="Nasi Box">
+    </div>
+    <div class="about-content">
+        <h1>About us</h1>
+        <h3>Always the Best Choice - SoDelicious, You'll Crave for More!</h3>
+        <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun, arisan,
+            syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek, nasi
+            kebuli, nasi tumpeng, dan banyak lagi, lengkap dengan sayur dan sambal khas. Dengan pengalaman lebih
+            dari 10
+            tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat, porsi
+            pas,
+            dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
+        <a href="#" class="btn-shop">Competely</a>
+    </div>
+</div>
+<div class="features-container">
+    <!-- Fast Delivery Feature -->
+    <div class="feature-card">
+        <img src="{{ asset('assets/homeassets11.png') }}" alt="Fast Delivery" class="feature-icon">
+        <h3 class="feature-title">fast delivery</h3>
+    </div>
+
+    <!-- Halal Certificate Feature -->
+    <div class="feature-card">
+        <img src="{{ asset('assets/homeassets12.png') }}" alt="Halal Certificate" class="feature-icon">
+        <h3 class="feature-title">bersertifikat halal</h3>
+    </div>
+
+    <!-- Free Box Feature -->
+    <div class="feature-card">
+        <img src="{{ asset('assets/homeassets13.png') }}" alt="Free Box" class="feature-icon">
+        <h3 class="feature-title">Free box</h3>
+    </div>
+
+    <!-- Payment Feature -->
+    <div class="feature-card">
+        <img src="{{ asset('assets/homeassets14.png') }}" alt="Payment Methods" class="feature-icon">
+        <h3 class="feature-title">Pembayaran</h3>
+    </div>
+</div>

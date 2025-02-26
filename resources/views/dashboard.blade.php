@@ -13,7 +13,6 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding-top: 80px;
         }
 
         a {
@@ -35,17 +34,10 @@
             padding: 15px 30px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             position: fixed;
-            /* Make the navbar fixed */
             top: 0;
-            /* Stick to the top */
             left: 0;
-            /* Stretch from left edge */
             right: 0;
-            /* Stretch to right edge */
-            width: 100%;
-            /* Full width */
             z-index: 1000;
-            /* Ensure navbar stays on top of other content */
         }
 
         .navbar .logo {
@@ -817,7 +809,7 @@
                     tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat,
                     porsi pas,
                     dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
-                <a href="#" class="btn-shop">Competely</a>
+                <a href="about" class="btn-shop">Competely</a>
             </div>
         </div>
 

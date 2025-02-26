@@ -8,78 +8,57 @@ use Illuminate\Http\Request;
 
 class AdminStatusPengirimanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $statuses = StatusPengiriman::all();
-        return view('admin.statuspengiriman.index', compact('statuses'));
+        $statusPengiriman = StatusPengiriman::all();
+        return view('admin.statuspengiriman.index', compact('statusPengiriman'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('admin.statuspengiriman.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'nama_pembeli' => 'required|string|max:255',
-            'nama_produk' => 'required|string|max:255',
+            'nama_pembeli' => 'required',
+            'nama_produk' => 'required',
             'tanggal_transaksi' => 'required|date',
-            'status_pengiriman' => 'required|string',
+            'status_pengiriman' => 'required|in:Dikirim,Selesai,Batal',
         ]);
 
         StatusPengiriman::create($request->all());
 
-        return redirect()->route('statuspengiriman.index')
-            ->with('success', 'Status pengiriman berhasil ditambahkan');
+        return redirect()->route('admin.statuspengiriman.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit($id)
     {
-        $status = StatusPengiriman::findOrFail($id);
-        return view('admin.statuspengiriman.edit', compact('status'));
+        $statusPengiriman = StatusPengiriman::findOrFail($id);
+        return view('admin.statuspengiriman.edit', compact('statusPengiriman'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_pembeli' => 'required|string|max:255',
-            'nama_produk' => 'required|string|max:255',
+            'nama_pembeli' => 'required',
+            'nama_produk' => 'required',
             'tanggal_transaksi' => 'required|date',
-            'status_pengiriman' => 'required|string',
+            'status_pengiriman' => 'required|in:Dikirim,Selesai,Batal',
         ]);
 
-        $status = StatusPengiriman::findOrFail($id);
-        $status->update($request->all());
+        $statusPengiriman = StatusPengiriman::findOrFail($id);
+        $statusPengiriman->update($request->all());
 
-        return redirect()->route('statuspengiriman.index')
-            ->with('success', 'Status pengiriman berhasil diperbarui');
+        return redirect()->route('admin.statuspengiriman.index')->with('success', 'Data berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        $status = StatusPengiriman::findOrFail($id);
-        $status->delete();
+        $statusPengiriman = StatusPengiriman::findOrFail($id);
+        $statusPengiriman->delete();
 
-        return redirect()->route('statuspengiriman.index')
-            ->with('success', 'Status pengiriman berhasil dihapus');
+        return redirect()->route('admin.statuspengiriman.index')->with('success', 'Data berhasil dihapus!');
     }
 }

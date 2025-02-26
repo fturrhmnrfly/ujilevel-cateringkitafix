@@ -5,21 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* General Styles */
-        body {
+         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding-top: 80px;
         }
 
         a {
             text-decoration: none;
             color: inherit;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
         }
 
         /* Navbar Styles */
@@ -31,17 +24,10 @@
             padding: 15px 30px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             position: fixed;
-            /* Make the navbar fixed */
             top: 0;
-            /* Stick to the top */
             left: 0;
-            /* Stretch from left edge */
             right: 0;
-            /* Stretch to right edge */
-            width: 100%;
-            /* Full width */
             z-index: 1000;
-            /* Ensure navbar stays on top of other content */
         }
 
         .navbar .logo {
@@ -153,9 +139,10 @@
 
         /* Breadcrumb Styles */
         .breadcrumb-container {
-            background-color: #EEEEEE;
-            padding: 1rem 2rem;
+            background-color: #f3f4f6;
             border-bottom: 1px solid #e5e7eb;
+            margin-top: 80px;
+            /* Add margin to prevent overlap with fixed navbar */
         }
 
         .breadcrumb {
@@ -175,8 +162,8 @@
 
         .breadcrumb-nav a {
             color: #6b7280;
+            text-decoration: none;
         }
-
 
         .pesanan-container {
             padding: 2rem;
@@ -278,14 +265,6 @@
             <img src="{{ asset('assets/profil.png') }}" alt="Profile">
         </div>
     </nav>
-    <div class="breadcrumb-container">
-        <div class="breadcrumb">
-            <div class="breadcrumb-title">Pesanan</div>
-            <div class="breadcrumb-nav">
-                <a href="{{ route('home') }}">Home</a> » Pesanan
-            </div>
-        </div>
-    </div>
 
     <div class="pesanan-container">
         <h1 class="pesanan-title">Pesanan saya</h1>

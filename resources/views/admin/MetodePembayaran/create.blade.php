@@ -1,6 +1,3 @@
-@extends('layouts.admin')
-
-@section('content')
 <div class="container mx-auto p-6">
     <h1 class="text-2xl font-bold mb-4">Buat Metode Pembayaran</h1>
     <form action="{{ route('admin.metodepembayaran.store') }}" method="POST">
@@ -33,4 +30,3 @@
         </div>
     </form>
 </div>
-@endsection

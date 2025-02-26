@@ -1,4 +1,103 @@
-@section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<style>
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #f3f4f6;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #1e1b4b;
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 10px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            padding: 5px;
+        }
+
+        .brand-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .menu-item:hover{
+            background-color: #2d2a77;
+        }
+
+        .menu-item i {
+            width: 20px;
+            height: 20px;
+        }
+        .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #2d2a77;
+        }
+</style>
 <div class="sidebar">
     <div class="logo-container">
         <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
@@ -51,40 +150,45 @@
         Logout
     </button>
 </div>
+
 <div class="container">
     <h2>Status Pengiriman</h2>
-    <a href="{{ route('admin.statuspengiriman.create') }}" class="btn btn-primary">Tambah Status</a>
+    <a href="{{ route('admin.statuspengiriman.create') }}" class="btn btn-primary mb-3">Tambah Data</a>
 
-    <table class="table mt-3">
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>No</th>
                 <th>Nama Pembeli</th>
                 <th>Nama Produk</th>
                 <th>Tanggal Transaksi</th>
                 <th>Status Pengiriman</th>
-                <th>Aksi</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($statuses as $status)
-                <tr>
-                    <td>{{ $status->id }}</td>
-                    <td>{{ $status->nama_pembeli }}</td>
-                    <td>{{ $status->nama_produk }}</td>
-                    <td>{{ $status->tanggal_transaksi }}</td>
-                    <td>{{ $status->status_pengiriman }}</td>
-                    <td>
-                        <a href="{{ route('admin.statuspengiriman.edit', $status->id) }}" class="btn btn-warning">Edit</a>
-                        <form action="{{ route('admin.statuspengiriman.destroy', $status->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
+            @foreach($statusPengiriman as $key => $data)
+            <tr>
+                <td>{{ $key + 1 }}</td>
+                <td>{{ $data->nama_pembeli }}</td>
+                <td>{{ $data->nama_produk }}</td>
+                <td>{{ $data->tanggal_transaksi }}</td>
+                <td>{{ $data->status_pengiriman }}</td>
+                <td>
+                    <a href="{{ route('admin.statuspengiriman.edit', $data->id) }}" class="btn btn-warning">Edit</a>
+                    <form action="{{ route('admin.statuspengiriman.destroy', $data->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
             @endforeach
         </tbody>
     </table>
 </div>
-@endsection
+

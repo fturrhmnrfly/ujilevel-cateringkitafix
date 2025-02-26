@@ -5,20 +5,26 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        Schema::create('statuspengiriman', function (Blueprint $table) {
+        Schema::create('status_pengirimen', function (Blueprint $table) {
             $table->id();
             $table->string('nama_pembeli');
             $table->string('nama_produk');
             $table->date('tanggal_transaksi');
-            $table->string('status_pengiriman');
+            $table->enum('status_pengiriman', ['Dikirim', 'Selesai', 'Batal']);
             $table->timestamps();
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('statuspengiriman');
+        Schema::dropIfExists('status_pengirimen');
     }
 };
