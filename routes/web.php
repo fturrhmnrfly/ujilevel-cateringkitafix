@@ -25,6 +25,7 @@ use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\MetodePembayaranUserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\AdminStokBahanController;
 use App\Http\Controllers\Admin\AdminKelolaMakananController;
 use App\Http\Controllers\Admin\AdminDaftarPesananController;
@@ -66,6 +67,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/konfirmasipesanan', [KonfirmasiPesananController::class, 'index'])->name('konfirmasipesanan.index');
     Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
     Route::get('/metodepembayaranuser', [MetodePembayaranUserController::class, 'index'])->name('metodepembayaranuser.index');
+    Route::get('/payment/{order_id}', [PaymentController::class, 'show'])->name('payment.show');
+    Route::post('/payment/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
 });
 
 // Admin
@@ -108,8 +111,9 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
 Route::patch('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
 Route::delete('/cart/remove/{itemId}', [CartController::class, 'removeItem'])->name('cart.remove');
-Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
-Route::post('/checkout', [CartController::class, 'processOrder'])->name('checkout.process');
+
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+
 
 // Order routes
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

@@ -6,30 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('name');
-            $table->string('email');
-            $table->string('phone');
-            $table->text('address');
-            $table->decimal('total', 10, 2);
-            $table->string('status')->default('pending');
-            $table->text('notes')->nullable();
+            $table->string('order_id')->unique();
+            $table->foreignId('user_id')->constrained();
+            $table->decimal('total_amount', 10, 2);
+            $table->string('status');
+            $table->string('payment_method')->nullable();
+            $table->string('payment_status')->default('unpaid');
+            $table->timestamp('payment_deadline');
             $table->timestamps();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('orders');
     }
 };

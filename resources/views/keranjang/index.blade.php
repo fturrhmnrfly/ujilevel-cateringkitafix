@@ -388,7 +388,7 @@
             </tbody>
         </table>
 
-        <a href="/checkout" class="checkout-btn">Checkout</a>
+        <a href="{{ route('checkout') }}" class="checkout-btn">Checkout</a>
     </div>
 </body>
 
