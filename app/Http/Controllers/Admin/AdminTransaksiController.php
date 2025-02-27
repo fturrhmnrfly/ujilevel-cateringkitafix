@@ -68,4 +68,13 @@ class AdminTransaksiController extends Controller
 
         return redirect()->route('admin.transaksi.index')->with('success', 'Transaksi berhasil dihapus.');
     }
+
+    public function dashboard()
+    {
+        $transaksis = Transaksi::all();
+        $pendapatan = $transaksis->where('jenis_tindakan', 'income')->sum('amount');
+        $pengeluaran = $transaksis->where('jenis_tindakan', 'expense')->sum('amount');
+
+        return view('admin.dashboard', compact('transaksis', 'pendapatan', 'pengeluaran'));
+    }
 }

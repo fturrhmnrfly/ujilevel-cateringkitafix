@@ -113,65 +113,63 @@
 <body>
     <x-sidebar></x-sidebar>
 
+    <div class="main-content">
+        <div class="header">
+            <span class="page-title">Transaksi</span>
+            <div class="admin-profile">
+                <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
+                <span>Admin</span>
+            </div>
+        </div>
 
-        <div class="main-content">
-            <div class="header">
-                <span class="page-title">Transaksi</span>
-                <div class="admin-profile">
-                    <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
-                    <span>Admin</span>
-                </div>
+        <div class="content">
+            <div class="content-header">
+                <a href="{{ route('admin.transaksi.create') }}" class="btn-primary">Tambah Bahan</a>
+                <input type="text" class="search-input" placeholder="Search Transaksi...">
             </div>
 
-            <div class="content">
-                <div class="content-header">
-                    <a href="{{ route('admin.transaksi.create') }}" class="btn-primary">Tambah Bahan</a>
-                    <input type="text" class="search-input" placeholder="Search Transaksi...">
-                </div>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Admin</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Tanggal Transaksi</th>
+                            <th>ID Transaksi</th>
+                            <th>Jenis Tindakan</th>
+                            <th>Deskripsi Tindakan</th>
+                            <th>Total Harga</th>
+                            <th>Status Transaksi</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($transaksis as $transaksi)
                             <tr>
-                                <th>No</th>
-                                <th>Nama Admin</th>
-                                <th>Nama Pelanggan</th>
-                                <th>Tanggal Transaksi</th>
-                                <th>ID Transaksi</th>
-                                <th>Jenis Tindakan</th>
-                                <th>Deskripsi Tindakan</th>
-                                <th>Status Transaksi</th>
-                                <th>Action</th>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $transaksi->nama_admin }}</td>
+                                <td>{{ $transaksi->nama_pelanggan }}</td>
+                                <td>{{ $transaksi->tanggal_transaksi }}</td>
+                                <td>{{ $transaksi->id_transaksi }}</td>
+                                <td>{{ $transaksi->jenis_tindakan }}</td>
+                                <td>{{ $transaksi->deskripsi_tindakan }}</td>
+                                <td>Rp. {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+                                <td class="{{ $transaksi->status_transaksi === 'Selesai' ? 'status-selesai' : 'status-dibatalkan' }}">
+                                    {{ $transaksi->status_transaksi }}
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.transaksi.edit', $transaksi) }}" class="btn-warning">Edit</a>
+                                    <form action="{{ route('admin.transaksi.destroy', $transaksi->id) }}" method="POST" style="display: inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-danger">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($transaksis as $transaksi)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $transaksi->nama_admin }}</td>
-                                    <td>{{ $transaksi->nama_pelanggan }}</td>
-                                    <td>{{ $transaksi->tanggal_transaksi }}</td>
-                                    <td>{{ $transaksi->id_transaksi }}</td>
-                                    <td>{{ $transaksi->jenis_tindakan }}</td>
-                                    <td>{{ $transaksi->deskripsi_tindakan }}</td>
-                                    <td
-                                        class="{{ $transaksi->status_transaksi === 'Selesai' ? 'status-selesai' : 'status-dibatalkan' }}">
-                                        {{ $transaksi->status_transaksi }}
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('admin.transaksi.edit', $transaksi) }}" class="btn-warning">Edit</a>
-                                        <form action="{{ route('admin.transaksi.destroy', $transaksi->id) }}"
-                                            method="POST" style="display: inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn-danger">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -139,7 +139,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>Total Pendapatan</h3>
-                    <div class="value" id="total-income">Rp. 12,500,000</div>
+                    <div class="value" id="total-income">Rp. {{ number_format($pendapatan, 0, ',', '.') }}</div>
                 </div>
             </div>
             <div class="stat-card">
@@ -148,7 +148,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>Total Pengeluaran</h3>
-                    <div class="value" id="total-expense">Rp. 10,000,000</div>
+                    <div class="value" id="total-expense">Rp. {{ number_format($pengeluaran, 0, ',', '.') }}</div>
                 </div>
             </div>
             <div class="stat-card">
@@ -157,83 +157,13 @@
                 </div>
                 <div class="stat-info">
                     <h3>Pesanan Hari Ini</h3>
-                    <div class="value" id="total-orders">10</div>
+                    <div class="value" id="total-orders">{{ $transaksis->count() }}</div>
                 </div>
             </div>
         </div>
 
         <div class="chart-container">
-            <canvas id="incomeChart">
-                <script>
-                    // Initialize Lucide icons
-                    lucide.createIcons();
-
-                    // Chart Configuration
-                    const ctx = document.getElementById('incomeChart').getContext('2d');
-                    const chart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-                            datasets: [{
-                                    label: 'Background',
-                                    data: Array(12).fill(6),
-                                    backgroundColor: 'rgba(229, 231, 235, 0.3)',
-                                    borderWidth: 0,
-                                    barPercentage: 0.6,
-                                },
-                                {
-                                    label: 'Pendapatan',
-                                    data: [1, 2, 2.5, 0.5, 1.5, 2, 1, 0.5, 1.5, 0.5, 1.5, 2],
-                                    backgroundColor: '#4F46E5',
-                                    borderWidth: 0,
-                                    barPercentage: 0.6,
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Pendapatan',
-                                    align: 'start',
-                                    font: {
-                                        size: 16,
-                                        weight: 'normal'
-                                    },
-                                    padding: {
-                                        bottom: 30
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    max: 6,
-                                    ticks: {
-                                        stepSize: 1,
-                                        callback: function(value) {
-                                            return value + 'k';
-                                        }
-                                    },
-                                    grid: {
-                                        borderDash: [2, 2]
-                                    }
-                                }
-                            }
-                        }
-                    });
-                </script>
-            </canvas>
+            <canvas id="incomeChart" width="400" height="300"></canvas>
         </div>
 
         <div class="transactions">
@@ -243,32 +173,74 @@
     </div>
 
     <script>
-        // Initialize transactions
-        const transactions = [{
-                type: 'expense',
-                description: 'Bahan Baku',
-                amount: 2500000,
-                date: '2025-02-21'
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Chart Configuration
+        const ctx = document.getElementById('incomeChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+                datasets: [{
+                        label: 'Background',
+                        data: Array(12).fill(6),
+                        backgroundColor: 'rgba(229, 231, 235, 0.3)',
+                        borderWidth: 0,
+                        barPercentage: 0.6,
+                    },
+                    {
+                        label: 'Pendapatan',
+                        data: @json($transaksis->where('jenis_tindakan', 'income')->pluck('total_harga')),
+                        backgroundColor: '#4F46E5',
+                        borderWidth: 0,
+                        barPercentage: 0.6,
+                    }
+                ]
             },
-            {
-                type: 'income',
-                description: 'Pendapatan Catering',
-                amount: 2500000,
-                date: '2025-02-21'
-            },
-            {
-                type: 'expense',
-                description: 'Biaya opsional',
-                amount: 2500000,
-                date: '2025-02-21'
-            },
-            {
-                type: 'income',
-                description: 'Pendapatan Hari ini',
-                amount: 2500000,
-                date: '2025-02-21'
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Pendapatan',
+                        align: 'start',
+                        font: {
+                            size: 16,
+                            weight: 'normal'
+                        },
+                        padding: {
+                            bottom: 30
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp. ' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            borderDash: [2, 2]
+                        }
+                    }
+                }
             }
-        ];
+        });
+
+        // Initialize transactions
+        const transactions = @json($transaksis);
 
         // Render transactions
         function renderTransactions() {
@@ -276,11 +248,11 @@
             list.innerHTML = transactions.map(transaction => `
                 <div class="transaction-item">
                     <div class="transaction-info">
-                        <strong>${transaction.description}</strong>
-                        <span class="transaction-date">${transaction.date}</span>
+                        <strong>${transaction.deskripsi_tindakan}</strong>
+                        <span class="transaction-date">${transaction.tanggal_transaksi}</span>
                     </div>
-                    <div class="${transaction.type === 'income' ? 'income' : 'expense'}">
-                        ${transaction.type === 'income' ? '+' : '-'}Rp. ${transaction.amount.toLocaleString()}
+                    <div class="${transaction.jenis_tindakan === 'income' ? 'income' : 'expense'}">
+                        ${transaction.jenis_tindakan === 'income' ? '+' : '-'}Rp. ${transaction.total_harga.toLocaleString()}
                     </div>
                 </div>
             `).join('');

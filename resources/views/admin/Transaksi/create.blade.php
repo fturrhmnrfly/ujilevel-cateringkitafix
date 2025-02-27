@@ -258,6 +258,10 @@
                         <textarea class="form-control" name="deskripsi_tindakan" placeholder="Masukkan deskripsi tindakan" required></textarea>
                     </div>
                     <div class="form-group">
+                        <label for="total_harga">Total Harga</label>
+                        <input type="number" class="form-control" name="total_harga" placeholder="Masukkan total harga" required>
+                    </div>
+                    <div class="form-group">
                         <label for="status_transaksi">Status Transaksi</label>
                         <select class="form-control" name="status_transaksi" required>
                             <option value="Selesai">Selesai</option>
