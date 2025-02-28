@@ -302,7 +302,7 @@
             <h2 class="section-title">Prasmanan</h2>
             <div class="menu-grid">
                 <!-- Item 1 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="1">
                     <img src="{{ asset('assets/homeassets3.jpg') }}" alt="Ayam Geprek">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Ayam Geprek</h3>
@@ -314,12 +314,13 @@
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="#" class="menu-item-button add-to-cart-btn">Tambah Ke Keranjang</a>
                     </div>
                 </div>
+                
 
                 <!-- Item 2 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="2">
                     <img src="{{ asset('assets/homeassets6.jpg') }}" alt="Ayam Kecap">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Ayam Kecap</h3>
@@ -336,7 +337,7 @@
                 </div>
 
                 <!-- Item 3 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="3">
                     <img src="{{ asset('assets/ikanbunjaergulai.png') }}" alt="Ikan Goreng">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Ikan Bunjer Gulai</h3>
@@ -353,7 +354,7 @@
                 </div>
 
                 <!-- Item 4 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="4">
                     <img src="{{ asset('assets/cumibalado.png') }}" alt="Cumi Balado">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Cumi Balado</h3>
@@ -370,7 +371,7 @@
                 </div>
 
                 <!-- Item 5 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="5">
                     <img src="{{ asset('assets/homeassets5.jpg') }}" alt="Ikan Goreng">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Ikan Goreng</h3>
@@ -387,7 +388,7 @@
                 </div>
 
                 <!-- Item 6 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="6">
                     <img src="{{ asset('assets/kentangbalado.png') }}" alt="Kentang Balado">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Kentang Balado</h3>
@@ -404,7 +405,7 @@
                 </div>
 
                 <!-- Item 7 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="7">
                     <img src="{{ asset('assets/tempeorek.png') }}" alt="Tempe Orek">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Tempe Orek</h3>
@@ -421,7 +422,7 @@
                 </div>
 
                 <!-- Item 8 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="8">
                     <img src="{{ asset('assets/ayamgoreng.png') }}" alt="Ayam Goreng">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Ayam Goreng</h3>
@@ -438,7 +439,7 @@
                 </div>
 
                 <!-- Item 9 -->
-                <div class="menu-item">
+                <div class="menu-item" data-id="9">
                     <img src="{{ asset('assets/homeassets4.jpg') }}" alt="Telur Balado">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Telur Balado</h3>
@@ -455,152 +456,60 @@
                 </div>
             </div>
         </div>
-        <script>
-            document.querySelectorAll(".menu-item").forEach(item => {
-            let count = 0;
-            const countSpan = item.querySelector(".count");
-            const minusButton = item.querySelector(".minus");
-            const plusButton = item.querySelector(".plus");
-
-            minusButton.addEventListener("click", () => {
-                if (count > 0) {
-                    count--;
-                    countSpan.textContent = count;
-                }
-            });
-
-            plusButton.addEventListener("click", () => {
-                count++;
-                countSpan.textContent = count;
-            });
-        });
-
-        // Cart Management System
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all menu items
-            document.querySelectorAll('.menu-item').forEach(menuItem => {
-                const itemId = menuItem.dataset.id;
-                const countElement = menuItem.querySelector('.count');
-                const minusButton = menuItem.querySelector('.minus');
-                const plusButton = menuItem.querySelector('.plus');
-                const addToCartButton = menuItem.querySelector('.menu-item-button');
-                const itemName = menuItem.querySelector('.menu-item-title').textContent;
-                const itemPrice = parseInt(menuItem.querySelector('.menu-item-price').textContent);
-
-                // Handle minus button click
-                minusButton.addEventListener('click', () => {
-                    let count = parseInt(countElement.textContent);
-                    if (count > 0) {
-                        count--;
-                        countElement.textContent = count;
-                    }
-                });
-
-                // Handle plus button click
-                plusButton.addEventListener('click', () => {
-                    let count = parseInt(countElement.textContent);
-                    count++;
-                    countElement.textContent = count;
-                });
-
-                // Handle add to cart button click
-                addToCartButton.addEventListener('click', () => {
-                    const quantity = parseInt(countElement.textContent);
-                    if (quantity > 0) {
-                        addToCart(itemId, itemName, itemPrice, quantity);
-                        window.location.href = '/keranjang';
-                    }
-                });
-            });
-        });
-
-        function addToCart(itemId, name, price, quantity) {
-            let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-
-            // Check if item already exists in cart
-            const existingItemIndex = cart.findIndex(item => item.id === itemId);
-
-            if (existingItemIndex !== -1) {
-                // Update existing item
-                cart[existingItemIndex].quantity += quantity;
-                cart[existingItemIndex].total = cart[existingItemIndex].quantity * price;
-            } else {
-                // Add new item
-                cart.push({
-                    id: itemId,
-                    name: name,
-                    price: price,
-                    quantity: quantity,
-                    total: price * quantity
-                });
-            }
-
-            sessionStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        // Initialize cart page if we're on the cart page
-        if (window.location.pathname === '/keranjang') {
-            initializeCartPage();
-        }
-
-        function initializeCartPage() {
-            const cartContainer = document.getElementById('cartItems');
-            const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-            let subtotal = 0;
-            const deliveryFee = 10000;
-
-            cartContainer.innerHTML = '';
-
-            cart.forEach(item => {
-                subtotal += item.total;
-
-                const cartItemElement = document.createElement('div');
-                cartItemElement.className = 'cart-item';
-                cartItemElement.innerHTML = `
-                    <img src="/assets/paketassets${item.id}.png" alt="${item.name}">
-                    <div class="cart-item-details">
-                        <div class="cart-item-title">${item.name}</div>
-                        <div class="cart-item-price">Rp ${item.price.toLocaleString()}</div>
-                        <div class="cart-item-quantity">
-                            Jumlah: 
-                            <button onclick="updateCartQuantity(${item.id}, ${item.quantity - 1})">-</button>
-                            <span>${item.quantity}</span>
-                            <button onclick="updateCartQuantity(${item.id}, ${item.quantity + 1})">+</button>
-                        </div>
-                    </div>
-                    <button class="remove-item" onclick="removeCartItem(${item.id})">×</button>
-                `;
-
-                cartContainer.appendChild(cartItemElement);
-            });
-
-            // Update summary
-            const total = subtotal + deliveryFee;
-            document.getElementById('subtotal').textContent = `Rp ${subtotal.toLocaleString()}`;
-            document.getElementById('total').textContent = `Rp ${total.toLocaleString()}`;
-        }
-
-        function updateCartQuantity(itemId, newQuantity) {
-            if (newQuantity < 1) return;
-
-            let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-            const item = cart.find(item => item.id === itemId);
-
-            if (item) {
-                item.quantity = newQuantity;
-                item.total = item.price * newQuantity;
-                sessionStorage.setItem('cart', JSON.stringify(cart));
-                initializeCartPage();
-            }
-        }
-
-        function removeCartItem(itemId) {
-            let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-            cart = cart.filter(item => item.id !== itemId);
-            sessionStorage.setItem('cart', JSON.stringify(cart));
-            initializeCartPage();
-        }
-        </script>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.menu-item').forEach(menuItem => {
+        const itemId = menuItem.getAttribute('data-id');
+        const countElement = menuItem.querySelector('.count');
+        const minusButton = menuItem.querySelector('.minus');
+        const plusButton = menuItem.querySelector('.plus');
+        const addToCartButton = menuItem.querySelector('.menu-item-button');
+        const itemName = menuItem.querySelector('.menu-item-title').textContent.trim();
+        const itemPrice = parseInt(menuItem.querySelector('.menu-item-price').textContent.replace('Rp ', '').replaceAll('.', ''), 10);
+
+        let count = 0;
+
+        function updateButtonState() {
+            addToCartButton.disabled = count === 0;
+        }
+
+        function updateCount(change) {
+            count = Math.max(0, count + change); // Pastikan count tidak negatif
+            countElement.textContent = count;
+            updateButtonState();
+        }
+
+        minusButton.addEventListener('click', () => updateCount(-1));
+        plusButton.addEventListener('click', () => updateCount(1));
+
+        addToCartButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (count > 0) {
+                addToCart(itemId, itemName, itemPrice, count);
+                window.location.href = '/keranjang';
+            }
+        });
+
+        updateButtonState();
+    });
+});
+
+function addToCart(itemId, name, price, quantity) {
+    let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+
+    const existingItem = cart.find(item => item.id === itemId);
+
+    if (existingItem) {
+        existingItem.quantity += quantity;
+    } else {
+        cart.push({ id: itemId, name, price, quantity });
+    }
+
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+}
+
+
+</script>
 
 </html>

@@ -278,19 +278,7 @@
             </div>
         </div>
 
-        <!-- Search Bar -->
-        <form class="search-bar">
-            <input type="text" placeholder="Search products...">
-            <button type="submit"><i class="fas fa-search"></i></button>
-        </form>
-
-        <!-- Navigation Links -->
-        <ul class="nav-links">
-            <li><a href="{{ route('home') }}">Home</a></li>
-            <li><a href="{{ route('about.index') }}">About</a></li>
-            <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
-            <li><a href="{{ route('contact.index') }}">Contact</a></li>
-        </ul>
+       <x-navbar></x-navbar>
 
         <!-- Profile Section -->
         <div class="profile">
@@ -317,6 +305,7 @@
             </thead>
             <tbody id="cart-items">
                 <script>
+                    
                     // Sample cart items data structure
                     // Replace the cart page script with this updated version
                     // Cart page script

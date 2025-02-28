@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/metodepembayaranuser', [MetodePembayaranUserController::class, 'index'])->name('metodepembayaranuser.index');
     Route::get('/payment/{order_id}', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
+    Route::get('/search', [MenuController::class, 'search'])->name('search');
 });
 
 // Admin

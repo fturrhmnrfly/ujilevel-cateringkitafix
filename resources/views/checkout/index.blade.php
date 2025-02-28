@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 
-<head>  
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Catering Kita</title>
@@ -246,19 +246,8 @@
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo">
-            <div class="text-navbar">
-                <p>CATERING</p>
-                <p>KITA</p>
-            </div>
-        </div>
 
-        <div class="profile">
-            <img src="{{ asset('assets/profil.png') }}" alt="Profile">
-        </div>
-    </nav>
+    <x-navbar></x-navbar>
     <div class="breadcrumb-container">
         <div class="breadcrumb">
             <div class="breadcrumb-title">Paket Nasi Box</div>
@@ -402,6 +391,49 @@
             // Initial render
             renderCheckoutItems();
         });
+        // Replace the form submission handler in your checkout page
+document.getElementById('shipping-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Collect order data from the form
+    const orderData = {
+        items: cartItems,
+        deliveryDate: document.getElementById('delivery-date').value,
+        deliveryTime: document.getElementById('delivery-time').value,
+        address: document.getElementById('address').value,
+        phone: document.getElementById('phone').value,
+        notes: document.getElementById('notes').value,
+        subtotal: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        shipping: 20000,
+        total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 20000
+    };
+
+    // Send the order data to the server
+    fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Clear cart
+            localStorage.removeItem('cartItems');
+            
+            // Redirect to payment page with the order ID
+            window.location.href = `/payment/${data.order_id}`;
+        } else {
+            alert('Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');
+    });
+});
     </script>
 </body>
 

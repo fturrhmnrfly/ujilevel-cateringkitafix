@@ -618,6 +618,7 @@
 <body>
     <header>
         <x-navbar></x-navbar>
+        
         <div class="breadcrumb-container">
             <div class="breadcrumb">
             </div>
@@ -747,14 +748,13 @@
                                 <button type="button" class="plus">+</button>
                             </div>
                         </div>
-                        <form class="add-to-cart-form" method="POST" action="{{ route('cart.add') }}">
-                            @csrf
+                        <form class="add-to-cart-form">
                             <input type="hidden" name="item_id" value="1">
                             <input type="hidden" name="item_name" value="Ayam Geprek">
                             <input type="hidden" name="item_price" value="12000">
                             <input type="hidden" name="quantity" class="quantity-input" value="0">
-                            <button type="submit" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                        </form>
+                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                        </form>                        
                     </div>
                 </div>
                 <div class="menu-item">
@@ -769,7 +769,13 @@
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/menuprasmanan" class="menu-item-button">Pesan</a>
+                        <form class="add-to-cart-form">
+                            <input type="hidden" name="item_id" value="2">
+                            <input type="hidden" name="item_name" value="Ayam Kecap">
+                            <input type="hidden" name="item_price" value="9000">
+                            <input type="hidden" name="quantity" class="quantity-input" value="0">
+                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                        </form>     
                     </div>
                 </div>
                 <div class="menu-item">
@@ -784,7 +790,13 @@
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/menuprasmanan" class="menu-item-button">Pesan</a>
+                        <form class="add-to-cart-form">
+                            <input type="hidden" name="item_id" value="1">
+                            <input type="hidden" name="item_name" value="Ikan Goreng">
+                            <input type="hidden" name="item_price" value="10000">
+                            <input type="hidden" name="quantity" class="quantity-input" value="0">
+                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                        </form>     
                     </div>
                 </div>
             </div>
@@ -795,7 +807,7 @@
                 <p class="promo-description">Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi
                     menu
                     yang sesuai dengan acara Anda.</p>
-                
+
             </div>
 
             <footer class="footer">
@@ -862,6 +874,84 @@
             </footer>
     </header>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi untuk mengambil item keranjang dari localStorage
+            function getCartItems() {
+                return JSON.parse(localStorage.getItem('cartItems')) || [];
+            }
+
+            // Fungsi untuk menyimpan item ke keranjang
+            function saveCartItems(items) {
+                localStorage.setItem('cartItems', JSON.stringify(items));
+            }
+
+            // Fungsi untuk menambah item ke keranjang
+            function addToCart(item) {
+                let cartItems = getCartItems();
+                let existingItem = cartItems.find(cartItem => cartItem.id === item.id);
+
+                if (existingItem) {
+                    existingItem.quantity += item.quantity;
+                } else {
+                    cartItems.push(item);
+                }
+
+                saveCartItems(cartItems);
+                alert('Item berhasil ditambahkan ke keranjang!');
+            }
+
+            // Event listener untuk tombol tambah ke keranjang
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    let menuItem = this.closest('.menu-item');
+                    let itemId = parseInt(menuItem.querySelector('input[name="item_id"]').value);
+                    let itemName = menuItem.querySelector('input[name="item_name"]').value;
+                    let itemPrice = parseInt(menuItem.querySelector('input[name="item_price"]')
+                        .value);
+                    let itemQuantity = parseInt(menuItem.querySelector('.quantity-input').value);
+                    let itemImage = menuItem.querySelector('img').src;
+
+                    if (itemQuantity > 0) {
+                        addToCart({
+                            id: itemId,
+                            name: itemName,
+                            price: itemPrice,
+                            quantity: itemQuantity,
+                            image: itemImage
+                        });
+                    } else {
+                        alert('Pilih jumlah terlebih dahulu!');
+                    }
+                });
+            });
+
+            // Update tombol "Pesan" jika jumlah berubah
+            document.querySelectorAll('.counter button').forEach(button => {
+                button.addEventListener('click', function() {
+                    let counter = this.closest('.counter');
+                    let quantityInput = counter.querySelector('.count');
+                    let hiddenQuantityInput = counter.closest('.menu-item').querySelector(
+                        '.quantity-input');
+                    let addToCartButton = counter.closest('.menu-item').querySelector(
+                        '.add-to-cart-btn');
+
+                    let currentQuantity = parseInt(quantityInput.textContent);
+
+                    if (this.classList.contains('plus')) {
+                        currentQuantity++;
+                    } else if (this.classList.contains('minus') && currentQuantity > 0) {
+                        currentQuantity--;
+                    }
+
+                    quantityInput.textContent = currentQuantity;
+                    hiddenQuantityInput.value = currentQuantity;
+
+                    addToCartButton.disabled = currentQuantity === 0;
+                });
+            });
+        });
         document.querySelectorAll(".menu-item").forEach(item => {
             let count = 0;
             const countSpan = item.querySelector(".count");
