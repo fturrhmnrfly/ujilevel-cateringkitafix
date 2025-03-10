@@ -7,10 +7,6 @@
     <title>Login - Catering Kita</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-        .nav-bg {
-            background-color: #2A2879;
-            height: 80px;
-        }
         .login-card {
             background-color: #F4F4F5;
             border-radius: 24px;
@@ -25,15 +21,7 @@
             width: 100%;
             margin-top: 24px;
         }
-        .page-bg {
-            background-color: #F9FAFB;
-            min-height: calc(100vh - 80px);
-        }
-        .breadcrumb-section {
-            background-color: #F9FAFB;
-            padding: 20px 40px;
-            border-bottom: 1px solid #E5E7EB;
-        }
+        
         .input-group {
             margin-bottom: 20px;
         }
@@ -50,6 +38,19 @@
             border-radius: 8px;
             background-color: white;
             margin-bottom: 4px;
+        }
+        .nav-bg {
+            background-color: #2A2879;
+            height: 80px;
+        }
+        .page-bg {
+            background-color: #F9FAFB;
+            min-height: calc(100vh - 80px);
+        }
+        .breadcrumb-section {
+            background-color: #F9FAFB;
+            padding: 20px 40px;
+            border-bottom: 1px solid #E5E7EB;
         }
         .logo-section {
             display: flex;
