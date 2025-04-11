@@ -73,6 +73,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/payment/{order_id}', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
     Route::get('/search', [MenuController::class, 'search'])->name('search');
+    Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
+    Route::get('/metodepembayaran/bca', [PaymentController::class, 'bca'])->name('payment.bca');
+    Route::get('/metodepembayaran/dana', [PaymentController::class, 'dana'])->name('payment.dana');
+    Route::get('/metodepembayaran/gopay', [PaymentController::class, 'gopay'])->name('payment.gopay');
+    Route::get('/metodepembayaran/cod', [PaymentController::class, 'cod'])->name('payment.cod');
 });
 
 // Admin
@@ -117,10 +122,21 @@ Route::patch('/cart/update', [CartController::class, 'updateQuantity'])->name('c
 Route::delete('/cart/remove/{itemId}', [CartController::class, 'removeItem'])->name('cart.remove');
 
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-
+Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
 // Order routes
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+Route::middleware(['auth'])->group(function () {
+    // Halaman pembayaran
+    Route::get('/payment/{orderId}', [PaymentController::class, 'show'])->name('payment.show');
+    
+    // Proses pembayaran
+    Route::post('/payment/{orderId}/process', [PaymentController::class, 'process'])->name('payment.process');
+    
+    // Halaman hasil pembayaran
+    Route::get('/payment/{orderId}/result', [PaymentController::class, 'result'])->name('payment.result');
+});
 
 require __DIR__.'/auth.php';

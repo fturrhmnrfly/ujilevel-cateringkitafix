@@ -54,4 +54,30 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Tampilkan daftar pesanan pengguna.
+     */
+    public function index()
+    {
+        // Ambil semua pesanan milik pengguna yang sedang login
+        $orders = Order::where('user_id', auth()->id())->get();
+
+        // Kirim data pesanan ke view
+        return view('orders.index', compact('orders'));
+    }
+
+    /**
+     * Tampilkan detail pesanan tertentu.
+     */
+    public function show($id)
+    {
+        // Ambil pesanan berdasarkan ID
+        $order = Order::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        // Kirim data pesanan ke view
+        return view('orders.show', compact('order'));
+    }
 }

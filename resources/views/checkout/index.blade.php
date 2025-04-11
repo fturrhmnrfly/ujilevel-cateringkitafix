@@ -305,7 +305,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="checkout-button">Lanjutkan Ke Pembayaran</button>
+                 <a href="{{ route('metodepembayaranuser.index') }}">lanjutkan</a>
             </form>
         </div>
     </div>
@@ -395,43 +395,42 @@
 document.getElementById('shipping-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // Collect order data from the form
+    // Kumpulkan data dari form
     const orderData = {
-        items: cartItems,
         deliveryDate: document.getElementById('delivery-date').value,
         deliveryTime: document.getElementById('delivery-time').value,
         address: document.getElementById('address').value,
         phone: document.getElementById('phone').value,
         notes: document.getElementById('notes').value,
         subtotal: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-        shipping: 20000,
-        total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 20000
+        shipping: 20000, // Biaya pengiriman tetap
+        total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 20000,
     };
 
-    // Send the order data to the server
-    fetch('/api/orders', {
+    // Kirim data ke backend
+    fetch('{{ route('checkout.process') }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
         },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(orderData),
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Clear cart
+            // Bersihkan keranjang
             localStorage.removeItem('cartItems');
-            
-            // Redirect to payment page with the order ID
+
+            // Redirect ke halaman pembayaran
             window.location.href = `/payment/${data.order_id}`;
         } else {
-            alert('Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');
+            alert('Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');
+        alert('Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.');
     });
 });
     </script>

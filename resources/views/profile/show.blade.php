@@ -329,7 +329,6 @@
         <h1>Profil Pengguna</h1>
         <div class="profile-info">
             <p><strong>Nama Lengkap:</strong> {{ $user->first_name }} {{ $user->last_name }}</p>
-            <p><strong>Jenis Kelamin:</strong> {{ $user->gender }}</p>
             <p><strong>Email:</strong> {{ $user->email }}</p>
             <p><strong>Nomor Telepon:</strong> {{ $user->phone }}</p>
             <p><strong>Alamat Rumah:</strong> {{ $user->address }}</p>
