@@ -78,6 +78,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/metodepembayaran/dana', [PaymentController::class, 'dana'])->name('payment.dana');
     Route::get('/metodepembayaran/gopay', [PaymentController::class, 'gopay'])->name('payment.gopay');
     Route::get('/metodepembayaran/cod', [PaymentController::class, 'cod'])->name('payment.cod');
+    Route::post('/buat-pesanan', [OrderController::class, 'createOrder'])->name('order.create');
+    Route::get('/payment/dana/success', function () {
+        return view('payments.dana_success');
+    })->name('payment.dana.success');
+    
+    Route::prefix('pesanan')->group(function () {
+        Route::get('/', [PesananController::class, 'index'])->name('pesanan.index'); // Semua Pesanan
+        Route::get('/process', [PesananController::class, 'process'])->name('pesanan.process'); // Diproses
+        Route::get('/shipped', [PesananController::class, 'shipped'])->name('pesanan.shipped'); // Dikirim
+        Route::get('/completed', [PesananController::class, 'completed'])->name('pesanan.completed'); // Selesai
+    });
 });
 
 // Admin

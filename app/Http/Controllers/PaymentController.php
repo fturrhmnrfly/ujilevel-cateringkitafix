@@ -82,6 +82,22 @@ class PaymentController extends Controller
     {
         // Implementasi integrasi dengan Dana
         // ...
+        $vaNumber = '12345678901234';
+        $expiryTime = now()->addHours(2);
+        
+        // Update status order
+        $order->update([
+            'payment_method' => 'dana',
+            'va_number' => $vaNumber,
+            'payment_expiry' => $expiryTime,
+            'status' => 'pending_payment'
+        ]);
+        
+        return [
+            'success' => true,
+            'va_number' => $vaNumber,
+            'expiry_time' => $expiryTime
+        ];
     }
     
     private function processGopay($order)

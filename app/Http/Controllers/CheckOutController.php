@@ -24,21 +24,32 @@ class CheckoutController extends Controller
             'subtotal' => 'required|numeric',
             'shipping' => 'required|numeric',
             'total' => 'required|numeric',
+            'items' => 'required|array',
         ]);
 
-        // Simpan data ke database
+        // Simpan data pesanan ke database
         $order = Order::create([
             'user_id' => auth()->id(),
             'total_amount' => $validated['total'],
             'status' => 'pending_payment',
-            'payment_method' => null,
+            'payment_method' => 'dana',
             'payment_status' => 'pending',
-            'va_number' => null,
-            'payment_expiry' => now()->addHours(2), // Contoh waktu kedaluwarsa 2 jam
-            'payment_proof' => null,
+            'shipping_address' => $validated['address'],
+            'phone_number' => $validated['phone'],
+            'notes' => $validated['notes'],
+            'delivery_date' => $validated['deliveryDate'] . ' ' . $validated['deliveryTime'],
         ]);
 
-        // Redirect ke halaman pembayaran
-        return redirect()->route('payment.show', ['orderId' => $order->id]);
+        // Simpan detail item pesanan
+        foreach ($validated['items'] as $item) {
+            $order->items()->create([
+                'product_id' => $item['id'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+            ]);
+        }
+
+        // Redirect ke halaman sukses dengan order_id
+        return redirect()->route('payment.dana.success', ['order_id' => $order->id]);
     }
 }

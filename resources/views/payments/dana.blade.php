@@ -491,24 +491,9 @@
 
         <div class="detail-section">
             <h2 class="detail-title">Detail Pesanan</h2>
-            <div id="order-items">
-                <!-- Order items will be populated here -->
-            </div>
 
             <div class="shipping-info">
                 <h3 class="detail-title">Informasi Pengiriman</h3>
-                <div class="info-item">
-                    <div class="info-label">Tanggal Pengiriman</div>
-                    <div class="info-value" id="delivery-date">20 Januari 2025</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Waktu Pengiriman</div>
-                    <div class="info-value" id="delivery-time">10:00 - 11:00</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Alamat Pengiriman</div>
-                    <div class="info-value" id="delivery-address">Jl. Sudirman No. 123</div>
-                </div>
             </div>
         </div>
     </div>
@@ -642,7 +627,7 @@
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Metode Pembayaran</span>
-                            <span>Transfer Bank BCA</span>
+                            <span>Dana</span>
                         </div>
                     </div>
                 `;

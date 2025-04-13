@@ -642,7 +642,7 @@
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Metode Pembayaran</span>
-                            <span>Transfer Bank BCA</span>
+                            <span>Gopay</span>
                         </div>
                     </div>
                 `;

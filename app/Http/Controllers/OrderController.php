@@ -80,4 +80,17 @@ class OrderController extends Controller
         // Kirim data pesanan ke view
         return view('orders.show', compact('order'));
     }
+
+    public function createOrder(Request $request)
+    {
+        // Logika untuk membuat pesanan
+        $order = new Order();
+        $order->user_id = auth()->id();
+        $order->payment_method = 'dana'; // Contoh metode pembayaran
+        $order->status = 'pending';
+        $order->save();
+
+        // Redirect ke halaman sukses Dana
+        return redirect()->route('payment.dana.success');
+    }
 }
