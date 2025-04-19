@@ -618,7 +618,7 @@
 <body>
     <header>
         <x-navbar></x-navbar>
-        
+
         <div class="breadcrumb-container">
             <div class="breadcrumb">
             </div>
@@ -626,7 +626,6 @@
         <div class="hero">
             <div class="hero-content">
                 <h1>Catering <span class="highlight">Kita</span></h1>
-                <p>Delicious food delivered to your door.</p>
             </div>
             <div class="hero-image">
                 <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box">
@@ -638,7 +637,6 @@
             </div>
             <div class="about-content">
                 <h1>About us</h1>
-                <h3>Always the Best Choice - SoDelicious, You'll Crave for More!</h3>
                 <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun,
                     arisan,
                     syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek,
@@ -648,7 +646,7 @@
                     tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat,
                     porsi pas,
                     dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
-                <a href="about" class="btn-shop">Competely</a>
+                <a href="about" class="btn-shop">Selengkapnya</a>
             </div>
         </div>
 
@@ -754,7 +752,7 @@
                             <input type="hidden" name="item_price" value="12000">
                             <input type="hidden" name="quantity" class="quantity-input" value="0">
                             <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                        </form>                        
+                        </form>
                     </div>
                 </div>
                 <div class="menu-item">
@@ -775,7 +773,7 @@
                             <input type="hidden" name="item_price" value="9000">
                             <input type="hidden" name="quantity" class="quantity-input" value="0">
                             <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                        </form>     
+                        </form>
                     </div>
                 </div>
                 <div class="menu-item">
@@ -796,7 +794,7 @@
                             <input type="hidden" name="item_price" value="10000">
                             <input type="hidden" name="quantity" class="quantity-input" value="0">
                             <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                        </form>     
+                        </form>
                     </div>
                 </div>
             </div>
@@ -1154,18 +1152,12 @@
                 }
             });
 
-            // Add cart counter to navbar if not already present
-            const navbar = document.querySelector('.nav-links');
-            if (navbar && !document.querySelector('.cart-count')) {
-                const cartLi = document.createElement('li');
-                cartLi.innerHTML = `
-            <a href="{{ route('cart.index') }}">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-count">0</span>
-            </a>
-        `;
-                navbar.appendChild(cartLi);
-            }
+
+            // Make cart icon clickable
+            document.querySelector('.cart-icon').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/keranjang';
+            });
         });
     </script>
     <main>

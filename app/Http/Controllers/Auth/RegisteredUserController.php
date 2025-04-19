@@ -13,7 +13,6 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Providers\RouteServiceProvider;
 
-
 class RegisteredUserController extends Controller
 {
     /**
@@ -41,20 +40,24 @@ class RegisteredUserController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $request->first_name . ' ' . $request->last_name, // Bisa juga langsung dari form
+            'name' => $request->first_name . ' ' . $request->last_name,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
             'password' => Hash::make($request->password),
+            'usertype' => 'user', // Default to regular user
         ]);
         
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect('/dashboard'); // Sesuaikan dengan rute setelah login
-
+        // Redirect based on usertype
+        if ($user->usertype === 'admin') {
+            return redirect('/admin/dashboard');
+        }
+        return redirect('/dashboard');
     }
 }

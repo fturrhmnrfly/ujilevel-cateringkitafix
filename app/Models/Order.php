@@ -1,5 +1,4 @@
 <?php
-// app/Models/Order.php
 
 namespace App\Models;
 
@@ -12,16 +11,34 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'total_amount',
+        'total_amount', 
         'status',
-        'payment_method',
         'payment_status',
-        'va_number',
-        'payment_expiry',
-        'payment_proof',
+        'shipping_address',
+        'phone_number',
+        'notes',
+        'delivery_date',
+        'payment_deadline'
     ];
 
-    protected $casts = [
-        'payment_expiry' => 'datetime',
+    protected $dates = [
+        'delivery_date',
+        'payment_deadline'
     ];
+
+    /**
+     * Relasi ke item pesanan
+     */
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Relasi ke user
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

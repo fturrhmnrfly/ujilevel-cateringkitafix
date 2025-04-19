@@ -14,43 +14,57 @@ class OrderController extends Controller
     {
         try {
             DB::beginTransaction();
+
+            // Validasi request
+            $validated = $request->validate([
+                'address' => 'required|string',
+                'phone' => 'required|string',
+                'notes' => 'nullable|string',
+                'deliveryDate' => 'required|date',
+                'deliveryTime' => 'required|string',
+                'total' => 'required|numeric',
+                'items' => 'required|array'
+            ]);
+
+            // Set payment deadline 24 jam dari sekarang
+            $paymentDeadline = now()->addHours(24);
             
-            // Create new order
-            $order = new Order();
-            $order->user_id = Auth::id();
-            $order->total_amount = $request->total;
-            $order->status = 'pending';
-            $order->payment_status = 'unpaid';
-            $order->shipping_address = $request->address;
-            $order->phone_number = $request->phone;
-            $order->notes = $request->notes;
-            $order->delivery_date = $request->deliveryDate . ' ' . $request->deliveryTime;
-            $order->payment_deadline = now()->addHours(24);
-            $order->save();
-            
-            // Save order items
+            // Buat order
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'total_amount' => $validated['total'],
+                'shipping_address' => $validated['address'],
+                'phone_number' => $validated['phone'],
+                'notes' => $validated['notes'],
+                'delivery_date' => $validated['deliveryDate'] . ' ' . $validated['deliveryTime'],
+                'payment_deadline' => $paymentDeadline,
+                'status' => 'pending',
+                'payment_status' => 'unpaid'
+            ]);
+
+            // Simpan order items
             foreach ($request->items as $item) {
-                $orderItem = new OrderItem();
-                $orderItem->order_id = $order->id;
-                $orderItem->product_id = $item['id'];
-                $orderItem->quantity = $item['quantity'];
-                $orderItem->price = $item['price'];
-                $orderItem->save();
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price']
+                ]);
             }
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
-                'order_id' => $order->order_id,
-                'message' => 'Order created successfully'
+                'message' => 'Order berhasil dibuat',
+                'order_id' => $order->id
             ]);
+
         } catch (\Exception $e) {
-            DB::rollBack();
-            
+            DB::rollback();
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Gagal membuat order: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -60,11 +74,14 @@ class OrderController extends Controller
      */
     public function index()
     {
-        // Ambil semua pesanan milik pengguna yang sedang login
-        $orders = Order::where('user_id', auth()->id())->get();
+        // Ambil semua pesanan pengguna yang sedang login
+        $orders = Order::with('items.product')
+                    ->where('user_id', auth()->id())
+                    ->orderBy('created_at', 'desc')
+                    ->get();
 
-        // Kirim data pesanan ke view
-        return view('orders.index', compact('orders'));
+        // Kirim data ke view
+        return view('pesanan.index', compact('orders'));
     }
 
     /**
@@ -72,25 +89,55 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        // Ambil pesanan berdasarkan ID
-        $order = Order::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        // Ambil pesanan berdasarkan ID dengan relasi
+        $order = Order::with('items.product')
+                ->where('id', $id)
+                ->where('user_id', auth()->id())
+                ->firstOrFail();
 
         // Kirim data pesanan ke view
-        return view('orders.show', compact('order'));
+        return view('pesanan.show', compact('order'));
     }
 
-    public function createOrder(Request $request)
+    /**
+     * Tampilkan pesanan dengan status 'processing'
+     */
+    public function process()
     {
-        // Logika untuk membuat pesanan
-        $order = new Order();
-        $order->user_id = auth()->id();
-        $order->payment_method = 'dana'; // Contoh metode pembayaran
-        $order->status = 'pending';
-        $order->save();
+        $orders = Order::with('items.product')
+                    ->where('user_id', auth()->id())
+                    ->where('status', 'processing')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+        
+        return view('pesanan.index', compact('orders'));
+    }
 
-        // Redirect ke halaman sukses Dana
-        return redirect()->route('payment.dana.success');
+    /**
+     * Tampilkan pesanan dengan status 'shipped'
+     */
+    public function shipped()
+    {
+        $orders = Order::with('items.product')
+                    ->where('user_id', auth()->id())
+                    ->where('status', 'shipped')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+        
+        return view('pesanan.index', compact('orders'));
+    }
+
+    /**
+     * Tampilkan pesanan dengan status 'completed'
+     */
+    public function completed()
+    {
+        $orders = Order::with('items.product')
+                    ->where('user_id', auth()->id())
+                    ->where('status', 'completed')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+        
+        return view('pesanan.index', compact('orders'));
     }
 }

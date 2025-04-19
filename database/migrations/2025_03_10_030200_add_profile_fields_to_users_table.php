@@ -12,10 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('first_name')->after('id');
-            $table->string('last_name')->after('first_name');
-            $table->string('phone')->after('email');
-            $table->text('address')->after('phone');
+            if (!Schema::hasColumn('users', 'first_name')) {
+                $table->string('first_name')->after('name');
+            }
+            if (!Schema::hasColumn('users', 'last_name')) {
+                $table->string('last_name')->after('first_name');
+            }
+            if (!Schema::hasColumn('users', 'phone')) {
+                $table->string('phone')->after('email');
+            }
+            if (!Schema::hasColumn('users', 'address')) {
+                $table->text('address')->after('phone');
+            }
         });
     }
 
@@ -25,10 +33,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('first_name');
-            $table->dropColumn('last_name');
-            $table->dropColumn('phone');
-            $table->dropColumn('address');
+            $table->dropColumn(['first_name', 'last_name', 'phone', 'address']);
         });
     }
 };

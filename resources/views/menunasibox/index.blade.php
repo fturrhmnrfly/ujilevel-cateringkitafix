@@ -144,8 +144,16 @@
         justify-content: center;
         border-radius: 50%;
         box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.2);
+        opacity: 0; /* Hide by default */
+        transform: scale(0); /* Start scaled down */
+        transition: all 0.3s ease;
     }
 
+    /* Only show the notification badge when cart has items */
+    .cart-icon[data-count]:not([data-count=""]):not([data-count="0"])::after {
+        opacity: 1;
+        transform: scale(1);
+    }
 
     /* Breadcrumb Styles */
     .breadcrumb-container {
@@ -465,8 +473,11 @@
                 const cartIcon = document.querySelector('.cart-icon');
                 const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-                // Update the data-count attribute
-                cartIcon.setAttribute('data-count', totalItems.toString());
+                if (totalItems > 0) {
+                    cartIcon.setAttribute('data-count', totalItems.toString());
+                } else {
+                    cartIcon.removeAttribute('data-count');
+                }
             }
 
             // Initial counter update

@@ -173,37 +173,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <!-- Logo -->
-        <div class="logo">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo">
-            <div class="text-navbar">
-                <p>CATERING</p>
-                <p>KITA</p>
-            </div>
-        </div>
-
-        <!-- Search Bar -->
-        <form class="search-bar">
-            <input type="text" placeholder="Search products...">
-            <button type="submit"><i class="fas fa-search"></i></button>
-        </form>
-
-        <!-- Navigation Links -->
-        <ul class="nav-links">
-            <li><a href="{{ route('dashboard') }}">Home</a></li>
-            <li><a href="{{ route('about.index') }}">About</a></li>
-            <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
-            <li><a href="{{ route('contact.index') }}">Contact</a></li>
-        </ul>
-
-        <!-- Profile Section -->
-        <div class="profile">
-            <a href="{{ route('profile.show') }}">
-                <img src="{{ asset('assets/profil.png') }}" alt="Profile">
-            </a>
-        </div>
-    </nav>
+<x-navbar></x-navbar>
 
     <div class="container">
         <div class="tab-navigation">
@@ -214,6 +184,94 @@
         </div>
 
         <!-- Tab content sections remain the same -->
+    </div>
+
+    <div class="container">
+        <h1>Pesanan Saya</h1>
+        
+        @if(isset($orders) && count($orders) > 0)
+            @foreach($orders as $order)
+                <div class="order-card">
+                    <div class="order-header" style="padding: 15px; border-bottom: 1px solid #eee;">
+                        <h3>Order ID: {{ $order->id }}</h3>
+                        <p>Tanggal Pemesanan: {{ $order->created_at->format('d F Y') }}</p>
+                        <p>Status: 
+                            <span class="status-badge" style="
+                                padding: 5px 10px;
+                                border-radius: 4px;
+                                font-weight: bold;
+                                background-color: 
+                                    @if($order->status == 'pending') #FFD700
+                                    @elseif($order->status == 'processing') #1E90FF
+                                    @elseif($order->status == 'shipped') #FFA500
+                                    @elseif($order->status == 'completed') #32CD32
+                                    @else #ccc
+                                    @endif;
+                                color: #333;
+                            ">
+                                {{ ucfirst($order->status) }}
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <div class="order-items" style="padding: 15px;">
+                        @foreach($order->items as $item)
+                            <div class="item-row" style="display: flex; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #f5f5f5;">
+                                <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
+                                <div style="flex-grow: 1;">
+                                    <p style="font-weight: bold; margin: 0;">{{ $item->product->name }}</p>
+                                    <p style="margin: 5px 0 0;">{{ $item->quantity }} × Rp {{ number_format($item->price, 0, ',', '.') }}</p>
+                                </div>
+                                <div>
+                                    <p style="font-weight: bold; margin: 0;">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    
+                    <div class="order-footer" style="padding: 15px; background-color: #f9f9f9; border-top: 1px solid #eee;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <p>Subtotal:</p>
+                            <p>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <p>Biaya Pengiriman:</p>
+                            <p>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                            <p>Total:</p>
+                            <p>Rp {{ number_format($order->total, 0, ',', '.') }}</p>
+                        </div>
+                        
+                        <a href="{{ route('pesanan.show', $order->id) }}" class="detail-btn" style="
+                            display: inline-block;
+                            background-color: #2c2c7b;
+                            color: white;
+                            padding: 10px 15px;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            margin-top: 10px;
+                            text-align: center;
+                        ">Lihat Detail</a>
+                    </div>
+                </div>
+            @endforeach
+        @else
+            <div class="empty-state" style="text-align: center; padding: 50px 0;">
+                <img src="{{ asset('assets/empty-order.png') }}" alt="Tidak ada pesanan" style="max-width: 150px; margin-bottom: 20px;">
+                <h3>Belum Ada Pesanan</h3>
+                <p>Anda belum memiliki pesanan. Silahkan pesan makanan terlebih dahulu.</p>
+                <a href="{{ route('dashboard') }}" class="btn" style="
+                    display: inline-block;
+                    background-color: #2c2c7b;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    margin-top: 15px;
+                ">Pesan Sekarang</a>
+            </div>
+        @endif
     </div>
 
     <!-- Rest of your HTML remains the same -->

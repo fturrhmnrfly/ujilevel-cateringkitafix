@@ -26,6 +26,7 @@ use App\Http\Controllers\MetodePembayaranUserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\Admin\AdminStokBahanController;
 use App\Http\Controllers\Admin\AdminKelolaMakananController;
 use App\Http\Controllers\Admin\AdminDaftarPesananController;
@@ -36,9 +37,7 @@ use App\Http\Controllers\Admin\AdminStatusPembayaranController;
 use App\Http\Controllers\Admin\AdminStatusPengirimanController;
 use App\Http\Controllers\Admin\AdminPenilaianController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WelcomeController::class, 'index']);
 
 Route::get('admin/dashboard', function () {
     return view('admin.dashboard');
@@ -89,6 +88,26 @@ Route::middleware('auth')->group(function () {
         Route::get('/shipped', [PesananController::class, 'shipped'])->name('pesanan.shipped'); // Dikirim
         Route::get('/completed', [PesananController::class, 'completed'])->name('pesanan.completed'); // Selesai
     });
+
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::patch('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
+    Route::delete('/cart/remove/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
+
+    // Keranjang routes
+    Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
+    Route::post('/keranjang/add', [KeranjangController::class, 'addToCart'])->name('keranjang.add');
+    Route::patch('/keranjang/update/{id}', [KeranjangController::class, 'updateQuantity'])->name('keranjang.update');
+    Route::delete('/keranjang/delete/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.remove');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/keranjang/tambah', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::patch('/keranjang/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
+    Route::delete('/keranjang/hapus/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
 });
 
 // Admin

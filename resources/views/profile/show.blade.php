@@ -284,15 +284,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <!-- Logo -->
-        <div class="logo">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo">
-            <div class="text-navbar">
-                <p>CATERING</p>
-                <p>KITA</p>
-            </div>
-        </div>
+   <x-navbar></x-navbar>
 
         {{-- <!-- Search Bar -->
         <form class="search-bar">

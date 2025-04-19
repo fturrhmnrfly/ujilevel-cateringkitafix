@@ -3,51 +3,137 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\Cart;
+use App\Models\CartItem;
+use App\Http\Controllers\Controller;
 
 class CartController extends Controller
+
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        // Ambil data keranjang dari session
-        $cart = session()->get('cart', []);
-        return view('cart', ['cart' => $cart]);
+        // Ambil keranjang aktif untuk user yang sedang login
+        $cart = Cart::where('user_id', auth()->id())
+                ->where('status', 'active')
+                ->first();
+        
+        $cartItems = [];
+        if ($cart) {
+            $cartItems = CartItem::where('cart_id', $cart->id)
+                        ->with('product')
+                        ->get();
+        }
+
+        return view('keranjang.index', compact('cartItems'));
     }
-    
-    public function add(Request $request)
+
+    public function addToCart(Request $request)
     {
-        $itemId = $request->item_id;
-        $itemName = $request->item_name;
-        $itemPrice = floatval($request->item_price);
-        $quantity = intval($request->quantity);
+        try {
+            DB::beginTransaction();
 
-        if ($quantity < 1) {
-            return redirect()->back()->with('error', 'Jumlah minimal 1.');
+            // Ambil atau buat keranjang baru
+            $cart = Cart::firstOrCreate(
+                [
+                    'user_id' => auth()->id(),
+                    'status' => 'active'
+                ],
+                [
+                    'total' => 0
+                ]
+            );
+
+            // Cek apakah item sudah ada di keranjang
+            $cartItem = CartItem::where('cart_id', $cart->id)
+                              ->where('product_id', $request->product_id)
+                              ->first();
+
+            if ($cartItem) {
+                $cartItem->update([
+                    'quantity' => $cartItem->quantity + $request->quantity
+                ]);
+            } else {
+                CartItem::create([
+                    'cart_id' => $cart->id,
+                    'product_id' => $request->product_id,
+                    'quantity' => $request->quantity,
+                    'price' => $request->price
+                ]);
+            }
+
+            $cart->updateTotal();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Produk berhasil ditambahkan ke keranjang'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan ke keranjang: ' . $e->getMessage()
+            ], 500);
         }
-
-        // Ambil keranjang dari session
-        $cart = session()->get('cart', []);
-
-        // Cek apakah item sudah ada di keranjang
-        if (isset($cart[$itemId])) {
-            $cart[$itemId]['quantity'] += $quantity;
-        } else {
-            $cart[$itemId] = [
-                'id' => $itemId,
-                'name' => $itemName,
-                'price' => $itemPrice,
-                'quantity' => $quantity,
-            ];
-        }
-
-        // Hitung total
-        $cart[$itemId]['total'] = $cart[$itemId]['price'] * $cart[$itemId]['quantity'];
-
-        // Simpan keranjang ke session
-        session()->put('cart', $cart);
-
-        return redirect()->back()->with('success', 'Item berhasil ditambahkan ke keranjang!');
     }
-    
+
+    public function updateQuantity(Request $request, $id)
+    {
+        try {
+            $cartItem = CartItem::findOrFail($id);
+            $newQuantity = $cartItem->quantity + $request->quantity_change;
+            
+            if ($newQuantity < 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jumlah minimal 1'
+                ]);
+            }
+            
+            $cartItem->update(['quantity' => $newQuantity]);
+            $cartItem->cart->updateTotal();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Jumlah berhasil diperbarui'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui jumlah'
+            ], 500);
+        }
+    }
+
+    public function removeItem($id)
+    {
+        try {
+            $cartItem = CartItem::findOrFail($id);
+            $cart = $cartItem->cart;
+            
+            $cartItem->delete();
+            $cart->updateTotal();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Item berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus item'
+            ], 500);
+        }
+    }
+
     public function remove(Request $request)
     {
         $itemId = $request->item_id;

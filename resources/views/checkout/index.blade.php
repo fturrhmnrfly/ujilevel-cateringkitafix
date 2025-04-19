@@ -242,6 +242,35 @@
         .breadcrumb-nav a {
             color: #6b7280;
         }
+
+        .btn-lanjutkan {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #2c2c77;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-lanjutkan:hover {
+            background-color: #1a1a5c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-lanjutkan:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
@@ -305,12 +334,58 @@
                     </div>
                 </div>
 
-                 <a href="{{ route('metodepembayaranuser.index') }}">lanjutkan</a>
+                 <a href="{{ route('metodepembayaranuser.index') }}" class="btn-lanjutkan">Lanjutkan ke Pembayaran</a>
             </form>
         </div>
     </div>
 
     <script>
+        // Letakkan di dalam file checkout.js atau dalam tag <script> di halaman checkout
+document.addEventListener('DOMContentLoaded', function() {
+    const checkoutForm = document.getElementById('checkoutForm');
+    
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Kumpulkan data formulir
+            const formData = new FormData(checkoutForm);
+            const orderData = {
+                address: formData.get('address'),
+                phone: formData.get('phone'),
+                notes: formData.get('notes'),
+                deliveryDate: formData.get('delivery_date'),
+                deliveryTime: formData.get('delivery_time'),
+                total: formData.get('total'),
+                items: JSON.parse(formData.get('items') || '[]')
+            };
+            
+            // Kirim data pesanan ke server
+            fetch('/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Arahkan ke halaman pesanan jika berhasil
+                    window.location.href = data.redirect;
+                } else {
+                    // Tampilkan pesan error
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memproses pesanan');
+            });
+        });
+    }
+});
         document.addEventListener('DOMContentLoaded', function() {
             // Get cart items from localStorage
             const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
@@ -397,40 +472,34 @@ document.getElementById('shipping-form').addEventListener('submit', function(e) 
 
     // Kumpulkan data dari form
     const orderData = {
-        deliveryDate: document.getElementById('delivery-date').value,
-        deliveryTime: document.getElementById('delivery-time').value,
         address: document.getElementById('address').value,
         phone: document.getElementById('phone').value,
         notes: document.getElementById('notes').value,
-        subtotal: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-        shipping: 20000, // Biaya pengiriman tetap
-        total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 20000,
+        deliveryDate: document.getElementById('delivery-date').value,
+        deliveryTime: document.getElementById('delivery-time').value,
+        total: cartTotal,
+        items: cartItems.map(item => ({
+            id: item.id,
+            quantity: item.quantity,
+            price: item.price
+        }))
     };
 
-    // Kirim data ke backend
-    fetch('{{ route('checkout.process') }}', {
+    // Kirim data ke server
+    fetch('{{ route("orders.store") }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify(orderData)
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Bersihkan keranjang
             localStorage.removeItem('cartItems');
-
-            // Redirect ke halaman pembayaran
             window.location.href = `/payment/${data.order_id}`;
-        } else {
-            alert('Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.');
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.');
     });
 });
     </script>

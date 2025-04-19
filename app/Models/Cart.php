@@ -32,4 +32,13 @@ class Cart extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Tambahkan method untuk menghitung total
+    public function updateTotal()
+    {
+        $this->total = $this->items->sum(function($item) {
+            return $item->price * $item->quantity;
+        });
+        $this->save();
+    }
 }

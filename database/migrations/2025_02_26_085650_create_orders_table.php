@@ -10,13 +10,15 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id')->unique();
             $table->foreignId('user_id')->constrained();
             $table->decimal('total_amount', 10, 2);
-            $table->string('status');
-            $table->string('payment_method')->nullable();
+            $table->string('status')->default('pending');
             $table->string('payment_status')->default('unpaid');
-            $table->timestamp('payment_deadline');
+            $table->string('shipping_address');
+            $table->string('phone_number');
+            $table->text('notes')->nullable();
+            $table->datetime('delivery_date');
+            $table->datetime('payment_deadline');
             $table->timestamps();
         });
     }

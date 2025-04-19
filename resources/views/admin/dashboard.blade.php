@@ -129,7 +129,7 @@
         </div>
 
         <div class="header">
-            <h2>Halo Admin Selamat Datang</h2>
+            <h2>Halo Wabak Ganteng Selamat Datang</h2>
         </div>
 
         <div class="stats-container">
