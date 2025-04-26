@@ -2,79 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function edit()
     {
         $user = Auth::user();
-        return view('profile.edit', compact('user'));
+        $profile = $user->profile;
+        return view('profile.edit', compact('user', 'profile'));
     }
 
-    /**
-     * Show the user's profile.
-     */
-    public function show()
+    public function update(Request $request)
     {
         $user = Auth::user();
-        return view('profile.show', compact('user'));
-    }
-
-    /**
-     * Update the user's profile information.
-     */
-    public function update(Request $request): RedirectResponse
-    {
-        $user = Auth::user();
-
-        $request->validate([
+        
+        $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'gender' => 'required|string|max:10',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'required|string|max:15',
             'address' => 'required|string|max:255',
+            'bio' => 'nullable|string'
         ]);
 
-        $user->update([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'gender' => $request->gender,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
-        ]);
+        $user->email = $validated['email'];
+        $user->save();
+
+        $user->profile()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'phone' => $validated['phone'],
+                'address' => $validated['address'],
+                'bio' => $validated['bio'] ?? null
+            ]
+        );
 
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully.');
     }
 
     /**
-     * Delete the user's account.
+     * Display the user's profile.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function show()
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $user = Auth::user();
+        $profile = $user->profile ?? $user->profile()->create([
+            'first_name' => '',
+            'last_name' => '',
+            'phone' => '',
+            'address' => '',
+            'bio' => null
         ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        
+        return view('profile.show', compact('user', 'profile'));
     }
 }

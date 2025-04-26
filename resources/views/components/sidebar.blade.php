@@ -114,6 +114,15 @@
     .logout-btn:hover {
         background-color: #2d2a77;
     }
+
+    .notification-badge {
+        background-color: red;
+        border-radius: 50%;
+        padding: 5px 10px;
+        color: white;
+        font-size: 0.8rem;
+        margin-left: auto;
+    }
 </style>
 <div class="sidebar">
     <div class="logo-container">
@@ -124,6 +133,14 @@
     <a href="{{ route('admin.dashboard') }}" class="menu-item active">
         <i class="fa-solid fa-house"></i>
         Dashboard
+    </a>
+    <a href="{{ route('admin.tentangkami.index') }}" class="menu-item active">
+        <i class="fa-solid fa-house"></i>
+        Tentang Kami
+    </a>
+    <a href="{{ route('admin.kategori.index') }}" class="menu-item active">
+        <i class="fa-solid fa-house"></i>
+        Kategori
     </a>
     <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">
         <i class="fa-solid fa-mug-hot"></i>

@@ -263,7 +263,7 @@
         <img src="{{ asset('assets/homeassets2.png') }}" alt="Nasi Box">
     </div>
     <div class="about-content">
-        <h1>About us</h1>
+        <h1>Tentang Kami</h1>
         <h3>Always the Best Choice - SoDelicious, You'll Crave for More!</h3>
         <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun, arisan,
             syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek, nasi

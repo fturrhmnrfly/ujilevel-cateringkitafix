@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keranjang - Catering Kita</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         * {
             margin: 0;
@@ -304,81 +305,100 @@
                 </tr>
             </thead>
             <tbody id="cart-items">
-                <script>
-                    
-                    // Sample cart items data structure
-                    // Replace the cart page script with this updated version
-                    // Cart page script
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // Get cart items from localStorage
-                        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
-                        // Function to format price in Rupiah
-                        function formatPrice(price) {
-                            return "Rp" + price.toLocaleString('id-ID');
-                        }
-
-                        // Function to render cart items
-                        function renderCart() {
-                            const cartContainer = document.getElementById('cart-items');
-                            cartContainer.innerHTML = '';
-
-                            cartItems.forEach(item => {
-                                const row = document.createElement('tr');
-                                row.className = 'cart-item';
-                                row.innerHTML = `
-                <td>
-                    <div class="product-info">
-                        <img src="${item.image}" alt="${item.name}" class="product-image">
-                        <span class="product-name">${item.name}</span>
-                    </div>
-                </td>
-                <td class="price">${formatPrice(item.price)}</td>
-                <td>
-                    <div class="quantity-control">
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
-                        <span class="quantity">${item.quantity}</span>
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-                    </div>
-                </td>
-                <td class="price">${formatPrice(item.price * item.quantity)}</td>
-                <td>
-                    <button class="delete-btn" onclick="removeItem(${item.id})">🗑️</button>
-                </td>
-            `;
-                                cartContainer.appendChild(row);
-                            });
-                        }
-
-                        // Function to update item quantity
-                        window.updateQuantity = function(itemId, change) {
-                            const item = cartItems.find(item => item.id === itemId);
-                            if (item) {
-                                const newQuantity = item.quantity + change;
-                                if (newQuantity > 0) {
-                                    item.quantity = newQuantity;
-                                    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                                    renderCart();
-                                }
-                            }
-                        }
-
-                        // Function to remove item from cart
-                        window.removeItem = function(itemId) {
-                            cartItems = cartItems.filter(item => item.id !== itemId);
-                            localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                            renderCart();
-                        }
-
-                        // Initial render
-                        renderCart();
-                    });
-                </script>
+                @foreach($cartItems as $item)
+                <tr class="cart-item" data-id="{{ $item->id }}">
+                    <td>
+                        <div class="product-info">
+                            <img src="{{ $item->image }}" alt="{{ $item->nama_produk }}" class="product-image">
+                            <span class="product-name">{{ $item->nama_produk }}</span>
+                        </div>
+                    </td>
+                    <td class="price">Rp{{ number_format($item->price, 0, ',', '.') }}</td>
+                    <td>
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="updateQuantity({{ $item->id }}, -1)">-</button>
+                            <span class="quantity">{{ $item->quantity }}</span>
+                            <button class="quantity-btn" onclick="updateQuantity({{ $item->id }}, 1)">+</button>
+                        </div>
+                    </td>
+                    <td class="price">Rp{{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
+                    <td>
+                        <button class="delete-btn" onclick="removeItem({{ $item->id }})">🗑️</button>
+                    </td>
+                </tr>
+                @endforeach
             </tbody>
         </table>
 
         <a href="{{ route('checkout') }}" class="checkout-btn">Checkout</a>
     </div>
+
+    <script>
+        async function removeItem(itemId) {
+            if (confirm('Apakah anda yakin ingin menghapus item ini?')) {
+                try {
+                    const response = await fetch(`/keranjang/remove/${itemId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Hapus elemen dari tampilan
+                        const itemRow = document.querySelector(`tr.cart-item[data-id="${itemId}"]`);
+                        if (itemRow) {
+                            itemRow.remove();
+                        }
+                        
+                        // Refresh halaman setelah menghapus
+                        window.location.reload();
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    alert('Gagal menghapus item: ' + error.message);
+                }
+            }
+        }
+
+        // Tambahkan fungsi untuk update quantity
+        async function updateQuantity(itemId, change) {
+            try {
+                const quantitySpan = document.querySelector(`tr[data-id="${itemId}"] .quantity`);
+                let newQuantity = parseInt(quantitySpan.textContent) + change;
+                
+                if (newQuantity < 1) {
+                    return;
+                }
+
+                const response = await fetch(`/keranjang/${itemId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        quantity: newQuantity
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Refresh halaman untuk memperbarui total
+                    window.location.reload();
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                alert('Gagal mengupdate jumlah: ' + error.message);
+            }
+        }
+    </script>
 </body>
 
 </html>

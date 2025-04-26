@@ -77,18 +77,16 @@
             flex-direction: column;
             align-items: center;
             margin-bottom: 30px;
+            padding: 20px;
         }
 
         .profile-image {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
             overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .profile-image img {
@@ -98,10 +96,11 @@
         }
 
         .user-name {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: bold;
+            color: #2c2c77;
             margin-top: 10px;
-            color: #333;
+            text-align: center;
         }
 
         /* Menambahkan header app seperti di desain */
@@ -281,6 +280,50 @@
             color: #6b7280;
             text-decoration: none;
         }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background-color: #5165ff;
+            color: white;
+            border: none;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #3949cc;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -303,7 +346,7 @@
         <!-- Profile Section -->
         <div class="profile">
             <a href="{{ route('profile.show') }}">
-                <img src="{{ asset('assets/profil.png') }}" alt="Profile">
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($profile->first_name) }}&background=2c2c77&color=fff&size=120" alt="Profile">
             </a>
         </div>
     </nav>
@@ -318,14 +361,41 @@
     </div>
 
     <div class="container">
-        <h1>Profil Pengguna</h1>
-        <div class="profile-info">
-            <p><strong>Nama Lengkap:</strong> {{ $user->first_name }} {{ $user->last_name }}</p>
-            <p><strong>Email:</strong> {{ $user->email }}</p>
-            <p><strong>Nomor Telepon:</strong> {{ $user->phone }}</p>
-            <p><strong>Alamat Rumah:</strong> {{ $user->address }}</p>
+        <div class="user-profile-header">
+            <div class="profile-image">
+                <img src="{{ $profile->avatar_url }}" alt="{{ $profile->first_name }}'s Profile" />
+            </div>
+            <div class="user-name">{{ $profile->first_name }} {{ $profile->last_name }}</div>
         </div>
-        <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profil</a>
+
+        <div class="profile-info">
+            <p><strong>Nama Lengkap:</strong> {{ $profile->first_name }} {{ $profile->last_name }}</p>
+            <p><strong>Email:</strong> {{ $user->email }}</p>  
+            <p><strong>Nomor Telepon:</strong> {{ $profile->phone }}</p>
+            <p><strong>Alamat Rumah:</strong> {{ $profile->address }}</p>
+            @if($profile->bio)
+                <p><strong>Bio:</strong> {{ $profile->bio }}</p>
+            @endif
+        </div>
+
+        <div class="button-group">
+            <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profil</a>
+            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                @csrf
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
     </div>
+
+    <script>
+        // Add confirmation before logout
+        document.querySelector('form[action="{{ route('logout') }}"]').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                localStorage.removeItem('cartItems'); // Clear cart items on logout
+                this.submit();
+            }
+        });
+    </script>
 </body>
 </html>

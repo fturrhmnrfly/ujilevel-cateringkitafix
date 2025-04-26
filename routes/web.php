@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MenuPrasmananController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
@@ -14,7 +15,6 @@ use App\Http\Controllers\DaftarPesananController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\MenuPrasmananController;
 use App\Http\Controllers\MenuNasiBoxController;
 use App\Http\Controllers\MetodePembayaranController;
 use App\Http\Controllers\KeranjangController;
@@ -36,6 +36,10 @@ use App\Http\Controllers\Admin\AdminMetodePembayaran;
 use App\Http\Controllers\Admin\AdminStatusPembayaranController;
 use App\Http\Controllers\Admin\AdminStatusPengirimanController;
 use App\Http\Controllers\Admin\AdminPenilaianController;
+use App\Http\Controllers\Admin\TentangKamiController;
+use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\NotificationAdminController;
+use App\Http\Controllers\SearchController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 
@@ -48,6 +52,8 @@ Route::get('/admin/dashboard', [AdminTransaksiController::class, 'dashboard'])->
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+
     
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -62,6 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
     Route::post('/pesanan', [PesananController::class, 'store'])->name('pesanan.store');
     Route::get('/menuprasmanan', [MenuPrasmananController::class, 'index'])->name('menuprasmanan.index');
+    Route::get('/menuprasmanan/{id}', [MenuPrasmananController::class, 'show'])->name('menuprasmanan.show');
     Route::get('/menunasibox', [MenuNasiBoxController::class, 'index'])->name('menunasibox.index');
     Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
     Route::get('/formulirpesanan', [FormulirPesananController::class, 'index'])->name('formulirpesanan.index');
@@ -70,8 +77,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
     Route::get('/metodepembayaranuser', [MetodePembayaranUserController::class, 'index'])->name('metodepembayaranuser.index');
     Route::get('/payment/{order_id}', [PaymentController::class, 'show'])->name('payment.show');
-    Route::post('/payment/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
-    Route::get('/search', [MenuController::class, 'search'])->name('search');
+    Route::post('/payment/confirm', [PaymentController::class, 'confirmPayment'])->name('payment.confirm');
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/metodepembayaran/bca', [PaymentController::class, 'bca'])->name('payment.bca');
     Route::get('/metodepembayaran/dana', [PaymentController::class, 'dana'])->name('payment.dana');
@@ -81,75 +88,120 @@ Route::middleware('auth')->group(function () {
     Route::get('/payment/dana/success', function () {
         return view('payments.dana_success');
     })->name('payment.dana.success');
-    
+    Route::get('/payment/bca/success', function () {
+        return view('payments.bca_success');
+    })->name('payment.bca.success');
+    Route::get('/payment/gopay/success', function () {
+        return view('payments.gopay_success');
+    })->name('payment.gopay.success');
+    Route::get('/payment/cod/success', function() {
+        return view('payments.cod_success');
+    })->name('payment.cod.success');
+Route::post('/payment/bca/confirm', [PaymentController::class, 'confirmBcaPayment'])
+    ->name('payment.bca.confirm')
+    ->middleware('auth');
+    Route::get('/metodepembayaran/{method}', [PaymentController::class, 'show'])->name('payment.show');
     Route::prefix('pesanan')->group(function () {
         Route::get('/', [PesananController::class, 'index'])->name('pesanan.index'); // Semua Pesanan
         Route::get('/process', [PesananController::class, 'process'])->name('pesanan.process'); // Diproses
         Route::get('/shipped', [PesananController::class, 'shipped'])->name('pesanan.shipped'); // Dikirim
         Route::get('/completed', [PesananController::class, 'completed'])->name('pesanan.completed'); // Selesai
+        Route::get('/penilaian', [PesananController::class, 'penilaian'])->name('pesanan.penilaian'); // Penilaian
+         Route::get('/unpaid', [PesananController::class, 'unpaid'])->name('pesanan.unpaid'); // Belum Bayar
+
+        });
+
+        Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+        Route::post('/orders/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+        // Keranjang routes
+        Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
+        Route::post('/keranjang/add', [KeranjangController::class, 'addToCart'])->name('keranjang.add');
+        Route::patch('/keranjang/update/{id}', [KeranjangController::class, 'updateQuantity'])->name('keranjang.update');
+        Route::delete('/keranjang/delete/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.remove');
+        Route::get('/keranjang/count', [KeranjangController::class, 'getCartCount'])->name('keranjang.count');
+        Route::get('/menunasibox/{id}', [MenuNasiBoxController::class, 'show'])->name('menunasibox.show');
+        Route::get('/pembayaran/{method}/{orderId}', [PaymentController::class, 'show'])->name('payment.show');
     });
 
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-
-    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::get('/cart', [CartController::class, 'index']);
-    Route::patch('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
-    Route::delete('/cart/remove/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
-
-    // Keranjang routes
+Route::middleware(['auth'])->group(function () {
     Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
     Route::post('/keranjang/add', [KeranjangController::class, 'addToCart'])->name('keranjang.add');
-    Route::patch('/keranjang/update/{id}', [KeranjangController::class, 'updateQuantity'])->name('keranjang.update');
-    Route::delete('/keranjang/delete/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.remove');
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/keranjang/tambah', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::patch('/keranjang/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
-    Route::delete('/keranjang/hapus/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
+    Route::patch('/keranjang/{id}', [KeranjangController::class, 'updateQuantity'])->name('keranjang.update');
+    Route::delete('/keranjang/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.remove');
+    Route::post('/keranjang/add', [KeranjangController::class, 'addToCart'])->name('keranjang.add');
+    Route::get('/keranjang/count', [KeranjangController::class, 'getCartCount'])->name('keranjang.count');
+    Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/store', [CheckOutController::class, 'store'])->name('checkout.store');
+    Route::delete('/keranjang/remove/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.remove');
+    Route::patch('/keranjang/{id}', [KeranjangController::class, 'updateQuantity'])->name('keranjang.update');
+    Route::post('/payment/process', [PaymentController::class, 'process'])->name('payment.process');
+    Route::get('/payment/{orderId}/bca', [PaymentController::class, 'showBca'])->name('payment.bca');
+    Route::get('/payment/bca/{orderId}', [PaymentController::class, 'showBca'])->name('payment.bca.show');
+    Route::get('/payment/{orderId}/dana', [PaymentController::class, 'showDana'])->name('payment.dana');
+    Route::get('/payment/{orderId}/gopay', [PaymentController::class, 'showGopay'])->name('payment.gopay');
+    Route::get('/payment/{orderId}/cod', [PaymentController::class, 'showCod'])->name('payment.cod');
+    Route::get('/payment/confirmation/{orderId}', [PaymentController::class, 'showConfirmation'])->name('payment.confirmation');
+    Route::get('/konfirmasi-pembayaran/{orderId}', [PaymentController::class, 'showConfirmation'])->name('payment.confirmation');
+    Route::get('/konfirmasi-pembayaran/{method}/{orderId}', [PaymentController::class, 'showConfirmation'])->name('payment.confirmation');
+    Route::post('/payment', [PaymentController::class, 'show'])->name('payment.show');
+    Route::post('/payment/{orderId}/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
+    Route::post('/payment/create', [PaymentController::class, 'store'])->name('payment.store');
+    Route::get('/payment/success', function () {
+        return view('payments.success');
+    })->name('payment.success');
+    
 });
 
 // Admin
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    // Kelola Makanan
+    Route::resource('kelolamakanan', AdminKelolaMakananController::class);
+
+    // Stok Bahan
+    Route::resource('stokbahan', AdminStokBahanController::class);
+    Route::get('stokbahan/search', [AdminStokBahanController::class, 'index'])->name('stokbahan.search');
+
+    // Daftar Pesanan
+    Route::resource('daftarpesanan', AdminDaftarPesananController::class);
+
+    // Laporan
+    Route::resource('laporan', AdminLaporanController::class);
+
+    // Transaksi
+    Route::resource('transaksi', AdminTransaksiController::class);
+
+    // Metode Pembayaran
+    Route::resource('metodepembayaran', AdminMetodePembayaran::class);
     
-    Route::prefix('admin')->name('admin.')->group(function () {
-        // Kelola Makanan
-        Route::resource('kelolamakanan', AdminKelolaMakananController::class);
+    // Metode Pembayaran
+    Route::resource('statuspembayaran', AdminStatusPembayaranController::class);
 
-        // Stok Bahan
-        Route::resource('stokbahan', AdminStokBahanController::class);
-        Route::get('stokbahan/search', [AdminStokBahanController::class, 'index'])->name('stokbahan.search');
+    // Status Pengiriman
+    Route::resource('statuspengiriman', AdminStatusPengirimanController::class);
 
-        // Daftar Pesanan
-        Route::resource('daftarpesanan', AdminDaftarPesananController::class);
+    // Penilaian
+    Route::resource('penilaian', AdminPenilaianController::class);
 
-        // Laporan
-        Route::resource('laporan', AdminLaporanController::class);
+    // Tentang Kami routes
+    Route::resource('tentangkami', TentangKamiController::class);
 
-        // Transaksi
-        Route::resource('transaksi', AdminTransaksiController::class);
+    // Notification
+    
 
-        // Metode Pembayaran
-        Route::resource('metodepembayaran', AdminMetodePembayaran::class);
-        
-        // Metode Pembayaran
-        Route::resource('statuspembayaran', AdminStatusPembayaranController::class);
-
-        // Status Pengiriman
-        Route::resource('statuspengiriman', AdminStatusPengirimanController::class);
-
-        // Penilaian
-        Route::resource('penilaian', AdminPenilaianController::class);
-
-    });
+    // Profile Admin
+    Route::get('/profileadmin', [ProfileController::class, 'show'])->name('profileadmin.show');
+    Route::get('/profileadmin/edit', [ProfileController::class, 'edit'])->name('profileadmin.edit');
+    Route::post('/profileadmin/update', [ProfileController::class, 'update'])->name('profileadmin.update');
 });
 
-// Cart routes
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-Route::patch('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
-Route::delete('/cart/remove/{itemId}', [CartController::class, 'removeItem'])->name('cart.remove');
+// Notifications
+Route::get('/notifications', [NotificationAdminController::class, 'index'])->name('admin.notifications.index');
+
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::resource('kategori', KategoriController::class);
+});
+
 
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
@@ -168,5 +220,7 @@ Route::middleware(['auth'])->group(function () {
     // Halaman hasil pembayaran
     Route::get('/payment/{orderId}/result', [PaymentController::class, 'result'])->name('payment.result');
 });
+
+Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 require __DIR__.'/auth.php';

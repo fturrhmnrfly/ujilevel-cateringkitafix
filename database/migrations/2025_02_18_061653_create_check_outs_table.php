@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('check_outs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->date('delivery_date');
+            $table->time('delivery_time');
+            $table->text('address');
+            $table->string('phone');
+            $table->text('notes')->nullable();
+            $table->decimal('subtotal', 10, 2);
+            $table->decimal('shipping_cost', 10, 2);
+            $table->decimal('total', 10, 2);
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

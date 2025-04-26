@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Document</title>
 </head>
 <style>
@@ -121,38 +122,26 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease;
+        cursor: pointer;
     }
 
-    .cart-icon:hover {
-        transform: scale(1.1);
-    }
-
-    .cart-icon::after {
+    .cart-icon[data-count]:after {
         content: attr(data-count);
         position: absolute;
-        top: -5px;
-        right: -5px;
-        background: red;
+        top: -8px;
+        right: -8px;
+        background: #ff0000;
         color: white;
         font-size: 12px;
         font-weight: bold;
-        width: 18px;
-        height: 18px;
+        padding: 2px 6px;
+        border-radius: 50%;
+        min-width: 16px;
+        height: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.2);
-        opacity: 0; /* Hide by default */
-        transform: scale(0); /* Start scaled down */
-        transition: all 0.3s ease;
-    }
-
-    /* Only show the notification badge when cart has items */
-    .cart-icon[data-count]:not([data-count=""]):not([data-count="0"])::after {
-        opacity: 1;
-        transform: scale(1);
     }
 
     /* Breadcrumb Styles */
@@ -260,7 +249,25 @@
     .counter {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+    }
+
+    .counter input {
+        width: 40px;
+        height: 25px;
+        text-align: center;
+        border: 1px solid #2c2c77;
+        border-radius: 4px;
+        font-size: 14px;
+        -moz-appearance: textfield;
+        /* Firefox */
+    }
+
+    /* Hilangkan tombol panah untuk Chrome, Safari, Edge, Opera */
+    .counter input::-webkit-outer-spin-button,
+    .counter input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
 
     .counter button {
@@ -272,10 +279,9 @@
         border-radius: 50%;
         cursor: pointer;
         font-size: 16px;
-    }
-
-    .counter .count {
-        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .menu-item-button {
@@ -334,226 +340,78 @@
         <div class="menu-section">
             <h2 class="section-title">Paket Nasi Box</h2>
             <div class="menu-grid">
-                <!-- Item 1 -->
+                @foreach($menuItems as $item)
                 <div class="menu-item">
-                    <img src="{{ asset('assets/paketassets1.png') }}" alt="Paket Nasi Box Premium A">
+                    <img src="{{ asset($item['image']) }}" alt="{{ $item['nama_produk'] }}">
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium A</h3>
-                        <p class="menu-item-title-p">Nasi putih, Ayam Goreng, Capcay, Mie Goreng, Telur Balado</p>
+                        <h3 class="menu-item-title">{{ $item['nama_produk'] }}</h3>
+                        <p class="menu-item-title-p">{{ $item['deskripsi'] }}</p>
                         <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 35.000</p>
+                            <p class="menu-item-price">Rp {{ number_format($item['price'], 0, ',', '.') }}</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menunasibox.show', $item['id']) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
-
-                <!-- Item 2 -->
-                <div class="menu-item">
-                    <img src="{{ asset('assets/paketassets3.png') }}" alt="Paket Nasi Box Premium B">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium B</h3>
-                        <p class="menu-item-title-p">Nasi putih, telur, perkedel, Mie Goreng, sayur bas jagung</p>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 35.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="#" class="menu-item-button">Tambah Ke Keranjang</a>
-                    </div>
-                </div>
-
-                <!-- Item 3 -->
-                <div class="menu-item">
-                    <img src="{{ asset('assets/paketassets2.png') }}" alt="Paket Nasi Box Premium C">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium C</h3>
-                        <p class="menu-item-title-p">Nasi putih, Ayam Goreng, Capcay, Mie Goreng, Telur Balado</p>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 35.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="#" class="menu-item-button">Tambah Ke Keranjang</a>
-                    </div>
-                </div>
-
-                <!-- Item 4 -->
-                <div class="menu-item">
-                    <img src="{{ asset('assets/paketassets4.png') }}" alt="Paket Nasi Box Premium D">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium D</h3>
-                        <p class="menu-item-title-p">Nasi putih, udang goreng, Capcay, kentang, daging,sambal </p>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 35.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="#" class="menu-item-button">Tambah Ke Keranjang</a>
-                    </div>
-                </div>
-
-                <!-- Item 5 -->
-                <div class="menu-item">
-                    <img src="{{ asset('assets/paketassets1.png') }}" alt="Paket Nasi Box Premium E">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium E</h3>
-                        <p class="menu-item-title-p">Nasi putih, Ayam Goreng, Capcay, Mie Goreng, Telur Balado</p>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 35.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="#" class="menu-item-button">Tambah Ke Keranjang</a>
-                    </div>
-                </div>
-
-                <!-- Item 6 -->
-                <div class="menu-item">
-                    <img src="{{ asset('assets/paketassets5.png') }}" alt="Paket Nasi Box Premium F">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium F</h3>
-                        <p class="menu-item-title-p">Nasi putih, Ayam kecap, telur, Mie Goreng, Tempe orak arik,sambal
-                        </p>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 35.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="#" class="menu-item-button">Tambah Ke Keranjang</a>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </header>
     <script>
-        document.querySelectorAll(".menu-item").forEach(item => {
-            let count = 0;
-            const countSpan = item.querySelector(".count");
-            const minusButton = item.querySelector(".minus");
-            const plusButton = item.querySelector(".plus");
-
-            minusButton.addEventListener("click", () => {
-                if (count > 0) {
-                    count--;
-                    countSpan.textContent = count;
-                }
-            });
-
-            plusButton.addEventListener("click", () => {
-                count++;
-                countSpan.textContent = count;
-            });
-        });
-
-        // Add this script at the bottom of your page, before the closing </body> tag
         document.addEventListener('DOMContentLoaded', function() {
-            // Function to update cart icon counter
+            // Handle menu items
+            document.querySelectorAll(".menu-item").forEach(item => {
+                const countInput = item.querySelector(".count");
+                const minusButton = item.querySelector(".minus");
+                const plusButton = item.querySelector(".plus");
+
+                // Set initial value
+                countInput.value = 0;
+
+                minusButton.addEventListener("click", () => {
+                    let value = parseInt(countInput.value) || 0;
+                    if (value > 0) {
+                        countInput.value = value - 1;
+                    }
+                });
+
+                plusButton.addEventListener("click", () => {
+                    let value = parseInt(countInput.value) || 0;
+                    countInput.value = value + 1;
+                });
+
+                // Hanya validasi untuk memastikan input adalah angka
+                countInput.addEventListener("input", function() {
+                    let value = parseInt(this.value) || 0;
+                    if (value < 0) value = 0;
+                    this.value = value;
+                });
+            });
+
+            // Update cart icon counter
             function updateCartCounter() {
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
                 const cartIcon = document.querySelector('.cart-icon');
-                const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-
+                const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+                
                 if (totalItems > 0) {
-                    cartIcon.setAttribute('data-count', totalItems.toString());
+                    cartIcon.setAttribute('data-count', totalItems);
                 } else {
                     cartIcon.removeAttribute('data-count');
                 }
             }
 
-            // Initial counter update
+            // Update counter when page loads
             updateCartCounter();
 
-            document.querySelectorAll(".menu-item").forEach(item => {
-                let count = 0;
-                const countSpan = item.querySelector(".count");
-                const minusButton = item.querySelector(".minus");
-                const plusButton = item.querySelector(".plus");
-                const addToCartButton = item.querySelector(".menu-item-button");
-
-                // Get menu item details
-                const menuItemName = item.querySelector(".menu-item-title").textContent;
-                const menuItemPrice = parseInt(item.querySelector(".menu-item-price").textContent.replace(
-                    "Rp ", "").replace(".", ""));
-                const menuItemImage = item.querySelector("img").getAttribute("src");
-
-                minusButton.addEventListener("click", () => {
-                    if (count > 0) {
-                        count--;
-                        countSpan.textContent = count;
-                    }
-                });
-
-                plusButton.addEventListener("click", () => {
-                    count++;
-                    countSpan.textContent = count;
-                });
-
-                addToCartButton.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    if (count > 0) {
-                        // Get existing cart items from localStorage
-                        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
-                        // Check if item already exists in cart
-                        const existingItemIndex = cartItems.findIndex(item => item.name ===
-                            menuItemName);
-
-                        if (existingItemIndex !== -1) {
-                            // Update quantity if item exists
-                            cartItems[existingItemIndex].quantity += count;
-                        } else {
-                            // Add new item if it doesn't exist
-                            cartItems.push({
-                                id: cartItems.length + 1,
-                                name: menuItemName,
-                                price: menuItemPrice,
-                                image: menuItemImage,
-                                quantity: count
-                            });
-                        }
-
-                        // Save updated cart to localStorage
-                        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-
-                        // Update cart counter
-                        updateCartCounter();
-
-                        // Reset counter
-                        count = 0;
-                        countSpan.textContent = count;
-
-                        // Show success message
-                        alert('Item berhasil ditambahkan ke keranjang!');
-                    } else {
-                        alert('Silakan pilih jumlah item terlebih dahulu!');
-                    }
-                });
-            });
-
-            // Make cart icon clickable
+            // Make cart icon redirect to cart page
             document.querySelector('.cart-icon').addEventListener('click', function(e) {
                 e.preventDefault();
-                window.location.href = '/keranjang';
+                window.location.href = '{{ route("keranjang.index") }}';
             });
         });
     </script>

@@ -2,41 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
+        'id',
+        'order_number',
         'user_id',
-        'total_amount', 
-        'status',
-        'payment_status',
+        'subtotal',
+        'shipping_cost',
+        'total_amount',
         'shipping_address',
         'phone_number',
         'notes',
         'delivery_date',
-        'payment_deadline'
+        'payment_method',
+        'payment_status',
+        'payment_proof',
+        'status'
     ];
 
-    protected $dates = [
-        'delivery_date',
-        'payment_deadline'
-    ];
-
-    /**
-     * Relasi ke item pesanan
-     */
     public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    /**
-     * Relasi ke user
-     */
     public function user()
     {
         return $this->belongsTo(User::class);

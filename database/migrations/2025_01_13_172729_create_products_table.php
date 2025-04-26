@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->enum('rasa', ['manis', 'gurih', 'pedas', 'pedas manis' ]);
+            $table->enum('rasa', ['manis', 'gurih', 'pedas', 'pedas manis']);
             $table->text('deskripsi')->nullable();
             $table->decimal('harga', 10, 2);
             $table->string('image_url')->nullable();

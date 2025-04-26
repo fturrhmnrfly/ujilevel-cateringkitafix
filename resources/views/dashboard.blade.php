@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title')</title>
+    <title>Dashboard - Catering Kita</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -26,6 +27,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background-color: #6b7280;
         }
 
         .breadcrumb-title {
@@ -53,11 +55,18 @@
 
         .hero-content {
             max-width: 50%;
+            display: flex;
+            justify-content: center;
+            margin-right: 20px;
         }
 
         .hero-content h1 {
             font-size: 110px;
             color: #3d4750;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            /* Center the text */
         }
 
         .hero-content .highlight {
@@ -84,8 +93,31 @@
             background-color: #1a1a5c;
         }
 
-        .hero-image img {
+        .hero-image {
+            width: 50%;
+            height: 500px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0 0 0 200px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 85%);
+            overflow: hidden; /* Add this to contain the absolute positioned image */
+        }
+
+        .main-hero-image {
             width: 500px;
+            position: relative;
+            z-index: 2; /* Higher z-index to appear in front */
+        }
+
+        .background-curve {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: 1; /* Lower z-index to appear behind */
+            width: 100%;
+            height: auto;
         }
 
         .about {
@@ -132,6 +164,8 @@
         .menu-section {
             padding: 40px;
             background-color: #fff;
+            overflow: hidden;
+            /* Menangani overflow */
         }
 
         .section-title {
@@ -141,48 +175,111 @@
             margin-bottom: 30px;
         }
 
+        /* Update menu grid styles */
         .menu-grid {
             display: flex;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-
-        .menu-item {
-            background: #fff;
-            border-radius: 15px;
-            width: 60%;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .menu-item-p {
-            background: #F8F8FB;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .menu-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .menu-item img {
+            flex-wrap: nowrap;
+            gap: 20px;
+            overflow-x: hidden;
+            padding: 20px 0;
+            position: relative;
             width: 100%;
-            height: 200px;
-            object-fit: cover;
         }
 
+        .menu-item,
+        .menu-item-p {
+            flex: 0 0 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            animation: slideIn 20s linear infinite;
+            margin: 10px;
+        }
+
+        /* Update animation keyframes */
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Update menu item content styles */
         .menu-item-content {
-            padding: 20px;
+            padding: 15px;
         }
 
         .menu-item-title {
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 10px;
+        }
+
+        .menu-item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .menu-item-price {
+            color: #2c2c77;
+            font-weight: bold;
+        }
+
+        /* Update button styles */
+        .menu-item-button {
+            display: block;
+            width: 90%;
+            padding: 10px;
+            background-color: #2c2c77;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu-item-button:hover {
+            background-color: #1a1a5c;
+        }
+
+        /* Add smooth infinite scroll */
+        .menu-grid::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        /* Hide scrollbar */
+        .menu-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        .menu-item img,
+        .menu-item-p img {
+            width: 100%;
+            height: 250px;
+            /* Increased height */
+            object-fit: cover;
+        }
+
+        .menu-item-content {
+            padding: 25px;
+            /* Increased padding */
+        }
+
+        .menu-item-title {
+            font-size: 22px;
+            /* Increased font size */
+            font-weight: bold;
+            margin-bottom: 15px;
         }
 
         .menu-item-price {
@@ -217,21 +314,51 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: #fff;
         }
 
         .counter button {
-            background-color: #ff9800;
+            background-color: #2c2c77;
             border: none;
             color: white;
-            padding: 5px 10px;
-            font-size: 16px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
             cursor: pointer;
-            border-radius: 5px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .counter button:hover {
+            background-color: #1a1a5c;
         }
 
         .counter button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+        }
+
+        .counter input.count {
+            width: 50px;
+            text-align: center;
+            border: none;
+            font-size: 14px;
+            padding: 5px;
+            -moz-appearance: textfield;
+            background: transparent;
+        }
+
+        /* Remove spinner arrows */
+        .counter input.count::-webkit-outer-spin-button,
+        .counter input.count::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         .category {
@@ -475,12 +602,14 @@
         .footer-logo {
             display: flex;
             flex-direction: column;
+            margin-left: 20px;
         }
 
         .footer-logo img {
-            width: 80px;
+            width: 100%;
             height: auto;
             margin-bottom: 10px;
+            margin-left: -150px;
         }
 
         .footer-brand {
@@ -612,6 +741,178 @@
         .menu-item-p.animate.fade-in {
             transform: translateY(0);
         }
+
+        /* Add navigation buttons */
+        .menu-nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .menu-nav-button {
+            background-color: #2c2c77;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .menu-nav-button:hover {
+            background-color: #1a1a5c;
+        }
+
+        .logo-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 100px;
+            /* Add margin to offset the chef hat */
+        }
+
+        .chef-hat {
+            width: 200px;
+            height: auto;
+            position: absolute;
+            top: -40px;
+            left: -80px;
+            /* Adjust left position */
+            z-index: 1;
+            margin-left: 20px
+        }
+
+        .hero-content h1 {
+            font-size: 110px;
+            color: #3d4750;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            /* Center the text */
+        }
+
+        .counter input.count {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 14px;
+            -moz-appearance: textfield;
+        }
+
+        .counter input.count::-webkit-inner-spin-button,
+        .counter input.count::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Add these styles to your existing CSS */
+        .comments-section {
+            padding: 40px;
+            background-color: #fff;
+        }
+
+        .comments-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .comment-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .user-name {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .rating {
+            color: #FFD700;
+            font-size: 14px;
+        }
+
+        .comment-text {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .comments-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Add this to your existing navbar styles */
+        .notification-icon {
+            display: flex;
+            align-items: center;
+            color: #fff;
+            text-decoration: none;
+            position: relative;
+            padding: 8px;
+            transition: opacity 0.3s;
+        }
+
+        .notification-icon:hover {
+            opacity: 0.8;
+        }
+
+        .notification-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Add this if you want to show a notification badge */
+        .notification-icon[data-count]:after {
+            content: attr(data-count);
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ff4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 50%;
+            min-width: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -625,10 +926,14 @@
         </div>
         <div class="hero">
             <div class="hero-content">
-                <h1>Catering <span class="highlight">Kita</span></h1>
+                <div class="logo-container">
+                    <img src="{{ asset('assets/topikoki.png') }}" alt="topikoki" class="chef-hat">
+                    <h1>Catering <span class="highlight">Kita</span></h1>
+                </div>
             </div>
             <div class="hero-image">
-                <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box">
+                <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box" class="main-hero-image">
+                <img src="{{ asset('assets/lengkung.png') }}" alt="lengkung" class="background-curve">
             </div>
         </div>
         <div class="about">
@@ -636,7 +941,7 @@
                 <img src="{{ asset('assets/homeassets2.png') }}" alt="Nasi Box">
             </div>
             <div class="about-content">
-                <h1>About us</h1>
+                <h1>Tentang Kami</h1>
                 <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun,
                     arisan,
                     syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek,
@@ -671,7 +976,7 @@
 
             <!-- Payment Feature -->
             <div class="feature-card">
-                <img src="{{ asset('assets/homeassets14.png') }}" alt="Payment Methods" class="feature-icon">
+                <img src="{{ asset('assets/homeassets14.png') }}" alt="Payment" class="feature-icon">
                 <h3 class="feature-title">Pembayaran</h3>
             </div>
         </div>
@@ -696,12 +1001,12 @@
         <div class="menu-section">
             <!-- Popular Menu Section -->
             <h2 class="section-title">Paket Nasi Box</h2>
-            <div class="menu-grid">
+            <div class="menu-grid" id="nasi-box">
                 <div class="menu-item-p">
                     <img src="{{ asset('assets/paketassets1.png') }}" alt="Paket Nasi Box A">
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Kotak Premium</h3>
-                        <h4>Nasi putih, Ayam Goreng, Capcay, Mie Goreng, Telur Balado</h4>
+                        <h3 class="menu-item-title">Paket Nasi Kotak Premium A</h3>
+                        <h4>Nasi Liwet, Ayam Bakar, Tumis Jagung Manis, Telur Ceplok, Sambal</h4>
                         <div class="menu-item-details">
                             <p class="menu-item-price">Rp 25.000</p>
                             <div class="counter">
@@ -710,14 +1015,15 @@
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/menunasibox" class="menu-item-button">Pesan</a>
+                        <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
+
                 <div class="menu-item-p">
                     <img src="{{ asset('assets/paketassets2.png') }}" alt="Paket Nasi Box B">
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium</h3>
-                        <h4>Nasi putih, Ayam Goreng, Capcay, Mie Goreng, Telur Balado</h4>
+                        <h3 class="menu-item-title">Paket Nasi Box Premium B</h3>
+                        <h4>Nasi putih, Ayam Bakar, Tumis Sayur, Tempe Goreng</h4>
                         <div class="menu-item-details">
                             <p class="menu-item-price">Rp 35.000</p>
                             <div class="counter">
@@ -726,432 +1032,464 @@
                                 <button class="plus">+</button>
                             </div>
                         </div>
+                        <a href="/keranjang" class="menu-item-button">Pesan</a>
+                    </div>
+                </div>
+
+                <div class="menu-item-p">
+                    <img src="{{ asset('assets/nasikotakpremium2.png') }}" alt="Paket Nasi Box C">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Paket Nasi Box Premium C</h3>
+                        <h4>Nasi putih, Ayam Goreng, daging cincang,tempe orak arik,
+                            samba, lalapan</h4>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp 30.000</p>
+                            <div class="counter">
+                                <button class="minus">-</button>
+                                <span class="count">0</span>
+                                <button class="plus">+</button>
+                            </div>
+                        </div>
                         <a href="/menunasibox" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
-            </div>
 
-            <!-- Prasmanan Section -->
-            <h2 class="section-title">Prasmanan</h2>
-            <div class="menu-grid">
-                <div class="menu-item">
-                    <img src="{{ asset('assets/homeassets3.jpg') }}" alt="Ayam Geprek">
+                <div class="menu-item-p">
+                    <img src="{{ asset('assets/nasikotakpremium3.png') }}" alt="Paket Nasi Box D">
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Ayam Geprek</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 12.000</p>
-                            <div class="counter">
-                                <button type="button" class="minus">-</button>
-                                <span class="count">0</span>
-                                <button type="button" class="plus">+</button>
+                        <h3 class="menu-item-title">Paket Nasi Box Premium D</h4>
+                            <h4>Nasi putih, daging sapi,sate,naget,sayur,telur kuning,kacang , sambal saus </h4>
+                            <div class="menu-item-details">
+                                <p class="menu-item-price">Rp 40.000</p>
+                                <div class="counter">
+                                    <button class="minus">-</button>
+                                    <span class="count">0</span>
+                                    <button class="plus">+</button>
+                                </div>
                             </div>
-                        </div>
-                        <form class="add-to-cart-form">
-                            <input type="hidden" name="item_id" value="1">
-                            <input type="hidden" name="item_name" value="Ayam Geprek">
-                            <input type="hidden" name="item_price" value="12000">
-                            <input type="hidden" name="quantity" class="quantity-input" value="0">
-                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                        </form>
+                            <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
-                <div class="menu-item">
-                    <img src="{{ asset('assets/homeassets6.jpg') }}" alt="Paket Prasmanan Gold">
+                <div class="menu-item-p">
+                    <img src="{{ asset('assets/nasikotakpremium4.png') }}" alt="Paket Nasi Box E">
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Ayam Kecap</h3>
+                        <h3 class="menu-item-title">Paket Nasi Box Premium E</h3>
+                        <h4>Nasi putih, telur, mie, capcay, ayam suir, sambal, kentang</h4>
                         <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 9.000</p>
+                            <p class="menu-item-price">Rp 40.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
                                 <span class="count">0</span>
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <form class="add-to-cart-form">
-                            <input type="hidden" name="item_id" value="2">
-                            <input type="hidden" name="item_name" value="Ayam Kecap">
-                            <input type="hidden" name="item_price" value="9000">
-                            <input type="hidden" name="quantity" class="quantity-input" value="0">
-                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                        </form>
+                        <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
-                <div class="menu-item">
-                    <img src="{{ asset('assets/homeassets5.jpg') }}" alt="Paket Prasmanan Gold">
+
+                <div class="menu-item-p">
+                    <img src="{{ asset('assets/nasikotakthailand.png') }}" alt="Paket Nasi Thailand">
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Ikan Goreng</h3>
+                        <h3 class="menu-item-title">Paket Nasi Campur Thailand</h3>
+                        <h4>Nasi kecap, udang, chicken, sayur</h4>
                         <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 10.000</p>
+                            <p class="menu-item-price">Rp 40.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
                                 <span class="count">0</span>
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <form class="add-to-cart-form">
-                            <input type="hidden" name="item_id" value="1">
-                            <input type="hidden" name="item_name" value="Ikan Goreng">
-                            <input type="hidden" name="item_price" value="10000">
-                            <input type="hidden" name="quantity" class="quantity-input" value="0">
-                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                        </form>
+                        <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Promotional Banner -->
-            <div class="promo-banner">
-                <h2 class="promo-title">Siap Memesan untuk Acara Anda?</h2>
-                <p class="promo-description">Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi
-                    menu
-                    yang sesuai dengan acara Anda.</p>
-
-            </div>
-
-            <footer class="footer">
-                <div class="footer-container">
-                    <!-- Logo and Brand Section -->
-                    <div class="footer-logo">
-                        <div class="footer-brand">
-                            <img src="{{ asset('assets/logo.png') }}" alt="Catering Kita Logo">
-                            <div class="footer-brand-text">
-                                <span class="brand-catering">CATERING</span>
-                                <span class="brand-kita">KITA</span>
-                            </div>
+        <!-- Prasmanan Section -->
+        <h2 class="section-title">Prasmanan</h2>
+        <div class="menu-grid" id="prasmanan">
+            <div class="menu-item">
+                <img src="{{ asset('assets/homeassets6.jpg') }}" alt="Paket Prasmanan Gold">
+                <div class="menu-item-content">
+                    <h3 class="menu-item-title">Ayam Kecap</h3>
+                    <div class="menu-item-details">
+                        <p class="menu-item-price">Rp 9.000</p>
+                        <div class="counter">
+                            <button class="minus">-</button>
+                            <span class="count">0</span>
+                            <button class="plus">+</button>
                         </div>
                     </div>
-
-                    <!-- Vertical Divider -->
-                    <div class="footer-divider"></div>
-
-                    <!-- Description Section -->
-                    <div class="footer-section">
-                        <h3 class="footer-title">Deskripsi</h3>
-                        <p class="footer-text">
-                            "Catering Kita adalah solusi lengkap untuk kebutuhan belanja makanan Anda. Temukan berbagai
-                            produk segar dan berkualitas hanya di sini!" "Belanja mudah dan cepat untuk semua kebutuhan
-                            katering Anda. Bergabunglah dengan ribuan pelanggan kami!"
-                        </p>
+                    <form class="add-to-cart-form">
+                        <input type="hidden" name="item_id" value="1">
+                        <input type="hidden" name="item_name" value="Ayam Kecap">
+                        <input type="hidden" name="item_price" value="9000">
+                        <input type="hidden" name="quantity" class="quantity-input" value="0">
+                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                    </form>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="{{ asset('assets/homeassets5.jpg') }}" alt="Paket Prasmanan Gold">
+                <div class="menu-item-content">
+                    <h3 class="menu-item-title">Ikan Goreng</h3>
+                    <div class="menu-item-details">
+                        <p class="menu-item-price">Rp 10.000</p>
+                        <div class="counter">
+                            <button class="minus">-</button>
+                            <span class="count">0</span>
+                            <button class="plus">+</button>
+                        </div>
                     </div>
-
-                    <!-- Product Categories Section -->
-                    <div class="footer-section">
-                        <h3 class="footer-title">Kategori Produk</h3>
-                        <p class="footer-text">
-                            "Temukan berbagai kategori produk terbaik kami."
-                        </p>
+                    <form class="add-to-cart-form">
+                        <input type="hidden" name="item_id" value="2">
+                        <input type="hidden" name="item_name" value="Ikan Goreng">
+                        <input type="hidden" name="item_price" value="10000">
+                        <input type="hidden" name="quantity" class="quantity-input" value="0">
+                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                    </form>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="{{ asset('assets/capcay.png') }}" alt="Paket Prasmanan Gold">
+                <div class="menu-item-content">
+                    <h3 class="menu-item-title">Capcay</h3>
+                    <div class="menu-item-details">
+                        <p class="menu-item-price">Rp 10.000</p>
+                        <div class="counter">
+                            <button class="minus">-</button>
+                            <span class="count">0</span>
+                            <button class="plus">+</button>
+                        </div>
                     </div>
+                    <form class="add-to-cart-form">
+                        <input type="hidden" name="item_id" value="3">
+                        <input type="hidden" name="item_name" value="Capcay">
+                        <input type="hidden" name="item_price" value="10000">
+                        <input type="hidden" name="quantity" class="quantity-input" value="0">
+                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                    </form>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="{{ asset('assets/bihungoreng.png') }}" alt="Paket Prasmanan Gold">
+                <div class="menu-item-content">
+                    <h3 class="menu-item-title">Bihun Goreng</h3>
+                    <div class="menu-item-details">
+                        <p class="menu-item-price">Rp 10.000</p>
+                        <div class="counter">
+                            <button class="minus">-</button>
+                            <span class="count">0</span>
+                            <button class="plus">+</button>
+                        </div>
+                    </div>
+                    <form class="add-to-cart-form">
+                        <input type="hidden" name="item_id" value="4">
+                        <input type="hidden" name="item_name" value="Bihun Goreng">
+                        <input type="hidden" name="item_price" value="10000">
+                        <input type="hidden" name="quantity" class="quantity-input" value="0">
+                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                    </form>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="{{ asset('assets/miegoreng.png') }}" alt="Paket Prasmanan Gold">
+                <div class="menu-item-content">
+                    <h3 class="menu-item-title">Mie Goreng</h3>
+                    <div class="menu-item-details">
+                        <p class="menu-item-price">Rp 10.000</p>
+                        <div class="counter">
+                            <button class="minus">-</button>
+                            <span class="count">0</span>
+                            <button class="plus">+</button>
+                        </div>
+                    </div>
+                    <form class="add-to-cart-form">
+                        <input type="hidden" name="item_id" value="5">
+                        <input type="hidden" name="item_name" value="Mie Goreng">
+                        <input type="hidden" name="item_price" value="10000">
+                        <input type="hidden" name="quantity" class="quantity-input" value="0">
+                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                    </form>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="{{ asset('assets/homeassets4.jpg') }}" alt="Paket Prasmanan Gold">
+                <div class="menu-item-content">
+                    <h3 class="menu-item-title">Telur Balado</h3>
+                    <div class="menu-item-details">
+                        <p class="menu-item-price">Rp 5.000</p>
+                        <div class="counter">
+                            <button class="minus">-</button>
+                            <span class="count">0</span>
+                            <button class="plus">+</button>
+                        </div>
+                    </div>
+                    <form class="add-to-cart-form">
+                        <input type="hidden" name="item_id" value="6">
+                        <input type="hidden" name="item_name" value="Telur Balado">
+                        <input type="hidden" name="item_price" value="5000">
+                        <input type="hidden" name="quantity" class="quantity-input" value="0">
+                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Contact Section -->
-                    <div class="footer-section">
-                        <h3 class="footer-title">Contact</h3>
-                        <div class="footer-contact">
-                            <div class="contact-item">
-                                <svg class="contact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                                    </path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                <span>Jln E.sumawijaya GG.amin RT 02/02 Desa pasireurih Kec tamansari</span>
-                            </div>
-                            <div class="contact-item">
-                                <svg class="contact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                                    </path>
-                                </svg>
-                                <span>+62 831-1582-6505</span>
-                            </div>
+        <!-- Add this section before the promo banner -->
+    <div class="comments-section">
+        <h2 class="section-title">Komentar Pelanggan</h2>
+        <div class="comments-container">
+            <!-- Comment 1 -->
+            <div class="comment-card">
+                <div class="comment-header">
+                    <img src="{{ asset('assets/profil.png') }}" alt="User" class="user-avatar">
+                    <div class="comment-info">
+                        <h4 class="user-name">Ahmad Faizin</h4>
+                        <div class="rating">
+                            ⭐⭐⭐⭐⭐
                         </div>
                     </div>
                 </div>
-            </footer>
+                <p class="comment-text">
+                    "Saya sangat puas dengan pelayanan yang efektif. Tim profesional dan fast respon dalam berkomunikasi dan langgar ini sangat terasa ketika berkomunikasi dari awal sampai pesanan tiba dengan baik."
+                </p>
+            </div>
+
+            <!-- Comment 2 -->
+            <div class="comment-card">
+                <div class="comment-header">
+                    <img src="{{ asset('assets/profil.png') }}" alt="User" class="user-avatar">
+                    <div class="comment-info">
+                        <h4 class="user-name">Jhonarendra</h4>
+                        <div class="rating">
+                            ⭐⭐⭐⭐⭐
+                        </div>
+                    </div>
+                </div>
+                <p class="comment-text">
+                    "Sangat senang dengan pelayanan yang diberikan oleh tim Catering Kita. Telah order lebih dari 5x dan selalu puas dengan hasilnya."
+                </p>
+            </div>
+        </div>
+    </div>
+
+        <!-- Promotional Banner -->
+        <div class="promo-banner">
+            <h2 class="promo-title">Siap Memesan untuk Acara Anda?</h2>
+            <p class="promo-description">Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi menu
+                yang sesuai dengan acara Anda.</p>
+            <a href="/contact" class="promo-button">Hubungi Kami</a>
+        </div>
     </header>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Logo and Brand Section -->
+            <div class="footer-logo">
+                <div class="footer-brand">
+                    <img src="{{ asset('assets/logo.png') }}" alt="Catering Kita Logo">
+                    <div class="footer-brand-text">
+                        <span class="brand-catering">CATERING</span>
+                        <span class="brand-kita">KITA</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vertical Divider -->
+            <div class="footer-divider"></div>
+
+            <!-- Description Section -->
+            <div class="footer-section">
+                <h3 class="footer-title">Deskripsi</h3>
+                <p class="footer-text">
+                    "Catering Kita adalah solusi lengkap untuk kebutuhan belanja makanan Anda. Temukan berbagai
+                    produk segar dan berkualitas hanya di sini!" "Belanja mudah dan cepat untuk semua kebutuhan
+                    katering Anda. Bergabunglah dengan ribuan pelanggan kami!"
+                </p>
+            </div>
+
+            <!-- Product Categories Section -->
+            <div class="footer-section">
+                <h3 class="footer-title">Kategori Produk</h3>
+                <p class="footer-text">
+                    "Temukan berbagai kategori produk terbaik kami."
+                </p>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="footer-section">
+                <h3 class="footer-title">Contact</h3>
+                <div class="footer-contact">
+                    <div class="contact-item">
+                        <svg class="contact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span>Jln E.sumawijaya GG.amin RT 02/02 Desa pasireurih Kec tamansari</span>
+                    </div>
+                    <div class="contact-item">
+                        <svg class="contact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                            </path>
+                        </svg>
+                        <span>+62 831-1582-6505</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Fungsi untuk mengambil item keranjang dari localStorage
+            // Helper functions
             function getCartItems() {
                 return JSON.parse(localStorage.getItem('cartItems')) || [];
             }
 
-            // Fungsi untuk menyimpan item ke keranjang
             function saveCartItems(items) {
                 localStorage.setItem('cartItems', JSON.stringify(items));
             }
 
-            // Fungsi untuk menambah item ke keranjang
-            function addToCart(item) {
-                let cartItems = getCartItems();
-                let existingItem = cartItems.find(cartItem => cartItem.id === item.id);
+            function updateCartCounter() {
+                const cartItems = getCartItems();
+                const cartIcon = document.querySelector('.cart-icon');
+                const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-                if (existingItem) {
-                    existingItem.quantity += item.quantity;
+                if (totalItems > 0) {
+                    cartIcon.setAttribute('data-count', totalItems.toString());
                 } else {
-                    cartItems.push(item);
+                    cartIcon.removeAttribute('data-count');
                 }
-
-                saveCartItems(cartItems);
-                alert('Item berhasil ditambahkan ke keranjang!');
             }
 
-            // Event listener untuk tombol tambah ke keranjang
-            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-
-                    let menuItem = this.closest('.menu-item');
-                    let itemId = parseInt(menuItem.querySelector('input[name="item_id"]').value);
-                    let itemName = menuItem.querySelector('input[name="item_name"]').value;
-                    let itemPrice = parseInt(menuItem.querySelector('input[name="item_price"]')
-                        .value);
-                    let itemQuantity = parseInt(menuItem.querySelector('.quantity-input').value);
-                    let itemImage = menuItem.querySelector('img').src;
-
-                    if (itemQuantity > 0) {
-                        addToCart({
-                            id: itemId,
-                            name: itemName,
-                            price: itemPrice,
-                            quantity: itemQuantity,
-                            image: itemImage
-                        });
-                    } else {
-                        alert('Pilih jumlah terlebih dahulu!');
+            // Convert all count spans to input fields
+            document.querySelectorAll('.counter .count').forEach(countSpan => {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'count';
+                input.value = '0';
+                input.min = '0';
+                input.addEventListener('input', function() {
+                    let value = parseInt(this.value) || 0;
+                    if (value < 0) {
+                        value = 0;
                     }
-                });
-            });
+                    this.value = value;
 
-            // Update tombol "Pesan" jika jumlah berubah
-            document.querySelectorAll('.counter button').forEach(button => {
-                button.addEventListener('click', function() {
-                    let counter = this.closest('.counter');
-                    let quantityInput = counter.querySelector('.count');
-                    let hiddenQuantityInput = counter.closest('.menu-item').querySelector(
-                        '.quantity-input');
-                    let addToCartButton = counter.closest('.menu-item').querySelector(
-                        '.add-to-cart-btn');
-
-                    let currentQuantity = parseInt(quantityInput.textContent);
-
-                    if (this.classList.contains('plus')) {
-                        currentQuantity++;
-                    } else if (this.classList.contains('minus') && currentQuantity > 0) {
-                        currentQuantity--;
+                    // Update hidden input if exists
+                    const menuItem = this.closest('.menu-item, .menu-item-p');
+                    const quantityInput = menuItem.querySelector('.quantity-input');
+                    if (quantityInput) {
+                        quantityInput.value = value;
                     }
 
-                    quantityInput.textContent = currentQuantity;
-                    hiddenQuantityInput.value = currentQuantity;
-
-                    addToCartButton.disabled = currentQuantity === 0;
-                });
-            });
-        });
-        document.querySelectorAll(".menu-item").forEach(item => {
-            let count = 0;
-            const countSpan = item.querySelector(".count");
-            const minusButton = item.querySelector(".minus");
-            const plusButton = item.querySelector(".plus");
-
-            minusButton.addEventListener("click", () => {
-                if (count > 0) {
-                    count--;
-                    countSpan.textContent = count;
-                }
-            });
-
-            plusButton.addEventListener("click", () => {
-                count++;
-                countSpan.textContent = count;
-            });
-        });
-        document.querySelectorAll(".menu-item-p").forEach(item => {
-            let count = 0;
-            const countSpan = item.querySelector(".count");
-            const minusButton = item.querySelector(".minus");
-            const plusButton = item.querySelector(".plus");
-
-            minusButton.addEventListener("click", () => {
-                if (count > 0) {
-                    count--;
-                    countSpan.textContent = count;
-                }
-            });
-
-            plusButton.addEventListener("click", () => {
-                count++;
-                countSpan.textContent = count;
-            });
-        });
-
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-        // Add animation classes to elements
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add animate class to elements
-            const heroContent = document.querySelector('.hero-content');
-            const heroImage = document.querySelector('.hero-image');
-            const featureCards = document.querySelectorAll('.feature-card');
-            const categories = document.querySelectorAll('.category');
-            const menuItems = document.querySelectorAll('.menu-item, .menu-item-p');
-            const promoBanner = document.querySelector('.promo-banner');
-
-            // Add animate class and delay attributes
-            [heroContent, heroImage].forEach(el => el?.classList.add('animate'));
-
-            featureCards.forEach((card, index) => {
-                card.classList.add('animate');
-                card.style.setProperty('--delay', index);
-            });
-
-            categories.forEach(category => category.classList.add('animate'));
-
-            menuItems.forEach((item, index) => {
-                item.classList.add('animate');
-                item.style.setProperty('--delay', index);
-            });
-
-            if (promoBanner) promoBanner.classList.add('animate');
-
-            // Intersection Observer for scroll animations
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
+                    // Update order button state
+                    const orderBtn = menuItem.querySelector('.menu-item-button, .add-to-cart-btn');
+                    if (orderBtn) {
+                        orderBtn.disabled = value === 0;
                     }
                 });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
+                countSpan.parentNode.replaceChild(input, countSpan);
             });
 
-            // Observe all animated elements
-            document.querySelectorAll('.animate').forEach(el => observer.observe(el));
-        });
-        // Search functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchForm = document.getElementById('searchForm');
-            const searchInput = document.getElementById('searchInput');
-
-            // Prevent empty searches
-            searchForm.addEventListener('submit', function(e) {
-                if (searchInput.value.trim() === '') {
-                    e.preventDefault();
-                    alert('Please enter a search term');
-                }
-            });
-
-            // Optional: Add live search as you type (for enhanced UX)
-            searchInput.addEventListener('input', function() {
-                // You can implement AJAX search here if desired
-                // This would show results as the user types
-
-                // Example placeholder for AJAX functionality:
-                /*
-                if (this.value.length > 2) {
-                    fetch(`/api/search?query=${this.value}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Display search suggestions
-                        })
-                        .catch(error => console.error('Error:', error));
-                }
-                */
-            });
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle all menu items (both standard and premium)
-            const menuItems = document.querySelectorAll('.menu-item, .menu-item-p');
-
-            menuItems.forEach(item => {
-                // Get elements
-                const countSpan = item.querySelector(".count");
-                const minusButton = item.querySelector(".minus");
-                const plusButton = item.querySelector(".plus");
-                const quantityInput = item.querySelector(".quantity-input");
-                const addToCartBtn = item.querySelector(".add-to-cart-btn");
-
-                let count = 0;
-
-                // Minus button click
-                minusButton.addEventListener("click", () => {
-                    if (count > 0) {
-                        count--;
-                        countSpan.textContent = count;
-                        quantityInput.value = count;
-
-                        // Disable the order button if count is 0
-                        if (count === 0) {
-                            addToCartBtn.disabled = true;
-                        }
-                    }
-                });
-
-                // Plus button click
-                plusButton.addEventListener("click", () => {
-                    count++;
-                    countSpan.textContent = count;
-                    quantityInput.value = count;
-
-                    // Enable the order button when count is > 0
-                    if (addToCartBtn.disabled && count > 0) {
-                        addToCartBtn.disabled = false;
-                    }
-                });
-
-                // Form submission handling (optional: for immediate feedback)
+            // Handle all menu items (both nasi box and prasmanan)
+            document.querySelectorAll('.menu-item, .menu-item-p').forEach(item => {
+                const countInput = item.querySelector('.count');
+                const minusButton = item.querySelector('.minus');
+                const plusButton = item.querySelector('.plus');
+                const orderButton = item.querySelector('.menu-item-button');
                 const form = item.querySelector('.add-to-cart-form');
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        // Only allow submission if quantity > 0
-                        if (count === 0) {
-                            e.preventDefault();
-                            alert('Please select a quantity first');
-                            return false;
-                        }
 
-                        // Optional: you can add AJAX submission here to avoid page refresh
-                        // This is just an example of how you might do it
-                        /*
-                        e.preventDefault();
-                        
-                        fetch(this.action, {
+                // Get menu item details
+                const menuItemName = item.querySelector('.menu-item-title').textContent;
+                const menuItemPrice = parseInt(item.querySelector('.menu-item-price').textContent.replace(
+                    'Rp ', '').replace('.', ''));
+                const menuItemImage = item.querySelector('img').getAttribute('src');
+
+                // Handle minus button
+                minusButton.addEventListener('click', () => {
+                    let value = parseInt(countInput.value) || 0;
+                    if (value > 0) {
+                        countInput.value = value - 1;
+                        countInput.dispatchEvent(new Event('input'));
+                    }
+                });
+
+                // Handle plus button
+                plusButton.addEventListener('click', () => {
+                    let value = parseInt(countInput.value) || 0;
+                    countInput.value = value + 1;
+                    countInput.dispatchEvent(new Event('input'));
+                });
+
+                // Handle add to cart
+                const addToCart = async (quantity) => {
+                    try {
+                        const response = await fetch('/keranjang/add', {
                             method: 'POST',
-                            body: new FormData(this),
                             headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Show success message or update cart counter
-                                alert('Item added to cart successfully!');
-                                
-                                // Reset counter after successful addition
-                                count = 0;
-                                countSpan.textContent = count;
-                                quantityInput.value = count;
-                                addToCartBtn.disabled = true;
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify({
+                                nama_produk: menuItemName,
+                                price: menuItemPrice,
+                                quantity: quantity,
+                                image: menuItemImage
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            let cartItems = getCartItems();
+                            const existingItemIndex = cartItems.findIndex(item => item.name ===
+                                menuItemName);
+
+                            if (existingItemIndex !== -1) {
+                                cartItems[existingItemIndex].quantity += quantity;
                             } else {
-                                alert('Error adding item to cart');
+                                cartItems.push({
+                                    id: cartItems.length + 1,
+                                    name: menuItemName,
+                                    price: menuItemPrice,
+                                    image: menuItemImage,
+                                    quantity: quantity
+                                });
                             }
-                        })
-                        .catch(error => console.error('Error:', error));
-                        */
+
+                            saveCartItems(cartItems);
+                            updateCartCounter();
+                            countInput.value = 0;
+                            countInput.dispatchEvent(new Event('input'));
+                            alert('Item berhasil ditambahkan ke keranjang!');
+                        }
+                    } catch (error) {
+                        alert('Gagal menambahkan ke keranjang: ' + error.message);
+                    }
+                };
+
+                // Handle order button click
+                if (orderButton) {
+                    orderButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const quantity = parseInt(countInput.value) || 0;
+                        if (quantity > 0) {
+                            addToCart(quantity);
+                        } else {
+                            alert('Silakan pilih jumlah item terlebih dahulu!');
+                        }
                     });
                 }
             });
-
 
             // Make cart icon clickable
             document.querySelector('.cart-icon').addEventListener('click', function(e) {

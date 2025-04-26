@@ -7,11 +7,9 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use App\Providers\RouteServiceProvider;
 
 class RegisteredUserController extends Controller
 {
@@ -31,33 +29,32 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'min:2', 'max:50'],
+            'last_name' => ['required', 'string', 'min:2', 'max:50'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'phone' => ['required', 'string', 'max:15'],
-            'address' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'phone' => ['required', 'numeric', 'digits_between:10,13'],
+            'address' => ['required', 'min:10'],
+            'password' => ['required', 'min:8', 'confirmed'],
         ]);
 
         $user = User::create([
             'name' => $request->first_name . ' ' . $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'usertype' => 'user',
+        ]);
+
+        // Create the user's profile
+        $user->profile()->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'email' => $request->email,
             'phone' => $request->phone,
-            'address' => $request->address,
-            'password' => Hash::make($request->password),
-            'usertype' => 'user', // Default to regular user
+            'address' => $request->address
         ]);
-        
+
         event(new Registered($user));
 
-        Auth::login($user);
-
-        // Redirect based on usertype
-        if ($user->usertype === 'admin') {
-            return redirect('/admin/dashboard');
-        }
-        return redirect('/dashboard');
+        return redirect()->route('login')
+            ->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
     }
 }

@@ -1,57 +1,96 @@
 <?php
-// app/Http/Controllers/PaymentController.php
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Payment;
+use App\Models\Transaksi;
+use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
-    public function show($orderId)
+    public function store(Request $request)
     {
-        $order = Order::findOrFail($orderId);
-
-        return view('payment.payment', compact('order'));
-    }
-    
-    public function process(Request $request, $orderId)
-    {
-        // Validasi input
-        $validated = $request->validate([
-            'payment_method' => 'required|string',
+        $order = Order::create([
+            'user_id' => auth()->id(),
+            'total_amount' => $request->total,
+            'payment_method' => $request->payment_method,
+            'shipping_address' => $request->address,
+            'phone_number' => $request->phone,
+            'delivery_date' => $request->delivery_date . ' ' . $request->delivery_time,
+            'notes' => $request->notes,
+            'status' => 'pending',
+            'payment_status' => 'unpaid'
         ]);
-        
-        // Ambil data order
-        $order = Order::findOrFail($orderId);
-        
-        // Proses pembayaran berdasarkan metode yang dipilih
-        $paymentMethod = $validated['payment_method'];
-        
-        // Logika untuk memproses masing-masing metode pembayaran
-        switch ($paymentMethod) {
-            case 'bca_va':
-                // Integrasi dengan BCA VA
-                $result = $this->processBcaVirtualAccount($order);
-                break;
-            case 'dana':
-                // Integrasi dengan Dana
-                $result = $this->processDana($order);
-                break;
-            case 'gopay':
-                // Integrasi dengan Gopay
-                $result = $this->processGopay($order);
-                break;
-            case 'cod':
-                // Proses COD
-                $result = $this->processCod($order);
-                break;
-            default:
-                return back()->with('error', 'Metode pembayaran tidak valid');
+
+        // Redirect to payment page with order ID
+        return redirect()->route('payment.show', ['orderId' => $order->id]);
+    }
+
+    public function show($method)
+    {
+        // Validate payment method
+        if (!in_array($method, ['bca', 'dana', 'gopay', 'cod'])) {
+            abort(404);
         }
         
-        // Redirect ke halaman hasil pembayaran
-        return redirect()->route('payment.result', ['orderId' => $orderId]);
+        return view("payments.{$method}");
+    }
+    
+    public function process(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $orderData = $request->order_data;
+            
+            // Validate incoming data
+            if (!$orderData) {
+                throw new \Exception('Data pesanan tidak valid');
+            }
+
+            // Create order
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'total_amount' => $orderData['total'],
+                'shipping_address' => $orderData['address'],
+                'phone_number' => $orderData['phone'],
+                'notes' => $orderData['notes'] ?? null,
+                'delivery_date' => $orderData['delivery_date'] . ' ' . $orderData['delivery_time'],
+                'shipping_cost' => $orderData['shipping_cost'],
+                'subtotal' => $orderData['subtotal'],
+                'status' => 'pending',
+                'payment_status' => 'unpaid',
+                'payment_deadline' => now()->addDay()
+            ]);
+
+            // Create order items
+            foreach ($orderData['items'] as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price']
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'order_id' => $order->id,
+                'message' => 'Order berhasil dibuat'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses order: ' . $e->getMessage()
+            ], 500);
+        }
     }
     
     private function processBcaVirtualAccount($order)
@@ -138,4 +177,159 @@ class PaymentController extends Controller
     {
         return view('payments.cod');
     }
+
+
+    public function confirm($orderId)
+    {
+        try {
+            $order = Order::findOrFail($orderId);
+
+            // Jika status pembayaran sudah dikonfirmasi, beri pesan
+            if ($order->payment_status == 'paid') {
+                return redirect()->route('orders.index')->with('info', 'Pembayaran sudah dikonfirmasi.');
+            }
+
+            // Proses pembayaran jika belum dibayar
+            $order->update([
+                'payment_status' => 'paid',
+                'status' => 'processing'
+            ]);
+
+            return redirect()->route('orders.index')->with('success', 'Pembayaran berhasil dikonfirmasi.');
+        } catch (\Exception $e) {
+            return redirect()->route('orders.index')->withErrors('Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+
+    public function confirmPayment(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Validate request
+            $validated = $request->validate([
+                'order_id' => 'required|exists:orders,id',
+                'payment_method' => 'required|string',
+                'proof_of_payment' => 'required|image|max:2048',
+                'amount' => 'required|numeric'
+            ]);
+
+            // Process payment proof upload
+            if ($request->hasFile('proof_of_payment')) {
+                $path = $request->file('proof_of_payment')->store('payment_proofs', 'public');
+            }
+
+            // Create payment record
+            $payment = Payment::create([
+                'user_id' => auth()->id(),
+                'order_id' => $validated['order_id'],
+                'payment_method' => $validated['payment_method'],
+                'amount' => $validated['amount'],
+                'status' => 'pending_verification',
+                'proof_of_payment' => $path ?? null,
+                'payment_date' => now()
+            ]);
+
+            // Update order status
+            $order = Order::find($validated['order_id']);
+            $order->update([
+                'payment_status' => 'pending_verification',
+                'status' => 'processing'
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pembayaran berhasil dikonfirmasi, menunggu verifikasi admin',
+                'payment_id' => $payment->id
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function showBca($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        return view('payments.bca', compact('order'));
+    }
+
+    public function showDana($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        return view('payments.dana', compact('order'));
+    }
+
+    public function showGopay($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        return view('payments.gopay', compact('order'));
+    }
+
+    public function showCod($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        return view('payments.cod', compact('order'));
+    }
+
+    public function showConfirmation($method, $orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        $paymentMethod = strtoupper($method);
+        
+        return view('payments.confirmation', compact('order', 'paymentMethod'));
+    }
+
+    public function confirmBcaPayment(Request $request)
+{
+    try {
+        // Validasi data request
+        $request->validate([
+            'payment_proof' => 'required|image|max:2048', // Memastikan hanya gambar yang diterima
+            'total' => 'required|numeric',
+            'order_data' => 'required'
+        ]);
+
+        DB::beginTransaction();
+
+        // Simpan bukti pembayaran ke storage
+        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+
+        // Buat entri transaksi
+        $transaksi = Transaksi::create([
+            'nama_admin' => 'System',
+            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+            'tanggal_transaksi' => now(),
+            'id_transaksi' => 'BCA-' . time(),
+            'jenis_tindakan' => 'Pembayaran BCA',
+            'deskripsi_tindakan' => 'Pembayaran via BCA',
+            'total_harga' => $request->total,
+            'status_transaksi' => 'Menunggu Konfirmasi',
+            'bukti_pembayaran' => $path // Menyimpan path bukti pembayaran
+        ]);
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pembayaran berhasil dikonfirmasi'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        \Log::error('Payment Error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
 }

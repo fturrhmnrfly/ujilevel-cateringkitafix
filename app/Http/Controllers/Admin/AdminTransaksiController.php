@@ -10,8 +10,24 @@ class AdminTransaksiController extends Controller
 {
     public function index()
     {
-        $transaksis = Transaksi::all();
+        $transaksis = Transaksi::orderBy('tanggal_transaksi', 'desc')->get();
+        
+        // Ensure dates are Carbon instances
+        $transaksis->transform(function($transaksi) {
+            if (!$transaksi->tanggal_transaksi instanceof \DateTime) {
+                $transaksi->tanggal_transaksi = Carbon::parse($transaksi->tanggal_transaksi);
+            }
+            return $transaksi;
+        });
+
         return view('admin.transaksi.index', compact('transaksis'));
+    }
+
+    public function updateStatus($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+        // Add your status update logic here
+        return response()->json(['success' => true]);
     }
 
     public function create()
@@ -47,18 +63,15 @@ class AdminTransaksiController extends Controller
     {
         $validated = $request->validate([
             'nama_admin' => 'required',
-            'nama_pelanggan' => 'required',
-            'tanggal_transaksi' => 'required|date',
-            'id_transaksi' => 'required',
-            'jenis_tindakan' => 'required',
-            'deskripsi_tindakan' => 'required',
-            'status_transaksi' => 'required|in:Selesai,Dibatalkan',
+            'status_transaksi' => 'required|in:Selesai,Dibatalkan,Pending',
+            'deskripsi_tindakan' => 'required'
         ]);
 
         $transaksi = Transaksi::findOrFail($id);
         $transaksi->update($validated);
 
-        return redirect()->route('admin.transaksi.index')->with('success', 'Transaksi berhasil diperbarui.');
+        return redirect()->route('admin.transaksi.index')
+            ->with('success', 'Transaksi berhasil diperbarui.');
     }
 
     public function destroy($id)

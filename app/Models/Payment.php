@@ -10,16 +10,26 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'order_id',
         'payment_method',
-        'va_number',
-        'payment_expiry',
+        'amount',
         'status',
+        'proof_of_payment',
+        'payment_date'
     ];
 
     protected $casts = [
-        'payment_expiry' => 'datetime',
+        'payment_date' => 'datetime'
     ];
+
+    /**
+     * Relasi ke model User.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * Relasi ke model Order.

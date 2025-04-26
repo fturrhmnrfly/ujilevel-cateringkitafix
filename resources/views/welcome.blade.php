@@ -250,8 +250,32 @@
         background-color: #1a1a5c;
     }
 
-    .hero-image img {
+    .hero-image {
+        background-color: #2d2e6c;
+        width: 50%;
+        height: 500px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 0 0 0 200px;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 85%);
+        overflow: hidden; /* Add this to contain the absolute positioned image */
+    }
+
+    .main-hero-image {
         width: 500px;
+        position: relative;
+        z-index: 2; /* Higher z-index to appear in front */
+    }
+
+    .background-curve {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 1; /* Lower z-index to appear behind */
+        width: 100%;
+        height: auto;
     }
 
     .about {
@@ -298,6 +322,7 @@
     .menu-section {
         padding: 40px;
         background-color: #fff;
+        overflow: hidden;
     }
 
     .section-title {
@@ -309,46 +334,44 @@
 
     .menu-grid {
         display: flex;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 30px;
+        gap: 40px;
         margin-bottom: 50px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 30px 0;
+        cursor: grab;
     }
 
-    .menu-item {
+    .menu-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .menu-item, .menu-item-p {
+        flex: 0 0 380px;
         background: #fff;
         border-radius: 15px;
-        width: 60%;
         overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease;
     }
 
-    .menu-item-p {
-        background: #F8F8FB;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-    }
-
-    .menu-item:hover {
-        transform: translateY(-5px);
-    }
-
-    .menu-item img {
+    .menu-item img, .menu-item-p img {
         width: 100%;
-        height: 200px;
+        height: 250px;
         object-fit: cover;
     }
 
     .menu-item-content {
-        padding: 20px;
+        padding: 25px;
     }
 
     .menu-item-title {
-        font-size: 18px;
+        font-size: 22px;
         font-weight: bold;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
 
     .menu-item-price {
@@ -778,6 +801,109 @@
     .menu-item-p.animate.fade-in {
         transform: translateY(0);
     }
+
+    .login-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .menu-item:hover .login-overlay {
+        opacity: 1;
+    }
+
+    .menu-item,
+    .menu-item-p {
+        flex: 0 0 300px; /* Fixed width for items */
+        background: #fff;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        animation: slideLoop 20s linear infinite;
+    }
+
+    /* Sliding animation */
+    @keyframes slideLoop {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+    /* Navigation buttons styling */
+    .menu-nav-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .menu-nav-button {
+        background-color: #2c2c77;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s;
+    }
+
+    .menu-nav-button:hover {
+        background-color: #1a1a5c;
+    }
+
+    .hero-content {
+        max-width: 50%;
+        display: flex;
+        justify-content: center;
+        margin-right: 20px;
+    }
+
+    .hero-image {
+        background-color: #2d2e6c;
+        width: 50%;
+        height: 500px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 0 0 0 200px;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 85%);
+    }
+
+    .logo-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 100px;
+    }
+
+    .chef-hat {
+        width: 200px;
+        height: auto;
+        position: absolute;
+        top: -40px;
+        left: -80px;
+        z-index: 1;
+        margin-left: 20px;
+    }
 </style>
 
 <body>
@@ -803,8 +929,9 @@
             <div class="hero-content animate">
                 <h1>Catering <span class="highlight">Kita</span></h1>
             </div>
-            <div class="hero-image animate">
-                <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box">
+            <div class="hero-image">
+                <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box" class="main-hero-image">
+                <img src="{{ asset('assets/lengkung.png') }}" alt="lengkung" class="background-curve">
             </div>
         </div>
 
@@ -814,7 +941,7 @@
                 <img src="{{ asset('assets/homeassets2.png') }}" alt="Nasi Box">
             </div>
             <div class="about-content animate">
-                <h1>About us</h1>
+                <h1>Tentang Kami</h1>
                 <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun,
                     arisan,
                     syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek,
@@ -859,6 +986,7 @@
         <section class="categories">
             <h2 class="section-title">Kategori</h2>
             <div class="category">
+                <!-- Prasmanan Category -->
                 <img src="{{ asset('assets/kategoriassets1.png') }}" alt="Prasmanan" class="category-image">
                 <div class="category-title">Prasmanan</div>
                 <div class="category-description">Hidangan lengkap dengan konsep prasmanan untuk berbagai acara</div>
@@ -866,6 +994,7 @@
             </div>
 
             <div class="category">
+                <!-- Nasi Box Category -->
                 <img src="{{ asset('assets/kategoriassets2.png') }}" alt="Nasi Box" class="category-image">
                 <div class="category-title">Nasi Box</div>
                 <div class="category-description">Paket nasi lengkap dengan lauk dalam kemasan praktis</div>
@@ -874,26 +1003,146 @@
         </section>
 
         <!-- Menu Section -->
-        <section class="menu-section">
+        <div class="menu-section">
+            <!-- Popular Menu Section -->
             <h2 class="section-title">Paket Nasi Box</h2>
-            <div class="menu-grid">
-                @foreach ($menus as $menu)
-                    <div class="menu-item animate">
-                        <img src="{{ asset($menu->image) }}" alt="{{ $menu->name }}">
-                        <div class="menu-item-content">
-                            <h3 class="menu-item-title">{{ $menu->name }}</h3>
-                            <p class="menu-item-price">Rp {{ number_format($menu->price, 0, ',', '.') }}</p>
-                        </div>
-                        <div class="login-overlay">
-                            <div class="login-message">
-                                <p>Please login to order</p>
-                                <a href="{{ route('login') }}" class="login-link">Login Now</a>
+            <div class="menu-grid" id="nasi-box">
+                <div class="menu-item-p">
+                    <img src="{{ asset('assets/paketassets1.png') }}" alt="Paket Nasi Box A">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Paket Nasi Box Premium A</h3>
+                        <h4>Nasi putih, Ayam Goreng, Capcay, Mie Goreng, Telur Balado</h4>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp 25.000</p>
+                            <div class="counter">
+                                <button class="minus">-</button>
+                                <span class="count">0</span>
+                                <button class="plus">+</button>
                             </div>
                         </div>
+                        <a href="/menunasibox" class="menu-item-button">Pesan</a>
                     </div>
-                @endforeach
+                </div>
+
+                <div class="menu-item-p">
+                    <img src="{{ asset('assets/paketassets2.png') }}" alt="Paket Nasi Box B">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Paket Nasi Box Premium B</h3>
+                        <h4>Nasi putih, Ayam Bakar, Tumis Sayur, Tempe Goreng</h4>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp 35.000</p>
+                            <div class="counter">
+                                <button class="minus">-</button>
+                                <span class="count">0</span>
+                                <button class="plus">+</button>
+                            </div>
+                        </div>
+                        <a href="/menunasibox" class="menu-item-button">Pesan</a>
+                    </div>
+                </div>
+
+                <div class="menu-item-p">
+                    <img src="{{ asset('assets/paketassets1.png') }}" alt="Paket Nasi Box C">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Paket Nasi Box Premium C</h3>
+                        <h4>Nasi putih, Ikan Goreng, Oseng Tempe, Sayur Asem</h4>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp 30.000</p>
+                            <div class="counter">
+                                <button class="minus">-</button>
+                                <span class="count">0</span>
+                                <button class="plus">+</button>
+                            </div>
+                        </div>
+                        <a href="/menunasibox" class="menu-item-button">Pesan</a>
+                    </div>
+                </div>
+
+                <div class="menu-item-p">
+                    <img src="{{ asset('assets/paketassets2.png') }}" alt="Paket Nasi Box D">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Paket Nasi Box Premium D</h3>
+                        <h4>Nasi Goreng Spesial, Ayam Crispy, Telur Dadar</h4>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp 40.000</p>
+                            <div class="counter">
+                                <button class="minus">-</button>
+                                <span class="count">0</span>
+                                <button class="plus">+</button>
+                            </div>
+                        </div>
+                        <a href="/menunasibox" class="menu-item-button">Pesan</a>
+                    </div>
+                </div>
             </div>
-        </section>
+
+            <!-- Prasmanan Section -->
+            <h2 class="section-title">Prasmanan</h2>
+            <div class="menu-grid" id="prasmanan">
+                <div class="menu-item">
+                    <img src="{{ asset('assets/homeassets3.jpg') }}" alt="Ayam Geprek">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Ayam Geprek</h3>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp 12.000</p>
+                            <div class="counter">
+                                <button type="button" class="minus">-</button>
+                                <span class="count">0</span>
+                                <button type="button" class="plus">+</button>
+                            </div>
+                        </div>
+                        <form class="add-to-cart-form">
+                            <input type="hidden" name="item_id" value="1">
+                            <input type="hidden" name="item_name" value="Ayam Geprek">
+                            <input type="hidden" name="item_price" value="12000">
+                            <input type="hidden" name="quantity" class="quantity-input" value="0">
+                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="{{ asset('assets/homeassets6.jpg') }}" alt="Paket Prasmanan Gold">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Ayam Kecap</h3>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp 9.000</p>
+                            <div class="counter">
+                                <button class="minus">-</button>
+                                <span class="count">0</span>
+                                <button class="plus">+</button>
+                            </div>
+                        </div>
+                        <form class="add-to-cart-form">
+                            <input type="hidden" name="item_id" value="2">
+                            <input type="hidden" name="item_name" value="Ayam Kecap">
+                            <input type="hidden" name="item_price" value="9000">
+                            <input type="hidden" name="quantity" class="quantity-input" value="0">
+                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="{{ asset('assets/homeassets5.jpg') }}" alt="Paket Prasmanan Gold">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Ikan Goreng</h3>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp 10.000</p>
+                            <div class="counter">
+                                <button class="minus">-</button>
+                                <span class="count">0</span>
+                                <button class="plus">+</button>
+                            </div>
+                        </div>
+                        <form class="add-to-cart-form">
+                            <input type="hidden" name="item_id" value="1">
+                            <input type="hidden" name="item_name" value="Ikan Goreng">
+                            <input type="hidden" name="item_price" value="10000">
+                            <input type="hidden" name="quantity" class="quantity-input" value="0">
+                            <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
         <!-- Promo Banner -->
         <div class="promo-banner animate">

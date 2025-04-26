@@ -45,6 +45,11 @@
 
         .stat-icon.income {
             background-color: #22c55e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
         }
 
         .stat-icon.expense {
@@ -52,7 +57,27 @@
         }
 
         .stat-icon.orders {
-            background-color: #3b82f6;
+            background-color: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .stat-icon.rating {
+            background-color: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .stat-icon i {
+            width: 24px;
+            height: 24px;
+            color: white;
         }
 
         .stat-info h3 {
@@ -113,29 +138,101 @@
         .expense {
             color: #f97316;
         }
+
+        .header {
+            background-color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-wrapper {
+            position: relative;
+        }
+
+        .notification-icon {
+            color: #333;
+            font-size: 20px;
+            text-decoration: none;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon:hover {
+            color: #2c2c77;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 
 <body>
     <x-sidebar></x-sidebar>
-
+    
     <div class="main-content">
         <div class="header">
-            <h1 class="page-title">Dashboard</h1>
-            <div class="admin-profile">
-                <span>Admin</span>
-                <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
+            <h1 class="page-title">{{ $title ?? 'Dashboard' }}</h1>
+            <div class="admin-controls">
+                <div class="notification-wrapper">
+                    <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
+                        <i class="fa-solid fa-bell"></i>
+                        @php
+                            $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())
+                                ->where('is_read', false)
+                                ->count();
+                        @endphp
+                        @if($unreadCount > 0)
+                            <span class="notification-badge">{{ $unreadCount }}</span>
+                        @endif
+                    </a>
+                </div>
+                <div class="admin-profile">
+                    <span>Admin</span>
+                    <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
+                </div>
             </div>
         </div>
 
         <div class="header">
-            <h2>Halo Wabak Ganteng Selamat Datang</h2>
+            <h2>Halo Admin Selamat Datang</h2>
         </div>
 
         <div class="stats-container">
             <div class="stat-card">
                 <div class="stat-icon income">
-                    <i data-lucide="trending-up"></i>
+                    <i class="fa-solid fa-circle-dollar-to-slot"></i>
                 </div>
                 <div class="stat-info">
                     <h3>Total Pendapatan</h3>
@@ -143,20 +240,20 @@
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon expense">
-                    <i data-lucide="trending-down"></i>
+                <div class="stat-icon orders">
+                    <i class="fa-solid fa-bag-shopping"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>Total Pengeluaran</h3>
+                    <h3>Pesanan Hari Ini</h3>
                     <div class="value" id="total-expense">Rp. {{ number_format($pengeluaran, 0, ',', '.') }}</div>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon orders">
-                    <i data-lucide="shopping-bag"></i>
+                <div class="stat-icon rating">
+                    <i class="fa-solid fa-star"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>Pesanan Hari Ini</h3>
+                    <h3>Rating Terbanyak</h3>
                     <div class="value" id="total-orders">{{ $transaksis->count() }}</div>
                 </div>
             </div>

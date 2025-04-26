@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="id">
     <head>
         <meta charset="UTF-8">
@@ -9,6 +9,7 @@
             body {
                 font-family: Arial, sans-serif;
                 margin: 0;
+                padding: 100px
             }
 
             a {
@@ -201,6 +202,20 @@
             .form-actions button:hover {
                 background-color: #1a1a5e;
             }
+
+            .password-strength {
+                margin-top: 0.5rem;
+                font-size: 0.875rem;
+                font-weight: bold;
+            }
+
+            .form-group input:invalid {
+                border-color: #ff4d4d;
+            }
+
+            .form-group input:valid {
+                border-color: #4dff4d;
+            }
         </style>
     </head>
     <body>
@@ -214,22 +229,7 @@
                 </div>
             </div>
             
-            <!-- Profile Section -->
-            <div class="profile">
-                <a href="{{ route('profile.show') }}">
-                    <img src="{{ asset('assets/profil.png') }}" alt="Profile">
-                </a>
-            </div>
         </nav>
-
-        <div class="breadcrumb-container">
-            <div class="breadcrumb">
-                <div class="breadcrumb-title">Register</div>
-                <div class="breadcrumb-nav">
-                    <a href="{{ route('dashboard') }}">Home</a> » Register
-                </div>
-            </div>
-        </div>
 
         <div class="form-container">
             <form method="POST" action="{{ route('register') }}">
@@ -304,5 +304,93 @@
                 </div>
             </form>
         </div>
+
+        @if(session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'Oke',
+                confirmButtonColor: '#2c2c77'
+            });
+        </script>
+        @endif
+
+        @if($errors->any())
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Mohon periksa kembali data yang dimasukkan',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: '#2c2c77'
+            });
+        </script>
+        @endif
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            
+            form.addEventListener('submit', function(e) {
+                const firstName = document.getElementById('first_name').value;
+                const lastName = document.getElementById('last_name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const address = document.getElementById('address').value;
+                const password = document.getElementById('password').value;
+                const passwordConfirm = document.getElementById('password_confirmation').value;
+
+                let isValid = true;
+                let errors = [];
+
+                // Validasi nama
+                if (firstName.length < 2) {
+                    errors.push('Nama depan minimal 2 karakter');
+                    isValid = false;
+                }
+
+                if (lastName.length < 2) {
+                    errors.push('Nama belakang minimal 2 karakter');
+                    isValid = false;
+                }
+
+                // Validasi email sederhana
+                if (!email.includes('@')) {
+                    errors.push('Format email tidak valid');
+                    isValid = false;
+                }
+
+                // Validasi nomor telepon sederhana
+                if (phone.length < 10 || phone.length > 13) {
+                    errors.push('Nomor telepon harus 10-13 digit');
+                    isValid = false;
+                }
+
+                // Validasi alamat
+                if (address.length < 10) {
+                    errors.push('Alamat terlalu pendek (minimal 10 karakter)');
+                    isValid = false;
+                }
+
+                // Validasi password sederhana
+                if (password.length < 8) {
+                    errors.push('Password minimal 8 karakter');
+                    isValid = false;
+                }
+
+                if (password !== passwordConfirm) {
+                    errors.push('Konfirmasi password tidak cocok');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert(errors.join('\n'));
+                }
+            });
+        });
+        </script>
     </body>
     </html>

@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('keranjangs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->decimal('total', 10, 2)->default(0);
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }

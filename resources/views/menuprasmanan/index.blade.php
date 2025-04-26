@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Document</title>
 </head>
 <style>
@@ -187,73 +188,105 @@
         text-align: center;
     }
 
-    /* Updated menu section and grid styles */
-    .menu-section {
-        padding: 40px;
-        max-width: 1200px;
-        margin: 0 auto;
+    /* Update style untuk menu-item dan gambar */
+    .menu-item {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Tambahkan height 100% */
+    }
+
+    .menu-item img {
+        width: 100%;
+        height: 250px; /* Sesuaikan tinggi gambar */
+        object-fit: contain; /* Ubah dari cover ke contain */
+        padding: 10px; /* Tambahkan padding */
+        background: #f8f8f8; /* Tambahkan background color */
     }
 
     .menu-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 40px;
-        justify-content: center;
+        gap: 30px; /* Tambah gap */
         padding: 20px;
     }
 
-    .menu-item {
-        background: #F8F8FB;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-        padding: 15px;
-        margin: 0 auto;
-        width: 280px;
+    .menu-item-content {
+        padding: 20px; /* Tambah padding */
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Sesuaikan gap */
+        flex: 1;
     }
 
     .menu-item-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px
-    }
-
-    .menu-item-price {
-        color: #2c2c77;
-        font-weight: bold;
         font-size: 16px;
-        margin-bottom: 15px;
-    }
-
-    .menu-item-button {
-        display: inline-block;
-        padding: 8px 20px;
-        background-color: #2c2c77;
-        color: white;
-        border-radius: 25px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
-
-    .menu-item-button:hover {
-        background-color: #1a1a5c;
+        font-weight: bold;
+        margin: 0;
+        color: #333;
     }
 
     .menu-item-details {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        width: 100%;
+        justify-content: space-between;
     }
 
-    .menu-item img {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 10px;
-        display: block;
-        margin: 0 auto;
+    .menu-item-price {
+        font-size: 14px;
+        font-weight: bold;
+        color: #2c2c77;
+    }
+
+    .counter {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .counter input {
+        width: 30px;
+        height: 25px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .counter button {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        border: none;
+        background: #2c2c77;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .menu-item-button {
+        width: 100%;
+        padding: 8px 0;
+        background-color: #2c2c77;
+        color: white;
+        text-align: center;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 10px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .menu-item-button:hover {
+        background-color: #1a1a5c;
     }
 </style>
 
@@ -310,11 +343,11 @@
                             <p class="menu-item-price">Rp 12.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="#" class="menu-item-button add-to-cart-btn">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 1) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
                 
@@ -328,11 +361,11 @@
                             <p class="menu-item-price">Rp 9.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 2) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
 
@@ -345,11 +378,11 @@
                             <p class="menu-item-price">Rp 10.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 3) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
 
@@ -362,11 +395,11 @@
                             <p class="menu-item-price">Rp 15.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 4) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
 
@@ -379,11 +412,11 @@
                             <p class="menu-item-price">Rp 20.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 5) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
 
@@ -396,11 +429,11 @@
                             <p class="menu-item-price">Rp 8.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 6) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
 
@@ -413,11 +446,11 @@
                             <p class="menu-item-price">Rp 5.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 7) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
 
@@ -430,11 +463,11 @@
                             <p class="menu-item-price">Rp 8.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 8) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
 
@@ -447,69 +480,68 @@
                             <p class="menu-item-price">Rp 6.000</p>
                             <div class="counter">
                                 <button class="minus">-</button>
-                                <span class="count">0</span>
+                                <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="/keranjang" class="menu-item-button">Tambah Ke Keranjang</a>
+                        <a href="{{ route('menuprasmanan.show', 9) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
             </div>
         </div>
 </body>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.menu-item').forEach(menuItem => {
-        const itemId = menuItem.getAttribute('data-id');
-        const countElement = menuItem.querySelector('.count');
-        const minusButton = menuItem.querySelector('.minus');
-        const plusButton = menuItem.querySelector('.plus');
-        const addToCartButton = menuItem.querySelector('.menu-item-button');
-        const itemName = menuItem.querySelector('.menu-item-title').textContent.trim();
-        const itemPrice = parseInt(menuItem.querySelector('.menu-item-price').textContent.replace('Rp ', '').replaceAll('.', ''), 10);
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.menu-item').forEach(item => {
+            const countInput = item.querySelector('.count');
+            const minusButton = item.querySelector('.minus');
+            const plusButton = item.querySelector('.plus');
 
-        let count = 0;
+            // Set initial value
+            countInput.value = 0;
 
-        function updateButtonState() {
-            addToCartButton.disabled = count === 0;
-        }
+            minusButton.addEventListener('click', () => {
+                let value = parseInt(countInput.value) || 0;
+                if (value > 0) {
+                    countInput.value = value - 1;
+                }
+            });
 
-        function updateCount(change) {
-            count = Math.max(0, count + change); // Pastikan count tidak negatif
-            countElement.textContent = count;
-            updateButtonState();
-        }
+            plusButton.addEventListener('click', () => {
+                let value = parseInt(countInput.value) || 0;
+                countInput.value = value + 1;
+            });
 
-        minusButton.addEventListener('click', () => updateCount(-1));
-        plusButton.addEventListener('click', () => updateCount(1));
-
-        addToCartButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            if (count > 0) {
-                addToCart(itemId, itemName, itemPrice, count);
-                window.location.href = '/keranjang';
-            }
+            // Validate number input
+            countInput.addEventListener('input', function() {
+                let value = parseInt(this.value) || 0;
+                if (value < 0) value = 0;
+                this.value = value;
+            });
         });
 
-        updateButtonState();
+        // Update cart icon counter
+        function updateCartCounter() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const cartIcon = document.querySelector('.cart-icon');
+            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                cartIcon.setAttribute('data-count', totalItems);
+            } else {
+                cartIcon.removeAttribute('data-count');
+            }
+        }
+
+        // Update counter when page loads
+        updateCartCounter();
+
+        // Make cart icon redirect to cart page
+        document.querySelector('.cart-icon').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '{{ route("keranjang.index") }}';
+        });
     });
-});
-
-function addToCart(itemId, name, price, quantity) {
-    let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-
-    const existingItem = cart.find(item => item.id === itemId);
-
-    if (existingItem) {
-        existingItem.quantity += quantity;
-    } else {
-        cart.push({ id: itemId, name, price, quantity });
-    }
-
-    sessionStorage.setItem('cart', JSON.stringify(cart));
-}
-
-
 </script>
 
 </html>

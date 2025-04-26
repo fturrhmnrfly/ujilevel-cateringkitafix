@@ -340,6 +340,128 @@
             margin-right: 15px;
         }
     }
+
+    .notification-wrapper {
+        position: relative;
+        margin-right: 20px;
+    }
+
+    .notification-icon {
+        color: #333;
+        font-size: 20px;
+        position: relative;
+        text-decoration: none;
+    }
+
+    .notification-icon:hover {
+        color: #2c2c77;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: #ff4444;
+        color: white;
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 18px;
+        text-align: center;
+    }
+
+    /* Update the navbar-right style */
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        margin-left: 20px;
+    }
+
+    /* Update notification wrapper style */
+    .notification-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .notification-icon {
+        color: #fff;
+        font-size: 24px;
+        position: relative;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .notification-icon:hover {
+        color: #ffcc00;
+    }
+
+    /* Update cart icon style */
+    .cart-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .cart-icon img {
+        width: 30px;
+        height: 30px;
+        transition: transform 0.3s ease;
+    }
+
+    .cart-icon:hover img {
+        transform: scale(1.1);
+    }
+
+    /* Update profile style */
+    .profile {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile img {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+    }
+
+    .profile img:hover {
+        transform: scale(1.1);
+    }
+
+    /* Update notification badge */
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: #ff4444;
+        color: white;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 18px;
+        text-align: center;
+    }
+
+    /* Update media queries for responsive design */
+    @media (max-width: 768px) {
+        .navbar-right {
+            gap: 15px;
+            margin-left: 10px;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+        }
+
+        .cart-icon img,
+        .profile img {
+            width: 25px;
+            height: 25px;
+        }
+    }
 </style>
 <nav class="navbar">
     <!-- Logo -->
@@ -359,8 +481,8 @@
     </div>
 
     <!-- Search Bar -->
-    <form class="search-bar">
-        <input type="text" placeholder="Search products...">
+    <form class="search-bar" action="{{ route('search') }}" method="GET">
+        <input type="text" name="query" placeholder="Search products..." value="{{ request('query') }}">
         <button type="submit"><i class="fas fa-search"></i></button>
     </form>
 
@@ -372,15 +494,24 @@
         <li><a href="{{ route('contact.index') }}">Contact</a></li>
     </ul>
 
-    <div class="cart-icon">
-        <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
-    </div>
+    <div class="navbar-right">
+        <div class="notification-wrapper">
+            {{-- <a href="{{ route('notifications.index') }}" class="notification-icon"> --}}
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">0</span>
+            </a>
+        </div>
 
-    <!-- Profile Section -->
-    <div class="profile">
-        <a href="{{ route('profile.show') }}">
-            <img src="{{ asset('assets/profil.png') }}" alt="Profile">
-        </a>
+        <div class="cart-icon">
+            <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile">
+            <a href="{{ route('profile.show') }}">
+                <img src="{{ asset('assets/profil.png') }}" alt="Profile">
+            </a>
+        </div>
     </div>
 </nav>
 
@@ -455,5 +586,50 @@ document.addEventListener('DOMContentLoaded', function() {
         originalSetItem.apply(this, arguments);
         window.dispatchEvent(event);
     };
+
+    // Panggil saat halaman dimuat
+    syncCartCounter();
 });
+
+// Tambahkan event listener untuk tombol logout
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutForm = document.querySelector('form[action="{{ route('logout') }}"]');
+    if (logoutForm) {
+        logoutForm.addEventListener('submit', function() {
+            localStorage.removeItem('cartItems'); // Hapus cart items saat logout
+        });
+    }
+});
+
+async function syncCartCounter() {
+    try {
+        const response = await fetch('/keranjang/count', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const cartIcon = document.querySelector('.cart-icon');
+            // Hanya tampilkan counter jika ada items
+            if (data.count > 0) {
+                cartIcon.setAttribute('data-count', data.count.toString());
+            } else {
+                cartIcon.removeAttribute('data-count');
+            }
+            
+            // Clear localStorage dan set ulang sesuai database
+            localStorage.removeItem('cartItems');
+            if (data.items && data.items.length > 0) {
+                localStorage.setItem('cartItems', JSON.stringify(data.items));
+            }
+        }
+    } catch (error) {
+        console.error('Error syncing cart:', error);
+    }
+}
 </script>
