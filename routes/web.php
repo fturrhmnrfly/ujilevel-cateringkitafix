@@ -150,7 +150,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/success', function () {
         return view('payments.success');
     })->name('payment.success');
-    
+    Route::middleware(['auth'])->group(function () {
+        Route::prefix('pesanan')->group(function () {
+            Route::get('/', [OrderController::class, 'index'])->name('pesanan.index');
+            Route::get('/pending', [OrderController::class, 'pending'])->name('pesanan.pending');
+            Route::get('/processing', [OrderController::class, 'processing'])->name('pesanan.processing');
+            Route::get('/shipped', [OrderController::class, 'shipped'])->name('pesanan.shipped');
+            Route::get('/completed', [OrderController::class, 'completed'])->name('pesanan.completed');
+            Route::get('/reviews', [OrderController::class, 'reviews'])->name('pesanan.reviews');
+            Route::get('/{id}', [OrderController::class, 'show'])->name('pesanan.show');
+            Route::post('/{id}/review', [OrderController::class, 'submitReview'])->name('pesanan.submit-review');
+            Route::get('/pesanan/shipped', function () {
+                return view('pesanan.dikirim');
+            })->name('pesanan.shipped');
+        });
+    });
 });
 
 // Admin

@@ -50,9 +50,10 @@ class ProfileController extends Controller
     public function show()
     {
         $user = Auth::user();
+        // Pastikan profile dibuat jika belum ada
         $profile = $user->profile ?? $user->profile()->create([
-            'first_name' => '',
-            'last_name' => '',
+            'first_name' => explode(' ', $user->name)[0] ?? '',
+            'last_name' => explode(' ', $user->name)[1] ?? '',
             'phone' => '',
             'address' => '',
             'bio' => null

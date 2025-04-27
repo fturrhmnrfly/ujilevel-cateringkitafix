@@ -32,4 +32,9 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getTotalAttribute()
+{
+    return $this->subtotal + $this->shipping_cost;
+}
 }

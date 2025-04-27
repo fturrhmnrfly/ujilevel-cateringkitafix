@@ -129,7 +129,7 @@
 
         .tab-navigation {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             background-color: #27276e;
             padding: 10px 20px;
             width: 100%;
@@ -199,16 +199,108 @@
         .back-button:hover {
             color: #3a3a8c;
         }
+
+        .order-details {
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .order-id {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .order-date {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .order-items {
+            margin-bottom: 20px;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .item-info {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #666;
+        }
+
+        .order-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .detail-button {
+            display: block;
+            width: 100%;
+            background: #2c2c77;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .detail-button:hover {
+            background: #1f1f5c;
+        }
     </style>
 </head>
 <body>
 <x-navbar></x-navbar>
 
 <div class="container">
-    <!-- Fix the back button syntax -->
-    <a href="{{ url()->previous() }}" class="back-button">
-        <i class="fas fa-chevron-left"></i>
-    </a>
     
     <div class="tab-navigation">
         <a href="{{ route('pesanan.index') }}" class="tab-btn {{ request()->routeIs('pesanan.index') ? 'active' : '' }}">Semua Pesanan</a>
@@ -221,89 +313,92 @@
 </div>
 
 <div class="container">
-    <h1>Pesanan Saya</h1>
-    
     @if(isset($orders) && count($orders) > 0)
         @foreach($orders as $order)
-            <div class="order-card">
-                <div class="order-header" style="padding: 15px; border-bottom: 1px solid #eee;">
-                    <h3>Order ID: {{ $order->id }}</h3>
-                    <p>Tanggal Pemesanan: {{ $order->created_at->format('d F Y') }}</p>
-                    <p>Status: 
-                        <span class="status-badge" style="
-                            padding: 5px 10px;
-                            border-radius: 4px;
-                            font-weight: bold;
-                            background-color: 
-                                @if($order->status == 'pending') #FFD700
-                                @elseif($order->status == 'processing') #1E90FF
-                                @elseif($order->status == 'shipped') #FFA500
-                                @elseif($order->status == 'completed') #32CD32
-                                @else #ccc
-                                @endif;
-                            color: #333;
-                        ">
-                            {{ ucfirst($order->status) }}
-                        </span>
-                    </p>
-                </div>
-                
-                <div class="order-items" style="padding: 15px;">
-                    @foreach($order->items as $item)
-                        <div class="item-row" style="display: flex; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #f5f5f5;">
-                            <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
-                            <div style="flex-grow: 1;">
-                                <p style="font-weight: bold; margin: 0;">{{ $item->product->name }}</p>
-                                <p style="margin: 5px 0 0;">{{ $item->quantity }} × Rp {{ number_format($item->price, 0, ',', '.') }}</p>
-                            </div>
-                            <div>
-                                <p style="font-weight: bold; margin: 0;">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>
-                            </div>
+            <!-- Order Details Card -->
+            <div class="order-details" style="max-width: 800px; margin: 20px auto; background: white; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px;">
+                <!-- Order Header -->
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="font-size: 16px; margin: 0; color: #333;">
+                                Order #{{ str_pad($order->order_number, 8, '0', STR_PAD_LEFT) }}
+                            </h3>
+                            <p style="color: #666; font-size: 14px; margin: 5px 0;">
+                                Tanggal Pemesanan: {{ $order->created_at->format('d F Y') }}
+                            </p>
                         </div>
+                        <span style="
+                            padding: 5px 12px;
+                            background: #FFF3CD;
+                            color: #856404;
+                            border-radius: 15px;
+                            font-size: 13px;
+                            display: inline-block;
+                        ">{{ ucfirst($order->status) }}</span>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div style="margin-bottom: 20px;">
+                    @foreach($order->items as $item)
+                    <div style="display: flex; align-items: center; background: white; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+                        <img src="{{ asset($item->image) }}" alt="{{ $item->name }}" 
+                            style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
+                        <div style="flex-grow: 1;">
+                            <h4 style="margin: 0; font-size: 14px; color: #333;">{{ $item->name }}</h4>
+                            <p style="color: #666; margin: 3px 0; font-size: 12px;">{{ $item->quantity }}x</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 14px; color: #333;">Rp {{ number_format($item->price, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
                     @endforeach
                 </div>
-                
-                <div class="order-footer" style="padding: 15px; background-color: #f9f9f9; border-top: 1px solid #eee;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <p>Subtotal:</p>
-                        <p>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</p>
+
+                <!-- Order Summary -->
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #666; font-size: 14px;">Subtotal</span>
+                        <span style="color: #333; font-size: 14px;">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <p>Biaya Pengiriman:</p>
-                        <p>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</p>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #666; font-size: 14px;">Biaya Pengiriman</span>
+                        <span style="color: #333; font-size: 14px;">Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-weight: bold;">
-                        <p>Total:</p>
-                        <p>Rp {{ number_format($order->total, 0, ',', '.') }}</p>
+                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                        <span style="color: #333; font-size: 14px;">Total</span>
+                        <span style="color: #333; font-size: 14px; font-weight: 600;">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
                     </div>
-                    
-                    <a href="{{ route('pesanan.show', $order->id) }}" class="detail-btn" style="
-                        display: inline-block;
-                        background-color: #2c2c7b;
-                        color: white;
-                        padding: 10px 15px;
-                        border-radius: 5px;
-                        text-decoration: none;
-                        margin-top: 10px;
-                        text-align: center;
-                    ">Lihat Detail</a>
+                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                        <span style="color: #666; font-size: 14px;">Metode Pembayaran</span>
+                        <span style="color: #333; font-size: 14px;">{{ strtoupper($order->payment_method) }}</span>
+                    </div>
                 </div>
+
+                <!-- Delivery Schedule -->
+                <div style="display: flex; align-items: center; background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                    <i class="far fa-calendar" style="color: #666; margin-right: 8px;"></i>
+                    <span style="color: #666; font-size: 14px;">Pengiriman dijadwalkan: {{ \Carbon\Carbon::parse($order->delivery_date)->format('d F Y') }}, {{ $order->delivery_time }}</span>
+                </div>
+
+                <!-- Detail Button -->
+                <a href="{{ route('pesanan.show', $order->id) }}" 
+                style="display: block; text-align: center; padding: 12px; background: #27276e; color: white; border-radius: 8px; text-decoration: none; font-weight: 500;">
+                    Lihat Detail
+                </a>
             </div>
         @endforeach
     @else
-        <div class="empty-state" style="text-align: center; padding: 50px 0;">
+        <!-- Empty State -->
+        <div style="text-align: center; padding: 50px 0;">
             <img src="{{ asset('assets/empty-order.png') }}" alt="Tidak ada pesanan" style="max-width: 150px; margin-bottom: 20px;">
             <h3>Belum Ada Pesanan</h3>
             <p>Anda belum memiliki pesanan. Silahkan pesan makanan terlebih dahulu.</p>
-            <a href="{{ route('dashboard') }}" class="btn" style="
-                display: inline-block;
-                background-color: #2c2c7b;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 5px;
-                text-decoration: none;
-                margin-top: 15px;
-            ">Pesan Sekarang</a>
+            <a href="{{ route('dashboard') }}" 
+            style="display: inline-block; padding: 12px 30px; background: #2c2c77; color: white; border-radius: 8px; margin-top: 20px; text-decoration: none;">
+                Pesan Sekarang
+            </a>
         </div>
     @endif
 </div>

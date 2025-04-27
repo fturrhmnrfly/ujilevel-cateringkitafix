@@ -355,8 +355,8 @@
         <div class="profile-info">
             <p><strong>Nama Lengkap:</strong> {{ $profile->first_name }} {{ $profile->last_name }}</p>
             <p><strong>Email:</strong> {{ $user->email }}</p>  
-            <p><strong>Nomor Telepon:</strong> {{ $profile->phone }}</p>
-            <p><strong>Alamat Rumah:</strong> {{ $profile->address }}</p>
+            <p><strong>Nomor Telepon:</strong> {{ $profile->phone ?? '-' }}</p>
+            <p><strong>Alamat Rumah:</strong> {{ $profile->address ?? '-' }}</p>
             @if($profile->bio)
                 <p><strong>Bio:</strong> {{ $profile->bio }}</p>
             @endif

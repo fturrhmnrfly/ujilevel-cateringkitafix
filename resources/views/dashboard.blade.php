@@ -18,16 +18,20 @@
         /* Breadcrumb Styles */
         .breadcrumb-container {
             background-color: #f3f4f6;
+            /* Light gray color */
+            padding: 1rem 2rem;
             border-bottom: 1px solid #e5e7eb;
             margin-top: 80px;
-            /* Add margin to prevent overlap with fixed navbar */
+            /* Space below fixed navbar */
+            width: 100%;
         }
 
         .breadcrumb {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #6b7280;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .breadcrumb-title {
@@ -97,27 +101,31 @@
             width: 50%;
             height: 500px;
             position: relative;
+            right: -5%;
             display: flex;
             justify-content: center;
             align-items: center;
             border-radius: 0 0 0 200px;
             clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 85%);
-            overflow: hidden; /* Add this to contain the absolute positioned image */
+            overflow: hidden;
+            /* Add this to contain the absolute positioned image */
         }
 
         .main-hero-image {
             width: 500px;
             position: relative;
-            z-index: 2; /* Higher z-index to appear in front */
+            z-index: 2;
+            /* Higher z-index to appear in front */
         }
 
         .background-curve {
             position: absolute;
             bottom: 0;
-            right: 0;
-            z-index: 1; /* Lower z-index to appear behind */
+            right: -150px;
+            z-index: 1;
+            /* Lower z-index to appear behind */
             width: 100%;
-            height: auto;
+            height: 100%;
         }
 
         .about {
@@ -922,6 +930,7 @@
 
         <div class="breadcrumb-container">
             <div class="breadcrumb">
+                <!-- You can add breadcrumb content here if needed -->
             </div>
         </div>
         <div class="hero">
@@ -1238,47 +1247,51 @@
         </div>
 
         <!-- Add this section before the promo banner -->
-    <div class="comments-section">
-        <h2 class="section-title">Komentar Pelanggan</h2>
-        <div class="comments-container">
-            <!-- Comment 1 -->
-            <div class="comment-card">
-                <div class="comment-header">
-                    <img src="{{ asset('assets/profil.png') }}" alt="User" class="user-avatar">
-                    <div class="comment-info">
-                        <h4 class="user-name">Ahmad Faizin</h4>
-                        <div class="rating">
-                            ⭐⭐⭐⭐⭐
+        <div class="comments-section">
+            <h2 class="section-title">Komentar Pelanggan</h2>
+            <div class="comments-container">
+                <!-- Comment 1 -->
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <img src="{{ asset('assets/profil.png') }}" alt="User" class="user-avatar">
+                        <div class="comment-info">
+                            <h4 class="user-name">Ahmad Faizin</h4>
+                            <div class="rating">
+                                ⭐⭐⭐⭐⭐
+                            </div>
                         </div>
                     </div>
+                    <p class="comment-text">
+                        "Saya sangat puas dengan pelayanan yang efektif. Tim profesional dan fast respon dalam
+                        berkomunikasi dan langgar ini sangat terasa ketika berkomunikasi dari awal sampai pesanan tiba
+                        dengan baik."
+                    </p>
                 </div>
-                <p class="comment-text">
-                    "Saya sangat puas dengan pelayanan yang efektif. Tim profesional dan fast respon dalam berkomunikasi dan langgar ini sangat terasa ketika berkomunikasi dari awal sampai pesanan tiba dengan baik."
-                </p>
-            </div>
 
-            <!-- Comment 2 -->
-            <div class="comment-card">
-                <div class="comment-header">
-                    <img src="{{ asset('assets/profil.png') }}" alt="User" class="user-avatar">
-                    <div class="comment-info">
-                        <h4 class="user-name">Jhonarendra</h4>
-                        <div class="rating">
-                            ⭐⭐⭐⭐⭐
+                <!-- Comment 2 -->
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <img src="{{ asset('assets/profil.png') }}" alt="User" class="user-avatar">
+                        <div class="comment-info">
+                            <h4 class="user-name">Jhonarendra</h4>
+                            <div class="rating">
+                                ⭐⭐⭐⭐⭐
+                            </div>
                         </div>
                     </div>
+                    <p class="comment-text">
+                        "Sangat senang dengan pelayanan yang diberikan oleh tim Catering Kita. Telah order lebih dari
+                        5x dan selalu puas dengan hasilnya."
+                    </p>
                 </div>
-                <p class="comment-text">
-                    "Sangat senang dengan pelayanan yang diberikan oleh tim Catering Kita. Telah order lebih dari 5x dan selalu puas dengan hasilnya."
-                </p>
             </div>
         </div>
-    </div>
 
         <!-- Promotional Banner -->
         <div class="promo-banner">
             <h2 class="promo-title">Siap Memesan untuk Acara Anda?</h2>
-            <p class="promo-description">Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi menu
+            <p class="promo-description">Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi
+                menu
                 yang sesuai dengan acara Anda.</p>
             <a href="/contact" class="promo-button">Hubungi Kami</a>
         </div>
