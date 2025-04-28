@@ -190,6 +190,11 @@
             gap: 10px;
         }
 
+        .admin-profile a:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
         .admin-avatar {
             width: 35px;
             height: 35px;
@@ -200,7 +205,7 @@
 
 <body>
     <x-sidebar></x-sidebar>
-    
+
     <div class="main-content">
         <div class="header">
             <h1 class="page-title">{{ $title ?? 'Dashboard' }}</h1>
@@ -213,14 +218,17 @@
                                 ->where('is_read', false)
                                 ->count();
                         @endphp
-                        @if($unreadCount > 0)
+                        @if ($unreadCount > 0)
                             <span class="notification-badge">{{ $unreadCount }}</span>
                         @endif
                     </a>
                 </div>
                 <div class="admin-profile">
-                    <span>Admin</span>
-                    <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
+                    <a href="{{ route('admin.profile.show') }}"
+                        style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                        <span>Admin</span>
+                        <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
+                    </a>
                 </div>
             </div>
         </div>

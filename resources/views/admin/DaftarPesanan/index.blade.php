@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catering Kita Admin - Daftar Pesanan</title>
+    <title>Daftar Pesanan - Admin</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         .content {
             padding: 20px;
@@ -162,16 +163,176 @@
             color: #666;
             font-size: 14px;
         }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .stat-card p {
+            margin: 5px 0 0;
+            color: #666;
+        }
+
+        /* Add these CSS classes if not already present */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-diproses {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .badge-dikirim {
+            background: #1e90ff;
+            color: #fff;
+        }
+
+        .badge-diterima {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .badge-dibatalkan {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 400px;
+            margin: 100px auto;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .status-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .status-notes {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            min-height: 100px;
+            resize: vertical;
+            font-size: 14px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            background: #e2e2e2;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .btn-update {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            background: #4040ff;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Status Badge Colors */
+        .status-option-dikirim {
+            background: #1e90ff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .status-option-dibatalkan {
+            background: #dc3545;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .status-option-diterima {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .status-option-diproses {
+            background: #ffc107;
+            color: black;
+            padding: 4px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 12px;
+        }
     </style>
 </head>
 
 <body>
-    <x-sidebar></x-sidebar>
-
+    <x-sidebar />
 
     <div class="main-content">
         <div class="header">
-            <h1 class="page-title">{{ $title ?? 'Daftar Pesanan' }}</h1>
+            <h1 class="page-title">Daftar Pesanan</h1>
             <div class="admin-controls">
                 <div class="notification-wrapper">
                     <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
@@ -191,13 +352,29 @@
                     <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
                 </div>
             </div>
-        </div><br>
+        </div>
 
         <div class="content">
-            <div class="content-header">
-                <a href="{{ route('admin.daftarpesanan.create') }}" class="btn-primary">Tambah Pesanan</a>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Cari pesanan...">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>{{ $stats['total'] }}</h3>
+                    <p>Semuah Pesanan</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ $stats['belum_bayar'] }}</h3>
+                    <p>Belum Bayar</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ $stats['diproses'] }}</h3>
+                    <p>Diproses</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ $stats['dikirim'] }}</h3>
+                    <p>Dikirim</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ $stats['selesai'] }}</h3>
+                    <p>Selesai</p>
                 </div>
             </div>
 
@@ -206,54 +383,152 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama Pesanan</th>
+                            <th>ID Pesanan</th>
                             <th>Nama Pelanggan</th>
                             <th>Tanggal Pesanan</th>
                             <th>Jumlah</th>
-                            <th>Tanggal Acara</th>
-                            <th>Lokasi</th>
+                            <th>Alamat</th>
+                            <th>No. Telepon</th>
                             <th>Total Harga</th>
-                            <th>Status</th>
-                            <th>Pesan</th> <!-- Kolom baru -->
-                            <th>Action</th>
+                            <th>Status Pengiriman</th>
+                            <th>Status Pembayaran</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($pesanans as $index => $pesanan)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $pesanan->nama_pesanan }}</td>
-                                <td>{{ $pesanan->nama_pelanggan }}</td>
-                                <td>{{ $pesanan->tanggal_pesanan->format('d/m/Y') }}</td>
-                                <td>{{ $pesanan->jumlah_pesanan }}</td>
-                                <td>{{ $pesanan->tanggal_acara->format('d/m/Y') }}</td>
-                                <td>{{ $pesanan->lokasi_pengiriman }}</td>
-                                <td>Rp.{{ number_format($pesanan->total_harga, 2) }}</td>
-                                <td class="status-{{ $pesanan->status_pengiriman }}">
+                        @foreach($pesanans as $pesanan)
+                        <tr data-order-id="{{ $pesanan->id }}">
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $pesanan->order_id }}</td>
+                            <td>{{ $pesanan->nama_pelanggan }}</td>
+                            <td>{{ $pesanan->tanggal_pesanan->format('d/m/Y') }}</td>
+                            <td>{{ $pesanan->jumlah_pesanan }}</td>
+                            <td>{{ $pesanan->lokasi_pengiriman }}</td>
+                            <td>{{ $pesanan->nomor_telepon }}</td>
+                            <td>Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</td>
+                            <td>
+                                <span class="badge badge-{{ $pesanan->status_pengiriman }}">
                                     {{ ucfirst($pesanan->status_pengiriman) }}
-                                </td>
-                                <td class="message-column">
-                                    <span class="message-content" title="{{ $pesanan->pesan_untuk_penjual ?? '-' }}">
-                                        {{ $pesanan->pesan_untuk_penjual ?? '-' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="{{ route('admin.daftarpesanan.edit', $pesanan) }}"
-                                        class="btn-warning">Edit</a>
-                                    <form action="{{ route('admin.daftarpesanan.destroy', $pesanan) }}" method="POST"
-                                        style="display: inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn-danger" type="submit">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge">{{ strtoupper($pesanan->status_pembayaran) }}</span>
+                            </td>
+                            <td>
+                                <button class="btn-warning" onclick="updateStatus('{{ $pesanan->id }}')">
+                                    Update Status
+                                </button>
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    <!-- Tambahkan modal di akhir body sebelum closing tag -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Update Status Pesanan</h3>
+            
+            <select class="status-select" id="statusSelect">
+                <option value="">Pilih Status Baru</option>
+                <option value="diproses">Di Proses</option>
+                <option value="dikirim">Dikirim</option>
+                <option value="diterima">Diterima</option>
+                <option value="dibatalkan">Dibatalkan</option>
+            </select>
+
+            <textarea class="status-notes" id="statusNotes" placeholder="Catatan Update Status Pesanan"></textarea>
+
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">Batal</button>
+                <button class="btn-update" onclick="confirmUpdate()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentOrderId = null;
+
+        function updateStatus(id) {
+            currentOrderId = id;
+            document.getElementById('updateModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('updateModal').style.display = 'none';
+            document.getElementById('statusSelect').value = '';
+            document.getElementById('statusNotes').value = '';
+        }
+
+        function confirmUpdate() {
+            const newStatus = document.getElementById('statusSelect').value;
+            const notes = document.getElementById('statusNotes').value;
+
+            if (!newStatus) {
+                alert('Silakan pilih status baru');
+                return;
+            }
+
+            const updateBtn = document.querySelector('.btn-update');
+            updateBtn.disabled = true;
+            updateBtn.textContent = 'Memproses...';
+
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            // Update the URL to match the route
+            fetch(`/admin/daftarpesanan/${currentOrderId}/status`, {
+                method: 'POST', // Keep this as POST to match the route
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body: JSON.stringify({
+                    status_pengiriman: newStatus,
+                    catatan: notes
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const row = document.querySelector(`tr[data-order-id="${currentOrderId}"]`);
+                    const statusBadge = row.querySelector('.badge');
+                    statusBadge.className = `badge badge-${newStatus}`;
+                    statusBadge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                    
+                    closeModal();
+                    alert('Status berhasil diperbarui');
+                    location.reload();
+                } else {
+                    throw new Error(data.message || 'Gagal mengupdate status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message || 'Terjadi kesalahan saat mengupdate status');
+            })
+            .finally(() => {
+                updateBtn.disabled = false;
+                updateBtn.textContent = 'Update Status';
+            });
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('updateModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
 </body>
 
 </html>

@@ -10,15 +10,18 @@ return new class extends Migration
     {
         Schema::create('daftar_pesanans', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_pesanan');
+            $table->string('order_id')->unique();
             $table->string('nama_pelanggan');
-            $table->date('tanggal_pesanan');
-            $table->string('jumlah_pesanan');
-            $table->date('tanggal_acara');
+            $table->datetime('tanggal_pesanan');
+            $table->integer('jumlah_pesanan');
             $table->text('lokasi_pengiriman');
+            $table->string('nomor_telepon');
             $table->decimal('total_harga', 10, 2);
-            $table->enum('status_pengiriman', ['diproses', 'pending', 'selesai']);
-            $table->text('pesan_untuk_penjual')->nullable(); // Add this line
+            $table->enum('status_pengiriman', ['diproses', 'dikirim', 'selesai', 'batal']);
+            $table->enum('status_pembayaran', ['pending', 'paid', 'failed']);
+            // Update this line to include all shipping options
+            $table->enum('opsi_pengiriman', ['self', 'instant', 'regular', 'economy']);
+            $table->text('pesan_untuk_penjual')->nullable();
             $table->timestamps();
         });
     }

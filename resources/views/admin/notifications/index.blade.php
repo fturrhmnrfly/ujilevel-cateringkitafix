@@ -3,119 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifikasi Admin - Catering Kita</title>
+    <title>Notifikasi</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
         }
 
         .header {
-            background: white;
-            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
         }
 
-        .notification-list {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .notifications-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .notification-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #2c2c77;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .notification-unread {
-            background-color: #f0f7ff;
-            border-left: 4px solid #2c2c77;
+        .notification-item.unread {
+            background: #f8f9ff;
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .notification-content {
+            flex: 1;
         }
 
         .notification-title {
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
             margin-bottom: 5px;
         }
 
         .notification-message {
             color: #666;
-            font-size: 0.9em;
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
 
         .notification-time {
             color: #999;
-            font-size: 0.8em;
+            font-size: 12px;
+        }
+
+        .notification-status {
+            font-size: 14px;
+            color: #666;
             margin-top: 5px;
-        }
-
-        .mark-all-btn {
-            background-color: #2c2c77;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .mark-read-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <x-sidebar></x-sidebar>
+    <div class="header">
+        <h1>Notifikasi</h1>
+        <button class="close-btn">&times;</button>
+    </div>
 
-    <div class="main-content">
-        <div class="header">
-            <h1>Notifikasi</h1>
-            <form action="{{ route('admin.notifications.index') }}" method="POST">
-                @csrf
-                <button type="submit" class="mark-all-btn">Tandai Semua Dibaca</button>
-            </form>
-        </div>
-
-        <div class="notification-list">
-            @forelse ($notifications as $notification)
-                <div class="notification-item {{ !$notification->is_read ? 'notification-unread' : '' }}">
-                    <div class="notification-content">
-                        <div class="notification-title">{{ $notification->title }}</div>
-                        <div class="notification-message">{{ $notification->message }}</div>
-                        <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
-                    </div>
-                    @if (!$notification->is_read)
-                        <form action="{{ route('admin.notifications.read', $notification->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="mark-read-btn">Tandai Dibaca</button>
-                        </form>
+    <div class="notifications-container">
+        @foreach($notifications as $notification)
+            <div class="notification-item {{ $notification->is_read ? 'read' : 'unread' }}">
+                <div class="notification-icon">
+                    @if($notification->icon_type === 'box')
+                        <img src="{{ asset('assets/box-icon.png') }}" alt="Box">
+                    @elseif($notification->icon_type === 'truck') 
+                        <img src="{{ asset('assets/truck-icon.png') }}" alt="Delivery">
+                    @elseif($notification->icon_type === 'check')
+                        <img src="{{ asset('assets/check-icon.png') }}" alt="Success">
                     @endif
                 </div>
-            @empty
-                <div class="notification-item">
-                    <div class="notification-message">Tidak ada notifikasi</div>
+
+                <div class="notification-content">
+                    <div class="notification-title">{{ $notification->title }}</div>
+                    <div class="notification-message">{{ $notification->message }}</div>
+                    <div class="notification-time">
+                        {{ $notification->created_at->diffForHumans() }}
+                    </div>
                 </div>
-            @endforelse
-        </div>
+            </div>
+        @endforeach
     </div>
+
+    <script>
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            window.history.back();
+        });
+    </script>
 </body>
 </html>

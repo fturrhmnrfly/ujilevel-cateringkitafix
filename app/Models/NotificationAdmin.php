@@ -7,16 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class NotificationAdmin extends Model
 {
     protected $fillable = [
+        'admin_id',
         'title',
-        'message',
-        'type',
+        'message', 
+        'icon_type',
+        'order_id',
         'is_read',
-        'data',
-        'admin_id'
+        'created_at'
     ];
 
     protected $casts = [
-        'is_read' => 'boolean',
-        'data' => 'array'
+        'is_read' => 'boolean'
     ];
 }

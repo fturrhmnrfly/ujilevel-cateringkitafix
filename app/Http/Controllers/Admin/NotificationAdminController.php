@@ -32,4 +32,12 @@ class NotificationAdminController extends Controller
 
         return redirect()->back()->with('success', 'Semua notifikasi telah dibaca');
     }
+	public function getUnreadCount()
+	{
+		$count = NotificationAdmin::where('admin_id', auth()->id())
+			->where('is_read', false)
+			->count();
+			
+		return response()->json(['count' => $count]);
+	}
 }

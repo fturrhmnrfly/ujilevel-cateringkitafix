@@ -4,254 +4,185 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Admin</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-        /* Style utama untuk container profil */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
 
-        /* Judul halaman */
-        h1 {
+        body {
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .profile-header {
             text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-
-        /* Container untuk informasi profil */
-        .profile-info {
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            padding: 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Style untuk setiap baris informasi */
-        .profile-info p {
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-            margin: 0;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        .profile-info p:last-child {
-            border-bottom: none;
-        }
-
-        /* Style untuk label yang dibold */
-        .profile-info strong {
-            display: inline-block;
-            width: 150px;
-            color: #555;
-        }
-
-        /* Style untuk tombol Edit Profil */
-        .btn-primary {
-            background-color: #5165ff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-right: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: #3949cc;
-        }
-
-        /* Style untuk header profil dan gambar user */
-        .user-profile-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 20px;
+            margin-bottom: 40px;
         }
 
         .profile-image {
             width: 120px;
             height: 120px;
+            margin: 0 auto 20px;
             border-radius: 50%;
-            overflow: hidden;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #2c2c77;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
         }
 
-        .profile-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .user-name {
+        .admin-name {
             font-size: 24px;
             font-weight: bold;
-            color: #2c2c77;
-            margin-top: 10px;
-            text-align: center;
+            margin-bottom: 5px;
+            color: #333;
         }
 
-        /* Menambahkan header app seperti di desain */
-        .app-header {
-            background-color: #2d2d8b;
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .admin-role {
+            color: #666;
             margin-bottom: 20px;
         }
 
-        .app-logo {
-            font-weight: bold;
-            font-size: 18px;
+        .info-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Button group di bagian bawah form */
-        .button-group {
+        .info-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e2e2;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4F46E5;
+        }
+
+        .btn-container {
             display: flex;
             justify-content: flex-end;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 30px;
         }
 
-        /* Responsive styling */
-        @media (max-width: 768px) {
-            .profile-info strong {
-                width: 120px;
-            }
+        .btn {
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.3s;
+        }
+
+        .btn-reset {
+            background: #e2e2e2;
+            color: #666;
+        }
+
+        .btn-save {
+            background: #4F46E5;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .info-value {
+            width: 100%;
+            padding: 12px;
+            background: #f8f9fa;
+            border: 1px solid #e2e2e2;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-value.bio {
+            min-height: 100px;
+            align-items: flex-start;
+            white-space: pre-wrap;
+        }
+
+        .btn-save {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Navbar Styles */
-        nav.navbar {
+        .navbar {
+            background-color: #2c2c77;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #2c2c77;
-            padding: 15px 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             position: fixed;
+            width: 100%;
             top: 0;
-            left: 0;
-            right: 0;
             z-index: 1000;
         }
 
         .navbar .logo {
             display: flex;
             align-items: center;
-            color: #fff;
         }
 
         .navbar .logo img {
-            width: 50px;
-            height: 50px;
+            height: 40px;
             margin-right: 10px;
         }
 
-        .navbar .logo .text-navbar p {
-            margin: 0;
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffcc00;
-            text-transform: uppercase;
-        }
-
-        .navbar .logo .text-navbar p:nth-child(2) {
-            color: #fff;
-        }
-
-        .navbar .search-bar {
+        .navbar .nav-right {
             display: flex;
             align-items: center;
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            width: 40%;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            gap: 20px;
         }
 
-        .navbar .search-bar input[type="text"] {
-            border: none;
-            outline: none;
-            flex: 1;
-            padding: 5px;
-            font-size: 14px;
-        }
-
-        .navbar .search-bar button {
-            border: none;
-            background: none;
-            cursor: pointer;
-            color: #2c2c77;
-            font-size: 16px;
-        }
-
-        .navbar .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        @media (max-width: 768px) {
-            nav.navbar {
-                padding: 10px 15px;
-            }
-
-            body {
-                padding-top: 60px;
-            }
-
-            .breadcrumb-container {
-                margin-top: 60px;
-            }
-        }
-
-        .navbar .nav-links li {
-            display: inline-block;
-        }
-
-        .navbar .nav-links li a {
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: color 0.3s ease-in-out;
-        }
-
-        .navbar .nav-links li a:hover {
-            color: #ffcc00;
-        }
-
-        .navbar .profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .sign-out {
             color: white;
-        }
-
-        .navbar .profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .navbar .profile span {
-            font-size: 14px;
-            font-weight: bold;
+            text-decoration: none;
+            font-weight: 500;
         }
 
         /* Breadcrumb Styles */
@@ -259,12 +190,16 @@
             background-color: #f3f4f6;
             padding: 1rem 2rem;
             border-bottom: 1px solid #e5e7eb;
+            margin-top: 70px;
+            width: 100%;
         }
 
         .breadcrumb {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .breadcrumb-title {
@@ -281,105 +216,82 @@
             text-decoration: none;
         }
 
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 120px;
-        }
-
-        .btn-primary {
-            background-color: #5165ff;
-            color: white;
-            border: none;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary:hover {
-            background-color: #3949cc;
-        }
-
-        .btn-danger:hover {
-            background-color: #c82333;
+        .container {
+            margin-top: 120px;
         }
     </style>
 </head>
 <body>
-        <!-- Profile Section -->
-        <div class="profile">
-            <a href="{{ route('profileadmin.show') }}">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode($profile->first_name) }}&background=2c2c77&color=fff&size=120" alt="Profile">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ asset('assets/logo.png') }}" alt="Catering Kita">
+            <span style="color: white; font-weight: bold;">CATERING KITA</span>
+        </div>
+        <div class="nav-right">
+            <a href="{{ route('logout') }}" class="sign-out" 
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Sign Out
             </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         </div>
     </nav>
 
+    <!-- Breadcrumb -->
     <div class="breadcrumb-container">
         <div class="breadcrumb">
-            <div class="breadcrumb-title">Profil Pengguna</div>
+            <div class="breadcrumb-title">Profile</div>
             <div class="breadcrumb-nav">
-                <a href="{{ route('dashboard') }}">Home</a> » Profil Pengguna
+                <a href="{{ route('admin.dashboard') }}">Home</a> » Profile
             </div>
         </div>
     </div>
 
+    <!-- Existing Content -->
     <div class="container">
-        <div class="user-profile-header">
+        <div class="profile-header">
             <div class="profile-image">
-                <img src="{{ $profile->avatar_url }}" alt="{{ $profile->first_name }}'s Profile" />
+                {{ strtoupper(substr($user->name, 0, 1)) }}
             </div>
-            <div class="user-name">{{ $profile->first_name }} {{ $profile->last_name }}</div>
+            <h2 class="admin-name">{{ $user->name }}</h2>
+            <p class="admin-role">Admin 1</p>
         </div>
 
-        <div class="profile-info">
-            <p><strong>Nama Lengkap:</strong> {{ $profile->first_name }} {{ $profile->last_name }}</p>
-            <p><strong>Email:</strong> {{ $user->email }}</p>  
-            <p><strong>Nomor Telepon:</strong> {{ $profile->phone ?? '-' }}</p>
-            <p><strong>Alamat Rumah:</strong> {{ $profile->address ?? '-' }}</p>
-            @if($profile->bio)
-                <p><strong>Bio:</strong> {{ $profile->bio }}</p>
-            @endif
-        </div>
+        <div class="info-container">
+            <h3 class="info-title">Informasi Profil</h3>
+            <div class="profile-info">
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap</label>
+                    <div class="info-value">{{ $user->name }}</div>
+                </div>
 
-        <div class="button-group">
-            <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profil</a>
-            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-                @csrf
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <div class="info-value">{{ strtolower(str_replace(' ', '', $user->name)) }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <div class="info-value">{{ $user->email }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nomor Telepon</label>
+                    <div class="info-value">{{ $profile->phone ?? '-' }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Bio</label>
+                    <div class="info-value bio">{{ $profile->bio ?? 'hello guys' }}</div>
+                </div>
+
+                <div class="btn-container">
+                    <a href="{{ route('admin.profile.edit') }}" class="btn btn-save">Edit Profile</a>
+                </div>
+            </div>
         </div>
     </div>
-
-    <script>
-        // Add confirmation before logout
-        document.querySelector('form[action="{{ route('logout') }}"]').addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (confirm('Apakah Anda yakin ingin keluar?')) {
-                localStorage.removeItem('cartItems'); // Clear cart items on logout
-                this.submit();
-            }
-        });
-    </script>
 </body>
 </html>
