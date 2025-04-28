@@ -332,4 +332,152 @@ class PaymentController extends Controller
     }
 }
 
+public function confirmDanaPayment(Request $request)
+{
+    try {
+        // Validasi data request
+        $request->validate([
+            'payment_proof' => 'required|image|max:2048',
+            'total' => 'required|numeric',
+            'order_data' => 'required'
+        ]);
+
+        DB::beginTransaction();
+
+        // Simpan bukti pembayaran ke storage
+        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+
+        // Buat entri transaksi
+        $transaksi = Transaksi::create([
+            'nama_admin' => 'System',
+            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+            'tanggal_transaksi' => now(),
+            'id_transaksi' => 'DANA-' . time(),
+            'jenis_tindakan' => 'Pembayaran DANA',
+            'deskripsi_tindakan' => 'Pembayaran via DANA',
+            'total_harga' => $request->total,
+            'status_transaksi' => 'Menunggu Konfirmasi',
+            'bukti_pembayaran' => $path
+        ]);
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pembayaran berhasil dikonfirmasi'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        \Log::error('Payment Error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+public function confirmGopayPayment(Request $request)
+{
+    try {
+        // Validasi data request
+        $request->validate([
+            'payment_proof' => 'required|image|max:2048',
+            'total' => 'required|numeric',
+            'order_data' => 'required'
+        ]);
+
+        DB::beginTransaction();
+
+        // Simpan bukti pembayaran ke storage
+        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+
+        // Buat entri transaksi
+        $transaksi = Transaksi::create([
+            'nama_admin' => 'System',
+            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+            'tanggal_transaksi' => now(),
+            'id_transaksi' => 'GOPAY-' . time(),
+            'jenis_tindakan' => 'Pembayaran GOPAY',
+            'deskripsi_tindakan' => 'Pembayaran via GOPAY',
+            'total_harga' => $request->total,
+            'status_transaksi' => 'Menunggu Konfirmasi',
+            'bukti_pembayaran' => $path
+        ]);
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pembayaran berhasil dikonfirmasi'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        \Log::error('Payment Error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+public function confirmCodPayment(Request $request)
+{
+    try {
+        // Validasi data request
+        $request->validate([
+            'payment_proof' => 'required|image|max:2048',
+            'total' => 'required|numeric',
+            'order_data' => 'required',
+            'dp_amount' => 'required|numeric'
+        ]);
+
+        DB::beginTransaction();
+
+        // Simpan bukti pembayaran DP ke storage
+        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+
+        // Buat entri transaksi untuk DP
+        $transaksi = Transaksi::create([
+            'nama_admin' => 'System',
+            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+            'tanggal_transaksi' => now(),
+            'id_transaksi' => 'COD-DP-' . time(),
+            'jenis_tindakan' => 'Down Payment COD',
+            'deskripsi_tindakan' => 'Pembayaran DP untuk pesanan COD',
+            'total_harga' => $request->dp_amount,
+            'status_transaksi' => 'Menunggu Konfirmasi',
+            'bukti_pembayaran' => $path
+        ]);
+
+        // Buat entri transaksi untuk sisa pembayaran
+        $transaksiSisa = Transaksi::create([
+            'nama_admin' => 'System',
+            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+            'tanggal_transaksi' => now(),
+            'id_transaksi' => 'COD-' . time(),
+            'jenis_tindakan' => 'Sisa Pembayaran COD',
+            'deskripsi_tindakan' => 'Sisa pembayaran COD yang harus dibayar saat pengiriman',
+            'total_harga' => $request->total - $request->dp_amount,
+            'status_transaksi' => 'Menunggu Pembayaran',
+            'bukti_pembayaran' => null
+        ]);
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pembayaran DP berhasil dikonfirmasi'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        \Log::error('Payment Error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
+        ], 500);
+    }
+}
 }

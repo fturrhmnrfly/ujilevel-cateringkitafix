@@ -384,14 +384,19 @@
                         <tr>
                             <th>No</th>
                             <th>ID Pesanan</th>
-                            <th>Nama Pelanggan</th>
+                            <th>Nama pelanggan</th>
+                            <th>Kategori Pesanan</th>
                             <th>Tanggal Pesanan</th>
-                            <th>Jumlah</th>
-                            <th>Alamat</th>
-                            <th>No. Telepon</th>
+                            <th>Jumlah Pesanan</th>
+                            <th>Tanggal Pengiriman</th>
+                            <th>Waktu Pengiriman</th>
+                            <th>Alamat Pengiriman</th>
+                            <th>Nomor Telepon</th>
+                            <th>Pesan</th>
+                            <th>Opsi Pengiriman</th>
                             <th>Total Harga</th>
-                            <th>Status Pengiriman</th>
-                            <th>Status Pembayaran</th>
+                            <th>Status pengiriman</th>
+                            <th>Status pembayaran</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -401,10 +406,15 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $pesanan->order_id }}</td>
                             <td>{{ $pesanan->nama_pelanggan }}</td>
+                            <td>{{ $pesanan->kategori_pesanan }}</td>
                             <td>{{ $pesanan->tanggal_pesanan->format('d/m/Y') }}</td>
                             <td>{{ $pesanan->jumlah_pesanan }}</td>
+                            <td>{{ $pesanan->tanggal_pengiriman }}</td>
+                            <td>{{ $pesanan->waktu_pengiriman }}</td>
                             <td>{{ $pesanan->lokasi_pengiriman }}</td>
                             <td>{{ $pesanan->nomor_telepon }}</td>
+                            <td>{{ $pesanan->pesan }}</td>
+                            <td>{{ $pesanan->opsi_pengiriman }}</td>
                             <td>Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</td>
                             <td>
                                 <span class="badge badge-{{ $pesanan->status_pengiriman }}">

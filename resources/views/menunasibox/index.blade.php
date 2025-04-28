@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Document</title>
+    <title>Menu Nasi Box</title>
 </head>
 <style>
     body {
@@ -363,57 +363,76 @@
     </header>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle menu items
-            document.querySelectorAll(".menu-item").forEach(item => {
-                const countInput = item.querySelector(".count");
-                const minusButton = item.querySelector(".minus");
-                const plusButton = item.querySelector(".plus");
+    // Handle menu items
+    document.querySelectorAll(".menu-item").forEach(item => {
+        const countInput = item.querySelector(".count");
+        const minusButton = item.querySelector(".minus");
+        const plusButton = item.querySelector(".plus");
+        const detailButton = item.querySelector(".menu-item-button");
+        
+        // Get menu id from the product URL
+        const menuId = detailButton.href.split('/').pop();
+        
+        // Set initial value from localStorage or default to 0
+        const savedQuantity = localStorage.getItem(`menu_${menuId}_quantity`) || 0;
+        countInput.value = savedQuantity;
 
-                // Set initial value
-                countInput.value = 0;
-
-                minusButton.addEventListener("click", () => {
-                    let value = parseInt(countInput.value) || 0;
-                    if (value > 0) {
-                        countInput.value = value - 1;
-                    }
-                });
-
-                plusButton.addEventListener("click", () => {
-                    let value = parseInt(countInput.value) || 0;
-                    countInput.value = value + 1;
-                });
-
-                // Hanya validasi untuk memastikan input adalah angka
-                countInput.addEventListener("input", function() {
-                    let value = parseInt(this.value) || 0;
-                    if (value < 0) value = 0;
-                    this.value = value;
-                });
-            });
-
-            // Update cart icon counter
-            function updateCartCounter() {
-                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-                const cartIcon = document.querySelector('.cart-icon');
-                const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-                
-                if (totalItems > 0) {
-                    cartIcon.setAttribute('data-count', totalItems);
-                } else {
-                    cartIcon.removeAttribute('data-count');
-                }
+        minusButton.addEventListener("click", () => {
+            let value = parseInt(countInput.value) || 0;
+            if (value > 0) {
+                value -= 1;
+                countInput.value = value;
+                // Save to localStorage
+                localStorage.setItem(`menu_${menuId}_quantity`, value);
             }
-
-            // Update counter when page loads
-            updateCartCounter();
-
-            // Make cart icon redirect to cart page
-            document.querySelector('.cart-icon').addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = '{{ route("keranjang.index") }}';
-            });
         });
+
+        plusButton.addEventListener("click", () => {
+            let value = parseInt(countInput.value) || 0;
+            value += 1;
+            countInput.value = value;
+            // Save to localStorage
+            localStorage.setItem(`menu_${menuId}_quantity`, value);
+        });
+
+        // Save quantity when manually typing
+        countInput.addEventListener("input", function() {
+            let value = parseInt(this.value) || 0;
+            if (value < 0) value = 0;
+            this.value = value;
+            // Save to localStorage
+            localStorage.setItem(`menu_${menuId}_quantity`, value);
+        });
+
+        // Save quantity before going to detail page
+        detailButton.addEventListener('click', function(e) {
+            const quantity = parseInt(countInput.value) || 0;
+            localStorage.setItem(`menu_${menuId}_quantity`, quantity);
+        });
+    });
+
+    // Update cart icon counter
+    function updateCartCounter() {
+        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        const cartIcon = document.querySelector('.cart-icon');
+        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        
+        if (totalItems > 0) {
+            cartIcon.setAttribute('data-count', totalItems);
+        } else {
+            cartIcon.removeAttribute('data-count');
+        }
+    }
+
+    // Update counter when page loads
+    updateCartCounter();
+
+    // Make cart icon redirect to cart page
+    document.querySelector('.cart-icon').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '{{ route("keranjang.index") }}';
+    });
+});
     </script>
 </body>
 

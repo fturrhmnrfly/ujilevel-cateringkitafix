@@ -19,7 +19,7 @@
             padding: 24px;
             max-width: 500px;
             margin: 20px auto;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .modal-header {
@@ -36,45 +36,44 @@
         }
 
         .close-btn {
-            background: none;
-            border: none;
             font-size: 24px;
-            cursor: pointer;
             color: #666;
+            cursor: pointer;
+            border: none;
+            background: none;
         }
 
         .payment-info {
-            background: #f8f9fa;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .payment-info-label {
             color: #666;
-            display: block;
-            margin-bottom: 4px;
         }
 
         .payment-info-value {
+            text-align: right;
             font-weight: bold;
-            color: #333;
-            font-size: 18px;
-            display: block;
         }
 
         .instruction-box {
-            margin-bottom: 24px;
+            background-color: #f8f9ff;
+            border-left: 4px solid #4040ff;
+            padding: 16px;
+            margin: 20px 0;
         }
 
         .instruction-list {
-            padding-left: 24px;
-            margin-top: 12px;
+            margin-left: 20px;
+            line-height: 1.6;
         }
 
-        .instruction-list li {
-            margin-bottom: 8px;
-            color: #444;
+        .deadline-text {
+            color: #ff4040;
+            margin-top: 12px;
         }
 
         .form-group {
@@ -84,24 +83,24 @@
         .form-label {
             display: block;
             margin-bottom: 8px;
-            color: #444;
-            font-weight: 500;
+            color: #333;
         }
 
         .account-box {
-            background: #f8f9fa;
+            background: #f8f9ff;
             padding: 12px;
-            border-radius: 6px;
-            color: #333;
+            border-radius: 8px;
         }
 
         .account-number {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f8f9fa;
+            background: white;
             padding: 12px;
-            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-top: 8px;
         }
 
         .copy-btn {
@@ -113,26 +112,24 @@
             cursor: pointer;
         }
 
-        .deadline-text {
-            color: #dc3545;
-            margin-top: 12px;
-            font-size: 14px;
-        }
-
         .file-upload {
-            margin-top: 8px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
         }
 
         .confirm-btn {
+            width: 100%;
             background: #2c2c77;
             color: white;
-            width: 100%;
-            padding: 12px;
             border: none;
-            border-radius: 6px;
+            padding: 16px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 16px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -176,22 +173,46 @@
 
         <div class="form-group">
             <label class="form-label">Bukti Transferan</label>
-            <input type="file" class="file-upload" accept="image/*">
+            <input type="file" class="file-upload" name="payment_proof" accept="storage/*">
         </div>
 
         <button class="confirm-btn">Konfirmasi Pembayaran</button>
     </div>
 
     <script>
+        function generateOrderId() {
+            const timestamp = new Date().getTime();
+            const random = Math.floor(Math.random() * 1000);
+            return `ORD${timestamp}${random}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const paymentTotal = document.getElementById('payment-total');
-            
             const savedTotal = localStorage.getItem('orderTotal');
-            
+
             if (savedTotal) {
                 const total = parseInt(savedTotal);
                 const formattedTotal = total.toLocaleString('id-ID');
                 paymentTotal.textContent = `Rp ${formattedTotal}`;
+            } else {
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                const selectedShipping = localStorage.getItem('selectedShipping');
+
+                const subtotal = cartItems.reduce((sum, item) =>
+                    sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
+
+                const shippingCosts = {
+                    'self': 0,
+                    'instant': 10000,
+                    'regular': 5000,
+                    'economy': 2000
+                };
+
+                const shippingCost = shippingCosts[selectedShipping] || 0;
+                const total = subtotal + shippingCost;
+                const formattedTotal = total.toLocaleString('id-ID');
+                paymentTotal.textContent = `Rp ${formattedTotal}`;
+                localStorage.setItem('orderTotal', total.toString());
             }
         });
 
@@ -205,30 +226,75 @@
             window.history.back();
         });
 
-        document.querySelector('.confirm-btn').addEventListener('click', function() {
+        document.querySelector('.confirm-btn').addEventListener('click', async function() {
             const fileInput = document.querySelector('.file-upload');
+            const confirmBtn = this;
 
             if (!fileInput.files.length) {
                 alert('Silakan upload bukti pembayaran');
                 return;
             }
 
-            const total = parseInt(document.getElementById('payment-total').textContent.replace(/[^\d]/g, ''));
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = 'Memproses...';
 
-            const orderData = {
-                total: total,
-                date: new Date().toISOString(),
-                items: JSON.parse(localStorage.getItem('cartItems')) || [],
-                shipping: localStorage.getItem('selectedShipping'),
-                shippingData: {
-                    deliveryDate: localStorage.getItem('deliveryDate'),
-                    deliveryTime: localStorage.getItem('deliveryTime'),
-                    address: localStorage.getItem('address')
+            try {
+                const orderData = {
+                    total: parseInt(document.getElementById('payment-total').textContent.replace(/[^\d]/g, '')),
+                    date: new Date().toISOString(),
+                    items: JSON.parse(localStorage.getItem('cartItems')) || [],
+                    shipping: localStorage.getItem('selectedShipping'),
+                    shippingData: {
+                        deliveryDate: localStorage.getItem('deliveryDate'),
+                        deliveryTime: localStorage.getItem('deliveryTime'),
+                        address: localStorage.getItem('address')
+                    }
+                };
+
+                const token = document.querySelector('meta[name="csrf-token"]').content;
+                const formData = new FormData();
+                formData.append('payment_proof', fileInput.files[0]);
+                formData.append('total', orderData.total);
+                formData.append('order_data', JSON.stringify(orderData));
+                formData.append('_token', token);
+
+                const response = await fetch('/payment/dana/confirm', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        // Hapus header Content-Type dan X-CSRF-TOKEN
+                    },
+                    credentials: 'same-origin' // Tambahkan ini
+                });
+
+                // Cek tipe konten response
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new TypeError("Response bukan JSON!");
                 }
-            };
-            localStorage.setItem('currentOrder', JSON.stringify(orderData));
 
-            window.location.href = '/payment/dana/success';
+                const data = await response.json();
+
+                if (data.success) {
+                    const successOrderData = {
+                        id: generateOrderId(),
+                        total: orderData.total,
+                        shipping: JSON.parse(localStorage.getItem('shippingData'))
+                    };
+                    
+                    localStorage.setItem('currentOrder', JSON.stringify(successOrderData));
+                    window.location.href = '/payment/dana/success';
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal mengonfirmasi pembayaran: ' + error.message);
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Konfirmasi Pembayaran';
+            }
         });
     </script>
 </body>

@@ -41,7 +41,6 @@ use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\NotificationAdminController;
 use App\Http\Controllers\Admin\KaryawanController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\Admin\AdminProfileController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 
@@ -102,6 +101,9 @@ Route::middleware('auth')->group(function () {
 Route::post('/payment/bca/confirm', [PaymentController::class, 'confirmBcaPayment'])
     ->name('payment.bca.confirm')
     ->middleware('auth');
+    Route::post('/payment/dana/confirm', [PaymentController::class, 'confirmDanaPayment'])->name('payment.dana.confirm');
+    Route::post('/payment/gopay/confirm', [PaymentController::class, 'confirmGopayPayment'])->name('payment.gopay.confirm');
+Route::post('/payment/cod/confirm', [PaymentController::class, 'confirmCodPayment'])->name('payment.cod.confirm');
     Route::get('/metodepembayaran/{method}', [PaymentController::class, 'show'])->name('payment.show');
     Route::prefix('pesanan')->group(function () {
         Route::get('/', [PesananController::class, 'index'])->name('pesanan.index'); // Semua Pesanan
@@ -180,9 +182,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Daftar Pesanan
     Route::resource('daftarpesanan', AdminDaftarPesananController::class);
-    Route::post('/admin/daftarpesanan/{id}/status', [AdminDaftarPesananController::class, 'updateStatus'])
-        ->name('admin.daftarpesanan.updateStatus');
-    
+
     // Laporan routes
     Route::get('laporan/export', [AdminLaporanController::class, 'export'])->name('laporan.export');
     Route::resource('laporan', AdminLaporanController::class);
@@ -210,17 +210,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Laporan
      Route::resource('laporan', AdminLaporanController::class);
-     
     // Notification
-    Route::get('/notifications', [NotificationAdminController::class, 'index'])->name('admin.notifications.index');
-    Route::post('/notifications/{id}/read', [NotificationAdminController::class, 'markAsRead'])->name('admin.notifications.read');
-    Route::get('/notifications/count', [NotificationAdminController::class, 'getUnreadCount'])->name('admin.notifications.count');
     
 
     // Profile Admin
-    Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [AdminProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profileadmin', [ProfileController::class, 'show'])->name('profileadmin.show');
+    Route::get('/profileadmin/edit', [ProfileController::class, 'edit'])->name('profileadmin.edit');
+    Route::post('/profileadmin/update', [ProfileController::class, 'update'])->name('profileadmin.update');
 });
 
 // Notifications

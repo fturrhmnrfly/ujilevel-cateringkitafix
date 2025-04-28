@@ -212,19 +212,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const minusButton = document.querySelector('.minus');
     const plusButton = document.querySelector('.plus');
     const addToCartButton = document.querySelector('.add-to-cart');
+    
+    // Get menu ID from the current page
+    const menuId = {{ $menu->id }};
+    
+    // Get saved quantity from localStorage
+    const savedQuantity = localStorage.getItem(`menu_${menuId}_quantity`) || 0;
+    countInput.value = savedQuantity;
 
-    // Handle minus button
     minusButton.addEventListener('click', () => {
         let value = parseInt(countInput.value) || 0;
         if (value > 0) {
-            countInput.value = value - 1;
+            value -= 1;
+            countInput.value = value;
+            localStorage.setItem(`menu_${menuId}_quantity`, value);
         }
     });
 
-    // Handle plus button  
     plusButton.addEventListener('click', () => {
         let value = parseInt(countInput.value) || 0;
-        countInput.value = value + 1;
+        value += 1;
+        countInput.value = value;
+        localStorage.setItem(`menu_${menuId}_quantity`, value);
+    });
+
+    countInput.addEventListener('input', function() {
+        let value = parseInt(this.value) || 0;
+        if (value < 0) value = 0;
+        this.value = value;
+        localStorage.setItem(`menu_${menuId}_quantity`, value);
     });
 
     // Handle add to cart

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Document</title>
+    <title>Menu Prasmanan</title>
 </head>
 <style>
     body {
@@ -62,7 +62,7 @@
     }
 
     .navbar .search-bar {
-        display: flex;
+        display
         align-items: center;
         background-color: #fff;
         padding: 10px;
@@ -492,38 +492,14 @@
 </body>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.menu-item').forEach(item => {
-            const countInput = item.querySelector('.count');
-            const minusButton = item.querySelector('.minus');
-            const plusButton = item.querySelector('.plus');
+    const cartIcon = document.querySelector('.cart-icon');
+    let cartUpdateTimeout;
 
-            // Set initial value
-            countInput.value = 0;
-
-            minusButton.addEventListener('click', () => {
-                let value = parseInt(countInput.value) || 0;
-                if (value > 0) {
-                    countInput.value = value - 1;
-                }
-            });
-
-            plusButton.addEventListener('click', () => {
-                let value = parseInt(countInput.value) || 0;
-                countInput.value = value + 1;
-            });
-
-            // Validate number input
-            countInput.addEventListener('input', function() {
-                let value = parseInt(this.value) || 0;
-                if (value < 0) value = 0;
-                this.value = value;
-            });
-        });
-
-        // Update cart icon counter
-        function updateCartCounter() {
+    // Fungsi untuk update counter dengan debouncing
+    function updateCartCounter() {
+        clearTimeout(cartUpdateTimeout);
+        cartUpdateTimeout = setTimeout(() => {
             const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-            const cartIcon = document.querySelector('.cart-icon');
             const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
             
             if (totalItems > 0) {
@@ -531,17 +507,72 @@
             } else {
                 cartIcon.removeAttribute('data-count');
             }
-        }
+        }, 100); // Delay 100ms untuk debouncing
+    }
 
-        // Update counter when page loads
-        updateCartCounter();
+    // Handle menu item interactions
+    document.querySelectorAll('.menu-item').forEach(item => {
+        const countInput = item.querySelector('.count');
+        const minusButton = item.querySelector('.minus');
+        const plusButton = item.querySelector('.plus');
+        const menuId = item.dataset.id;
 
-        // Make cart icon redirect to cart page
-        document.querySelector('.cart-icon').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = '{{ route("keranjang.index") }}';
+        // Set initial value
+        countInput.value = localStorage.getItem(`menu_${menuId}_quantity`) || 0;
+
+        // Minus button click
+        minusButton.addEventListener('click', () => {
+            let value = parseInt(countInput.value) || 0;
+            if (value > 0) {
+                value -= 1;
+                countInput.value = value;
+                localStorage.setItem(`menu_${menuId}_quantity`, value);
+                updateCartCounter();
+            }
+        });
+
+        // Plus button click
+        plusButton.addEventListener('click', () => {
+            let value = parseInt(countInput.value) || 0;
+            value += 1;
+            countInput.value = value;
+            localStorage.setItem(`menu_${menuId}_quantity`, value);
+            updateCartCounter();
+        });
+
+        // Manual input
+        countInput.addEventListener('input', function() {
+            let value = parseInt(this.value) || 0;
+            if (value < 0) value = 0;
+            this.value = value;
+            localStorage.setItem(`menu_${menuId}_quantity`, value);
+            updateCartCounter();
+        });
+
+        // Detail menu link click
+        const detailLink = item.querySelector('.menu-item-button');
+        detailLink.addEventListener('click', function(e) {
+            const quantity = parseInt(countInput.value) || 0;
+            localStorage.setItem(`menu_${menuId}_quantity`, quantity);
         });
     });
+
+    // Listen for storage changes from other tabs/windows
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'cartItems') {
+            updateCartCounter();
+        }
+    });
+
+    // Initial counter update
+    updateCartCounter();
+
+    // Cart icon click handler
+    cartIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '{{ route("keranjang.index") }}';
+    });
+});
 </script>
 
 </html>

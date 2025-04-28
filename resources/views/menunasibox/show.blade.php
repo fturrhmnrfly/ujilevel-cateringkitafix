@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Menu - {{ $menu->nama_produk }}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
@@ -193,103 +194,86 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const countInput = document.querySelector('.count');
-            const minusButton = document.querySelector('.minus');
-            const plusButton = document.querySelector('.plus');
-            const addToCartButton = document.querySelector('.add-to-cart');
+    const countInput = document.querySelector('.count');
+    const minusButton = document.querySelector('.minus');
+    const plusButton = document.querySelector('.plus');
+    const addToCartButton = document.querySelector('.add-to-cart');
+    
+    // Get menu ID from current page
+    const menuId = {{ $menu->id }};
+    
+    // Get saved quantity from localStorage
+    const savedQuantity = localStorage.getItem(`menu_${menuId}_quantity`) || 0;
+    countInput.value = savedQuantity;
 
-            minusButton.addEventListener('click', () => {
-                let value = parseInt(countInput.value) || 0;
-                if (value > 0) {
-                    countInput.value = value - 1;
-                }
-            });
-
-            plusButton.addEventListener('click', () => {
-                let value = parseInt(countInput.value) || 0;
-                countInput.value = value + 1;
-            });
-
-            // Make cart icon clickable and redirect to cart page
-    document.querySelector('.cart-icon').addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '{{ route("keranjang.index") }}';
+    minusButton.addEventListener('click', () => {
+        let value = parseInt(countInput.value) || 0;
+        if (value > 0) {
+            value -= 1;
+            countInput.value = value;
+            localStorage.setItem(`menu_${menuId}_quantity`, value);
+        }
     });
 
-    // Update cart counter function
-    function updateCartCounter() {
-        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        const cartIcon = document.querySelector('.cart-icon');
-        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-        
-        if (totalItems > 0) {
-            cartIcon.setAttribute('data-count', totalItems);
-        } else {
-            cartIcon.removeAttribute('data-count');
-        }
-    }
+    plusButton.addEventListener('click', () => {
+        let value = parseInt(countInput.value) || 0;
+        value += 1;
+        countInput.value = value;
+        localStorage.setItem(`menu_${menuId}_quantity`, value);
+    });
 
-    // Call updateCartCounter when page loads
-    updateCartCounter();
+    countInput.addEventListener('input', function() {
+        let value = parseInt(this.value) || 0;
+        if (value < 0) value = 0;
+        this.value = value;
+        localStorage.setItem(`menu_${menuId}_quantity`, value);
+    });
 
-    // Update counter when items are added to cart
+    // Handle add to cart
     addToCartButton.addEventListener('click', async (e) => {
         e.preventDefault();
         const quantity = parseInt(countInput.value) || 0;
         
         if (quantity > 0) {
             try {
-                // Get existing cart items or initialize empty array
-                let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                const response = await fetch('/keranjang/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        nama_produk: '{{ $menu->nama_produk }}',
+                        price: {{ $menu->price }},
+                        quantity: quantity,
+                        image: '{{ $menu->image }}'
+                    })
+                });
 
-                // Create new item
-                const newItem = {
-                    id: {{ $menu->id }},
-                    nama_produk: '{{ $menu->nama_produk }}',
-                    price: {{ $menu->price }},
-                    quantity: quantity,
-                    image: '{{ $menu->image }}'
-                };
-
-                // Check if item already exists in cart
-                const existingItemIndex = cartItems.findIndex(item => item.id === newItem.id);
+                const data = await response.json();
                 
-                if (existingItemIndex !== -1) {
-                    // Update quantity if item exists
-                    cartItems[existingItemIndex].quantity += quantity;
+                if (data.success) {
+                    alert('Item berhasil ditambahkan ke keranjang!');
+                    countInput.value = 0;
+                    localStorage.setItem(`menu_${menuId}_quantity`, 0);
+                    window.location.reload(); // Refresh halaman untuk update cart counter
                 } else {
-                    // Add new item if it doesn't exist
-                    cartItems.push(newItem);
+                    throw new Error(data.message || 'Gagal menambahkan ke keranjang');
                 }
-
-                // Save updated cart to localStorage
-                localStorage.setItem('cartItems', JSON.stringify(cartItems));
-
-                // Update cart total for next checkout
-                let cartTotal = cartItems.reduce((total, item) => {
-                    return total + (item.price * item.quantity);
-                }, 0);
-                localStorage.setItem('orderTotal', cartTotal);
-
-                alert('Item berhasil ditambahkan ke keranjang!');
-                countInput.value = 0;
-
-                // Optional: Update cart icon counter if you have one
-                const cartCounter = document.querySelector('.cart-count');
-                if (cartCounter) {
-                    const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-                    cartCounter.textContent = totalItems;
-                }
-
             } catch (error) {
                 alert('Gagal menambahkan ke keranjang: ' + error.message);
-                console.error(error);
             }
         } else {
             alert('Silakan pilih jumlah item terlebih dahulu!');
         }
     });
-        });
+
+    // Cart icon functionality
+    document.querySelector('.cart-icon').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '{{ route("keranjang.index") }}';
+    });
+});
     </script>
 </body>
 </html>

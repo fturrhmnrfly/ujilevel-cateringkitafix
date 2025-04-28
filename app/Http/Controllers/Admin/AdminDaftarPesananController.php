@@ -106,10 +106,11 @@ class AdminDaftarPesananController extends Controller
                 'catatan_status' => $validated['catatan']
             ]);
 
-            // Update order status for user view if exists
-            if ($order = Order::where('order_number', $pesanan->order_id)->first()) {
+            // Update order status jika ada
+            $order = Order::where('order_id', $pesanan->order_id)->first();
+            if ($order) {
                 $order->update([
-                    'status' => $this->mapStatusToOrderStatus($validated['status_pengiriman'])
+                    'status' => $validated['status_pengiriman']
                 ]);
             }
 
@@ -119,7 +120,6 @@ class AdminDaftarPesananController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Status Update Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengupdate status: ' . $e->getMessage()

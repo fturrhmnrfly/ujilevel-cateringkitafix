@@ -44,23 +44,19 @@
         }
 
         .payment-info {
-            background: #f8f9fa;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .payment-info-label {
             color: #666;
-            display: block;
-            margin-bottom: 4px;
         }
 
         .payment-info-value {
+            text-align: right;
             font-weight: bold;
-            color: #333;
-            font-size: 18px;
-            display: block;
         }
 
         .instruction-box {
@@ -320,7 +316,14 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    // Add this function at the top of your script section
+    function generateOrderId() {
+        const timestamp = new Date().getTime();
+        const random = Math.floor(Math.random() * 1000);
+        return `ORD${timestamp}${random}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
             const paymentTotal = document.getElementById('payment-total');
             const dpAmount = document.getElementById('dp-amount');
             const remainingAmount = document.getElementById('remaining-amount');
@@ -443,24 +446,22 @@
             document.getElementById('cod-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const fileInput = document.querySelector('.file-upload'); // Perbaiki selector
+                const fileInput = document.querySelector('.file-upload');
+                const confirmBtn = document.querySelector('.confirm-btn');
+                
                 if (!fileInput.files.length) {
                     alert('Silakan upload bukti transfer DP');
                     return;
                 }
 
-                const selectedPayment = paymentSelector.querySelector('span').textContent;
-                if (selectedPayment === 'Pilih Metode Pembayaran') {
-                    alert('Silakan pilih metode pembayaran DP');
-                    return;
-                }
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Memproses...';
 
                 try {
-                    // Siapkan data order
                     const orderData = {
-                        total: parseInt(savedTotal),
-                        dp: parseInt(localStorage.getItem('dpAmount')),
-                        remainingAmount: parseInt(localStorage.getItem('remainingAmount')),
+                        total: parseInt(document.getElementById('payment-total').textContent.replace(/[^\d]/g, '')),
+                        dp_amount: parseInt(document.getElementById('dp-amount').textContent.replace(/[^\d]/g, '')),
+                        remaining_amount: parseInt(document.getElementById('remaining-amount').textContent.replace(/[^\d]/g, '')),
                         date: new Date().toISOString(),
                         items: JSON.parse(localStorage.getItem('cartItems')) || [],
                         shipping: localStorage.getItem('selectedShipping'),
@@ -471,20 +472,45 @@
                         }
                     };
 
-                    // Simpan data order
-                    localStorage.setItem('currentOrder', JSON.stringify(orderData));
-
-                    // Upload bukti pembayaran (jika diperlukan)
+                    const token = document.querySelector('meta[name="csrf-token"]').content;
                     const formData = new FormData();
                     formData.append('payment_proof', fileInput.files[0]);
+                    formData.append('total', orderData.total);
+                    formData.append('dp_amount', orderData.dp_amount);
                     formData.append('order_data', JSON.stringify(orderData));
+                    formData.append('_token', token);
 
-                    // Redirect ke halaman success
-                    window.location.href = '/payment/cod/success';
+                    const response = await fetch('/payment/cod/confirm', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        }
+                    });
 
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const successOrderData = {
+                            id: generateOrderId(),
+                            total: orderData.total,
+                            dp_amount: orderData.dp_amount,
+                            remaining_amount: orderData.remaining_amount,
+                            shipping: JSON.parse(localStorage.getItem('shippingData'))
+                        };
+                        
+                        localStorage.setItem('currentOrder', JSON.stringify(successOrderData));
+                        window.location.href = '/payment/cod/success';
+                    } else {
+                        throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                    }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat memproses pembayaran');
+                    alert('Gagal mengonfirmasi pembayaran: ' + error.message);
+                } finally {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = 'Konfirmasi Pembayaran';
                 }
             });
         });

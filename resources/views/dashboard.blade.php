@@ -194,13 +194,21 @@
 
         /* Update menu grid styles */
         .menu-grid {
+            /* Update existing styles */
             display: flex;
             flex-wrap: nowrap;
             gap: 20px;
-            overflow-x: hidden;
+            overflow-x: auto;
+            /* Change from hidden to auto */
             padding: 20px 0;
             position: relative;
             width: 100%;
+            cursor: grab;
+            /* Add grab cursor */
+            scroll-behavior: smooth;
+            /* Add smooth scrolling */
+            -webkit-overflow-scrolling: touch;
+            /* Better touch scrolling */
         }
 
         .menu-item,
@@ -276,7 +284,21 @@
 
         /* Hide scrollbar */
         .menu-grid::-webkit-scrollbar {
-            display: none;
+            height: 8px;
+        }
+
+        .menu-grid::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .menu-grid::-webkit-scrollbar-thumb {
+            background: #2c2c77;
+            border-radius: 4px;
+        }
+
+        .menu-grid::-webkit-scrollbar-thumb:hover {
+            background: #1a1a5c;
         }
 
         .menu-item img,
@@ -364,11 +386,11 @@
         .counter input.count {
             width: 50px;
             text-align: center;
-            border: none;
-            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             padding: 5px;
+            font-size: 14px;
             -moz-appearance: textfield;
-            background: transparent;
         }
 
         /* Remove spinner arrows */
@@ -1370,155 +1392,224 @@
     </footer>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Helper functions
-            function getCartItems() {
-                return JSON.parse(localStorage.getItem('cartItems')) || [];
-            }
+    // Add this at the top of your existing DOMContentLoaded handler
+    const menuGrids = document.querySelectorAll('.menu-grid');
+    
+    menuGrids.forEach(grid => {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
 
-            function saveCartItems(items) {
-                localStorage.setItem('cartItems', JSON.stringify(items));
-            }
-
-            function updateCartCounter() {
-                const cartItems = getCartItems();
-                const cartIcon = document.querySelector('.cart-icon');
-                const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-
-                if (totalItems > 0) {
-                    cartIcon.setAttribute('data-count', totalItems.toString());
-                } else {
-                    cartIcon.removeAttribute('data-count');
-                }
-            }
-
-            // Convert all count spans to input fields
-            document.querySelectorAll('.counter .count').forEach(countSpan => {
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.className = 'count';
-                input.value = '0';
-                input.min = '0';
-                input.addEventListener('input', function() {
-                    let value = parseInt(this.value) || 0;
-                    if (value < 0) {
-                        value = 0;
-                    }
-                    this.value = value;
-
-                    // Update hidden input if exists
-                    const menuItem = this.closest('.menu-item, .menu-item-p');
-                    const quantityInput = menuItem.querySelector('.quantity-input');
-                    if (quantityInput) {
-                        quantityInput.value = value;
-                    }
-
-                    // Update order button state
-                    const orderBtn = menuItem.querySelector('.menu-item-button, .add-to-cart-btn');
-                    if (orderBtn) {
-                        orderBtn.disabled = value === 0;
-                    }
-                });
-                countSpan.parentNode.replaceChild(input, countSpan);
-            });
-
-            // Handle all menu items (both nasi box and prasmanan)
-            document.querySelectorAll('.menu-item, .menu-item-p').forEach(item => {
-                const countInput = item.querySelector('.count');
-                const minusButton = item.querySelector('.minus');
-                const plusButton = item.querySelector('.plus');
-                const orderButton = item.querySelector('.menu-item-button');
-                const form = item.querySelector('.add-to-cart-form');
-
-                // Get menu item details
-                const menuItemName = item.querySelector('.menu-item-title').textContent;
-                const menuItemPrice = parseInt(item.querySelector('.menu-item-price').textContent.replace(
-                    'Rp ', '').replace('.', ''));
-                const menuItemImage = item.querySelector('img').getAttribute('src');
-
-                // Handle minus button
-                minusButton.addEventListener('click', () => {
-                    let value = parseInt(countInput.value) || 0;
-                    if (value > 0) {
-                        countInput.value = value - 1;
-                        countInput.dispatchEvent(new Event('input'));
-                    }
-                });
-
-                // Handle plus button
-                plusButton.addEventListener('click', () => {
-                    let value = parseInt(countInput.value) || 0;
-                    countInput.value = value + 1;
-                    countInput.dispatchEvent(new Event('input'));
-                });
-
-                // Handle add to cart
-                const addToCart = async (quantity) => {
-                    try {
-                        const response = await fetch('/keranjang/add', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector(
-                                    'meta[name="csrf-token"]').content
-                            },
-                            body: JSON.stringify({
-                                nama_produk: menuItemName,
-                                price: menuItemPrice,
-                                quantity: quantity,
-                                image: menuItemImage
-                            })
-                        });
-
-                        const data = await response.json();
-
-                        if (data.success) {
-                            let cartItems = getCartItems();
-                            const existingItemIndex = cartItems.findIndex(item => item.name ===
-                                menuItemName);
-
-                            if (existingItemIndex !== -1) {
-                                cartItems[existingItemIndex].quantity += quantity;
-                            } else {
-                                cartItems.push({
-                                    id: cartItems.length + 1,
-                                    name: menuItemName,
-                                    price: menuItemPrice,
-                                    image: menuItemImage,
-                                    quantity: quantity
-                                });
-                            }
-
-                            saveCartItems(cartItems);
-                            updateCartCounter();
-                            countInput.value = 0;
-                            countInput.dispatchEvent(new Event('input'));
-                            alert('Item berhasil ditambahkan ke keranjang!');
-                        }
-                    } catch (error) {
-                        alert('Gagal menambahkan ke keranjang: ' + error.message);
-                    }
-                };
-
-                // Handle order button click
-                if (orderButton) {
-                    orderButton.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const quantity = parseInt(countInput.value) || 0;
-                        if (quantity > 0) {
-                            addToCart(quantity);
-                        } else {
-                            alert('Silakan pilih jumlah item terlebih dahulu!');
-                        }
-                    });
-                }
-            });
-
-            // Make cart icon clickable
-            document.querySelector('.cart-icon').addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = '/keranjang';
-            });
+        grid.addEventListener('mousedown', (e) => {
+            isDown = true;
+            grid.style.cursor = 'grabbing';
+            startX = e.pageX - grid.offsetLeft;
+            scrollLeft = grid.scrollLeft;
+            
+            // Temporarily pause auto-animation
+            grid.style.animation = 'none';
         });
+
+        grid.addEventListener('mouseleave', () => {
+            isDown = false;
+            grid.style.cursor = 'grab';
+            
+            // Resume auto-animation
+            grid.style.animation = 'slideIn 20s linear infinite';
+        });
+
+        grid.addEventListener('mouseup', () => {
+            isDown = false;
+            grid.style.cursor = 'grab';
+            
+            // Resume auto-animation
+            grid.style.animation = 'slideIn 20s linear infinite';
+        });
+
+        grid.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - grid.offsetLeft;
+            const walk = (x - startX) * 2; // Adjust sliding speed
+            grid.scrollLeft = scrollLeft - walk;
+        });
+
+        // Pause animation on hover
+        grid.addEventListener('mouseenter', () => {
+            grid.style.animation = 'none';
+        });
+
+        // Touch events for mobile devices
+        grid.addEventListener('touchstart', (e) => {
+            isDown = true;
+            startX = e.touches[0].pageX - grid.offsetLeft;
+            scrollLeft = grid.scrollLeft;
+            grid.style.animation = 'none';
+        });
+
+        grid.addEventListener('touchend', () => {
+            isDown = false;
+            grid.style.animation = 'slideIn 20s linear infinite';
+        });
+
+        grid.addEventListener('touchmove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.touches[0].pageX - grid.offsetLeft;
+            const walk = (x - startX) * 2;
+            grid.scrollLeft = scrollLeft - walk;
+        });
+    });
+    
+    // Helper functions
+    function getCartItems() {
+        return JSON.parse(localStorage.getItem('cartItems')) || [];
+    }
+
+    function saveCartItems(items) {
+        localStorage.setItem('cartItems', JSON.stringify(items));
+    }
+
+    function updateCartCounter() {
+        const cartItems = getCartItems();
+        const cartIcon = document.querySelector('.cart-icon');
+        const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+        if (totalItems > 0) {
+            cartIcon.setAttribute('data-count', totalItems.toString());
+        } else {
+            cartIcon.removeAttribute('data-count');
+        }
+    }
+
+    // Convert all count spans to input fields
+    document.querySelectorAll('.counter .count').forEach(countSpan => {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'count';
+        input.value = '0';
+        input.min = '0';
+        input.addEventListener('input', function() {
+            let value = parseInt(this.value) || 0;
+            if (value < 0) {
+                value = 0;
+            }
+            this.value = value;
+
+            // Update hidden input if exists
+            const menuItem = this.closest('.menu-item, .menu-item-p');
+            const quantityInput = menuItem.querySelector('.quantity-input');
+            if (quantityInput) {
+                quantityInput.value = value;
+            }
+
+            // Update order button state
+            const orderBtn = menuItem.querySelector('.menu-item-button, .add-to-cart-btn');
+            if (orderBtn) {
+                orderBtn.disabled = value === 0;
+            }
+        });
+        countSpan.parentNode.replaceChild(input, countSpan);
+    });
+
+    // Handle all menu items (both nasi box and prasmanan)
+    document.querySelectorAll('.menu-item, .menu-item-p').forEach(item => {
+        const countInput = item.querySelector('.count');
+        const minusButton = item.querySelector('.minus');
+        const plusButton = item.querySelector('.plus');
+        const orderButton = item.querySelector('.menu-item-button');
+        const form = item.querySelector('.add-to-cart-form');
+
+        // Get menu item details
+        const menuItemName = item.querySelector('.menu-item-title').textContent;
+        const menuItemPrice = parseInt(item.querySelector('.menu-item-price').textContent.replace(
+            'Rp ', '').replace('.', ''));
+        const menuItemImage = item.querySelector('img').getAttribute('src');
+
+        // Handle minus button
+        minusButton.addEventListener('click', () => {
+            let value = parseInt(countInput.value) || 0;
+            if (value > 0) {
+                countInput.value = value - 1;
+                countInput.dispatchEvent(new Event('input'));
+            }
+        });
+
+        // Handle plus button
+        plusButton.addEventListener('click', () => {
+            let value = parseInt(countInput.value) || 0;
+            countInput.value = value + 1;
+            countInput.dispatchEvent(new Event('input'));
+        });
+
+        // Handle add to cart
+        const addToCart = async (quantity) => {
+            try {
+                const response = await fetch('/keranjang/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector(
+                            'meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        nama_produk: menuItemName,
+                        price: menuItemPrice,
+                        quantity: quantity,
+                        image: menuItemImage
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    let cartItems = getCartItems();
+                    const existingItemIndex = cartItems.findIndex(item => item.name ===
+                        menuItemName);
+
+                    if (existingItemIndex !== -1) {
+                        cartItems[existingItemIndex].quantity += quantity;
+                    } else {
+                        cartItems.push({
+                            id: cartItems.length + 1,
+                            name: menuItemName,
+                            price: menuItemPrice,
+                            image: menuItemImage,
+                            quantity: quantity
+                        });
+                    }
+
+                    saveCartItems(cartItems);
+                    updateCartCounter();
+                    countInput.value = 0;
+                    countInput.dispatchEvent(new Event('input'));
+                    alert('Item berhasil ditambahkan ke keranjang!');
+                }
+            } catch (error) {
+                alert('Gagal menambahkan ke keranjang: ' + error.message);
+            }
+        };
+
+        // Handle order button click
+        if (orderButton) {
+            orderButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                const quantity = parseInt(countInput.value) || 0;
+                if (quantity > 0) {
+                    addToCart(quantity);
+                } else {
+                    alert('Silakan pilih jumlah item terlebih dahulu!');
+                }
+            });
+        }
+    });
+
+    // Make cart icon clickable
+    document.querySelector('.cart-icon').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '/keranjang';
+    });
+});
     </script>
     <main>
         @yield('content')
