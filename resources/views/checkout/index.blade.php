@@ -1051,7 +1051,8 @@
 
                     <div class="button-group">
                         <button id="submit-order" class="btn-lanjutkan" disabled>Buat Pesanan</button>
-                        <button id="proceed-payment" class="btn-lanjutkan" style="display: none;">Lanjutkan ke Pembayaran</button>
+                        <button id="proceed-payment" class="btn-lanjutkan" style="display: none;">Lanjutkan ke
+                            Pembayaran</button>
                     </div>
 
             </form>
@@ -1202,10 +1203,10 @@
             function updateTotals() {
                 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
                 const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                
+
                 // Update subtotal display
                 document.getElementById('subtotal').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
-                
+
                 // Get selected shipping option cost
                 const selectedShipping = document.querySelector('input[name="shipping_option"]:checked');
                 const shippingCosts = {
@@ -1214,17 +1215,17 @@
                     'regular': 5000,
                     'economy': 2000
                 };
-                
+
                 const shippingCost = selectedShipping ? shippingCosts[selectedShipping.value] : 0;
-                
+
                 // Update shipping cost display
                 const shippingDisplay = document.querySelector('.summary-item:nth-child(2) span:last-child');
                 shippingDisplay.textContent = shippingCost ? `Rp ${shippingCost.toLocaleString('id-ID')}` : '-';
-                
+
                 // Calculate and update total
                 const total = subtotal + shippingCost;
                 document.getElementById('total').textContent = `Rp ${total.toLocaleString('id-ID')}`;
-                
+
                 // Save total to localStorage
                 localStorage.setItem('orderTotal', total.toString());
             }
@@ -1243,7 +1244,8 @@
 
             // 3. Update fungsi confirmShippingOption
             function confirmShippingOption() {
-                const selectedOption = document.querySelector('.shipping-options-modal input[type="radio"]:checked');
+                const selectedOption = document.querySelector(
+                '.shipping-options-modal input[type="radio"]:checked');
                 if (selectedOption) {
                     updateShippingDisplay(selectedOption.value);
                     updateTotals(); // Tambahkan ini
@@ -1736,7 +1738,8 @@
             }
 
             // Get shipping cost from the summary span instead
-            const shippingCostText = document.querySelector('.summary-item:nth-child(2) span:last-child').textContent;
+            const shippingCostText = document.querySelector('.summary-item:nth-child(2) span:last-child')
+                .textContent;
             const shippingCost = parseFloat(shippingCostText.replace(/[^\d]/g, '') || '0');
 
             // Save shipping selection to session/local storage
@@ -1887,11 +1890,30 @@
         function submitOrder(e) {
             e.preventDefault();
 
-            const requiredFields = [
-                { id: 'delivery-date', message: 'Tanggal pengiriman harus diisi' },
-                { id: 'delivery-time', message: 'Waktu pengiriman harus diisi' },
-                { id: 'address', message: 'Alamat harus diisi' },
-                { id: 'phone', message: 'Nomor telepon harus diisi' }
+            const shippingData = {
+                deliveryDate: document.getElementById('delivery-date').value,
+                deliveryTime: document.getElementById('delivery-time').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value
+            };
+            localStorage.setItem('shippingData', JSON.stringify(shippingData));
+
+            const requiredFields = [{
+                    id: 'delivery-date',
+                    message: 'Tanggal pengiriman harus diisi'
+                },
+                {
+                    id: 'delivery-time',
+                    message: 'Waktu pengiriman harus diisi'
+                },
+                {
+                    id: 'address',
+                    message: 'Alamat harus diisi'
+                },
+                {
+                    id: 'phone',
+                    message: 'Nomor telepon harus diisi'
+                }
             ];
 
             for (const field of requiredFields) {
@@ -1918,11 +1940,11 @@
             }
 
             const formattedItems = cartItems.map(item => ({
-            name: item.nama_produk,      // ✅ diambil dari nama_produk
-            price: parseFloat(item.price), // konversi karena awalnya string
-            quantity: item.quantity,
-            image: item.image
-}));
+                name: item.nama_produk, // ✅ diambil dari nama_produk
+                price: parseFloat(item.price), // konversi karena awalnya string
+                quantity: item.quantity,
+                image: item.image
+            }));
 
 
             const orderData = {
@@ -1937,7 +1959,8 @@
                 },
                 payment_method: localStorage.getItem('selectedPaymentMethod'), // Tambahkan payment method
                 total: parseFloat(document.getElementById('total').textContent.replace(/[^\d]/g, '')),
-                shipping_cost: parseFloat(document.querySelector('.summary-item:nth-child(2) span:last-child').textContent.replace(/[^\d]/g, '')) || 0,
+                shipping_cost: parseFloat(document.querySelector('.summary-item:nth-child(2) span:last-child')
+                    .textContent.replace(/[^\d]/g, '')) || 0,
                 subtotal: parseFloat(document.getElementById('subtotal').textContent.replace(/[^\d]/g, ''))
             };
 
@@ -1947,26 +1970,26 @@
                 return;
             }
 
-            fetch('{{ route("orders.store") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify(orderData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    handleOrderSuccess(data.order_id);
-                } else {
-                    throw new Error(data.message || 'Gagal membuat pesanan');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat mengirim pesanan: ' + error.message);
-            });
+            fetch('{{ route('orders.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(orderData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        handleOrderSuccess(data.order_id);
+                    } else {
+                        throw new Error(data.message || 'Gagal membuat pesanan');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat mengirim pesanan: ' + error.message);
+                });
         }
 
 
@@ -2044,76 +2067,76 @@
         });
 
         function handleOrderSuccess(orderId) {
-    // Hide submit button and show proceed button
-    document.getElementById('submit-order').style.display = 'none';
-    const proceedButton = document.getElementById('proceed-payment');
-    proceedButton.style.display = 'block';
-    
-    // Store order ID
-    localStorage.setItem('currentOrderId', orderId);
-    
-    // Add click handler for proceed button
-    proceedButton.addEventListener('click', function() {
-        const selectedPayment = localStorage.getItem('selectedPaymentMethod');
-        if (!selectedPayment) {
-            alert('Silakan pilih metode pembayaran terlebih dahulu');
-            return;
+            // Hide submit button and show proceed button
+            document.getElementById('submit-order').style.display = 'none';
+            const proceedButton = document.getElementById('proceed-payment');
+            proceedButton.style.display = 'block';
+
+            // Store order ID
+            localStorage.setItem('currentOrderId', orderId);
+
+            // Add click handler for proceed button
+            proceedButton.addEventListener('click', function() {
+                const selectedPayment = localStorage.getItem('selectedPaymentMethod');
+                if (!selectedPayment) {
+                    alert('Silakan pilih metode pembayaran terlebih dahulu');
+                    return;
+                }
+
+                // Redirect to payment confirmation page
+                window.location.href = `{{ url('/metodepembayaran') }}/${selectedPayment}`;
+            });
         }
-        
-        // Redirect to payment confirmation page
-        window.location.href = `{{ url('/metodepembayaran') }}/${selectedPayment}`;
-    });
-}
 
         // Add this function to check form completion
-function checkFormCompletion() {
-    const requiredFields = [
-        'delivery-date',
-        'delivery-time', 
-        'address',
-        'phone'
-    ];
+        function checkFormCompletion() {
+            const requiredFields = [
+                'delivery-date',
+                'delivery-time',
+                'address',
+                'phone'
+            ];
 
-    // Cek apakah semua field terisi
-    const allFieldsFilled = requiredFields.every(fieldId => {
-        const field = document.getElementById(fieldId);
-        return field && field.value.trim() !== '';
-    });
-    
-    // Cek opsi pengiriman dipilih
-    const shippingSelected = document.querySelector('input[name="shipping_option"]:checked');
-    // Cek metode pembayaran dipilih
-    const paymentSelected = localStorage.getItem('selectedPaymentMethod');
-    
-    const submitButton = document.getElementById('submit-order');
-    submitButton.disabled = !(allFieldsFilled && shippingSelected && paymentSelected);
+            // Cek apakah semua field terisi
+            const allFieldsFilled = requiredFields.every(fieldId => {
+                const field = document.getElementById(fieldId);
+                return field && field.value.trim() !== '';
+            });
 
-    // Tambahkan log untuk debug
-    console.log({
-        allFieldsFilled,
-        shippingSelected: !!shippingSelected,
-        paymentSelected,
-        buttonDisabled: submitButton.disabled
-    });
-}
+            // Cek opsi pengiriman dipilih
+            const shippingSelected = document.querySelector('input[name="shipping_option"]:checked');
+            // Cek metode pembayaran dipilih
+            const paymentSelected = localStorage.getItem('selectedPaymentMethod');
 
-// Add listeners to all form fields
-document.addEventListener('DOMContentLoaded', function() {
-    const formFields = document.querySelectorAll('input, textarea');
-    formFields.forEach(field => {
-        field.addEventListener('change', checkFormCompletion);
-        field.addEventListener('input', checkFormCompletion);
-    });
-    
-    // Initial check
-    checkFormCompletion();
-});
+            const submitButton = document.getElementById('submit-order');
+            submitButton.disabled = !(allFieldsFilled && shippingSelected && paymentSelected);
 
-// Saat memilih metode pembayaran COD
-document.querySelector('input[value="cod"]').addEventListener('change', function() {
-    localStorage.setItem('selectedPaymentMethod', 'cod');
-    checkFormCompletion();
-});
+            // Tambahkan log untuk debug
+            console.log({
+                allFieldsFilled,
+                shippingSelected: !!shippingSelected,
+                paymentSelected,
+                buttonDisabled: submitButton.disabled
+            });
+        }
+
+        // Add listeners to all form fields
+        document.addEventListener('DOMContentLoaded', function() {
+            const formFields = document.querySelectorAll('input, textarea');
+            formFields.forEach(field => {
+                field.addEventListener('change', checkFormCompletion);
+                field.addEventListener('input', checkFormCompletion);
+            });
+
+            // Initial check
+            checkFormCompletion();
+        });
+
+        // Saat memilih metode pembayaran COD
+        document.querySelector('input[value="cod"]').addEventListener('change', function() {
+            localStorage.setItem('selectedPaymentMethod', 'cod');
+            checkFormCompletion();
+        });
     </script>
 </body>
 

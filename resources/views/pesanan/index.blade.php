@@ -368,11 +368,9 @@
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-top: 8px;">
                         <span style="color: #333; font-size: 14px;">Total</span>
-                        <span style="color: #333; font-size: 14px; font-weight: 600;">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
-                        <span style="color: #666; font-size: 14px;">Metode Pembayaran</span>
-                        <span style="color: #333; font-size: 14px;">{{ strtoupper($order->payment_method) }}</span>
+                        <span style="color: #333; font-size: 14px; font-weight: 600;">
+                            Rp {{ number_format(($order->subtotal + $order->shipping_cost), 0, ',', '.') }}
+                        </span>
                     </div>
                 </div>
 

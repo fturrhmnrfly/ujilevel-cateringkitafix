@@ -71,6 +71,75 @@
             margin-bottom: 20px;
         }
 
+        /* Tambahkan di dalam tag <style> yang sudah ada */
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .buat-transaksi {
+            float: right;
+            background: #2c2c77;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: none;
+        }
+
+        .search-box {
+            margin: 20px 0;
+        }
+
+        .search-box input {
+            width: 300px;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        td button {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+        }
+
+        .view-file {
+            background: #6c757d;
+            color: white;
+        }
+
+        .update-status {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .status-column {
+            font-weight: 500;
+        }
+
+        .description-column {
+            color: #666;
+            max-width: 250px;
+        }
+
+        .transaction-date {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .transaction-id {
+            font-family: monospace;
+            color: #444;
+        }
+
+        .price-column {
+            font-weight: 500;
+            color: #333;
+        }
+
         /* Add these styles to the existing <style> section */
         .modal {
             display: none;
@@ -136,7 +205,7 @@
     <div class="main-content">
         <div class="content">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Daftar Transaksi</h2>
+                <h2>Transaksi</h2>
                 <input type="text" class="search-input" placeholder="Cari transaksi...">
             </div>
 

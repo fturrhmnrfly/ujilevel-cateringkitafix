@@ -180,7 +180,7 @@ php
 
     <div class="main-content">
         <div class="header">
-            <h1 class="page-title">{{ $title ?? 'Dashboard' }}</h1>
+            <h1 class="page-title">{{ $title ?? 'Penilaian' }}</h1>
             <div class="admin-controls">
                 <div class="notification-wrapper">
                     <a href="{{ route('admin.notifications.index') }}" class="notification-icon">

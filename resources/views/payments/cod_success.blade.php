@@ -28,77 +28,88 @@
             font-weight: bold;
         }
         
+        /* Container utama */
         .container {
-            max-width: 480px;
-            margin: 0 auto;
+            max-width: 400px;
+            margin: 20px auto;
             background-color: white;
-            min-height: calc(100vh - 48px);
-            padding: 20px;
+            min-height: auto;
+            padding: 15px;
             display: flex;
             flex-direction: column;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
+        /* Success icon */
         .success-icon {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             background-color: #4CAF50;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 30px auto;
+            margin: 20px auto;
         }
         
+        /* Text styles */
         .success-title {
             text-align: center;
             font-size: 20px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            color: #333;
         }
         
         .success-subtitle {
             text-align: center;
             font-size: 14px;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
+        /* Payment info */
         .payment-info {
-            background-color: #f8f9fa;
+            background-color: white;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 24px;
+            padding: 15px;
+            margin: 15px 0;
         }
         
         .order-details {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-size: 14px;
-        }
-
-        .shipping-info-box {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .shipping-title {
-            font-size: 16px;
-            margin-bottom: 15px;
             color: #333;
         }
         
-        .shipping-detail {
+        /* Shipping info */
+        .shipping-info-box {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .shipping-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
             margin-bottom: 12px;
+        }
+        
+        .shipping-detail {
+            margin-bottom: 16px;
         }
         
         .shipping-detail strong {
             display: block;
-            margin-bottom: 4px;
+            font-weight: 500;
             color: #666;
-            font-size: 14px;
+            margin-bottom: 4px;
         }
         
         .shipping-detail div {
@@ -106,20 +117,30 @@
             font-size: 14px;
         }
         
+        /* Button styles */
         .home-button {
-            background-color: #2c2c77;
+            background-color: rgb(79, 94, 193);
             color: white;
-            padding: 12px 0;
+            padding: 12px;
+            border: none;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 500;
+            cursor: pointer;
+            width: 100%;
             text-align: center;
             text-decoration: none;
-            margin-top: auto;
+            transition: background-color 0.2s;
         }
         
+        .home-button:hover {
+            background-color: rgb(63, 75, 154);
+        }
+        
+        /* Price formatting */
         .price {
-            font-weight: bold;
+            font-weight: 600;
+            color: #333;
         }
     </style>
 </head>
@@ -148,20 +169,12 @@
                 <span id="orderDate"></span>
             </div>
             <div class="order-details">
-                <span>DP yang Dibayar</span>
-                <span class="price" id="dpAmount"></span>
-            </div>
-            <div class="order-details">
-                <span>Sisa Pembayaran (COD)</span>
-                <span class="price" id="remainingAmount"></span>
-            </div>
-            <div class="order-details">
                 <span>Total Pembayaran</span>
                 <span class="price" id="totalPayment"></span>
             </div>
             <div class="order-details">
                 <span>Metode Pembayaran</span>
-                <span>COD</span>
+                <span>COD (Cash On Delivery)</span>
             </div>
         </div>
         
@@ -188,36 +201,62 @@
     </div>
 
     <script>
+        function generateOrderId() {
+            const timestamp = new Date().getTime();
+            const random = Math.floor(Math.random() * 1000);
+            return `ORD${timestamp}${random}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            const orderData = JSON.parse(localStorage.getItem('currentOrder'));
-            const shippingData = JSON.parse(localStorage.getItem('shippingData'));
-            
-            if (orderData) {
-                document.getElementById('orderId').textContent = orderData.id;
+            try {
+                // Get data from localStorage
+                const orderData = JSON.parse(localStorage.getItem('currentOrder')) || {};
+                const shippingData = JSON.parse(localStorage.getItem('shippingData')) || {};
+                const orderTotal = localStorage.getItem('orderTotal');
+                
+                // Display order info
+                if (orderData.id) {
+                    document.getElementById('orderId').textContent = orderData.id;
+                } else {
+                    // Generate new order ID if not exists
+                    document.getElementById('orderId').textContent = generateOrderId();
+                }
+                
+                // Display current date as order date
                 document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'
                 });
-                document.getElementById('dpAmount').textContent = `Rp ${parseInt(localStorage.getItem('dpAmount')).toLocaleString('id-ID')}`;
-                document.getElementById('remainingAmount').textContent = `Rp ${parseInt(localStorage.getItem('remainingAmount')).toLocaleString('id-ID')}`;
-                document.getElementById('totalPayment').textContent = `Rp ${parseInt(localStorage.getItem('orderTotal')).toLocaleString('id-ID')}`;
-            }
+                
+                // Display payment total
+                if (orderTotal) {
+                    document.getElementById('totalPayment').textContent = `Rp ${parseInt(orderTotal).toLocaleString('id-ID')}`;
+                }
 
-            if (shippingData) {
-                document.getElementById('deliveryDate').textContent = shippingData.deliveryDate;
-                document.getElementById('deliveryTime').textContent = shippingData.deliveryTime;
-                document.getElementById('deliveryAddress').textContent = shippingData.address;
-            }
+                // Display shipping info
+                if (shippingData) {
+                    document.getElementById('deliveryDate').textContent = shippingData.deliveryDate || '-';
+                    document.getElementById('deliveryTime').textContent = shippingData.deliveryTime || '-';
+                    document.getElementById('deliveryAddress').textContent = shippingData.address || '-';
+                }
 
-            // Clear localStorage after displaying
-            localStorage.removeItem('cartItems');
-            localStorage.removeItem('currentOrder');
-            localStorage.removeItem('orderTotal');
-            localStorage.removeItem('selectedPaymentMethod');
-            localStorage.removeItem('shippingData');
-            localStorage.removeItem('dpAmount');
-            localStorage.removeItem('remainingAmount');
+                // Clear localStorage after displaying
+                setTimeout(() => {
+                    localStorage.removeItem('currentOrder');
+                    localStorage.removeItem('shippingData');
+                    localStorage.removeItem('orderTotal');
+                    localStorage.removeItem('cartItems');
+                    localStorage.removeItem('selectedPaymentMethod');
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error displaying order data:', error);
+                // Set default values if there's an error
+                document.getElementById('deliveryDate').textContent = '-';
+                document.getElementById('deliveryTime').textContent = '-';
+                document.getElementById('deliveryAddress').textContent = '-';
+            }
         });
     </script>
 </body>

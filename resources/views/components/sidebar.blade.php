@@ -135,15 +135,19 @@
         Dashboard
     </a>
     <a href="{{ route('admin.tentangkami.index') }}" class="menu-item active">
-        <i class="fa-solid fa-house"></i>
+        <i class="fa-solid fa-user"></i>
         Tentang Kami
     </a>
     <a href="{{ route('admin.kategori.index') }}" class="menu-item active">
-        <i class="fa-solid fa-house"></i>
+        <i class="fa-solid fa-folder"></i>
         Kategori
     </a>
+    <a href="{{ route('admin.karyawan.index') }}" class="menu-item active">
+        <i class="fa-solid fa-users"></i>
+        Daftar Karyawan
+    </a>
     <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">
-        <i class="fa-solid fa-mug-hot"></i>
+        <i class="fa-solid fa-cube"></i>
         Kelola Makanan
     </a>
     <a href="{{ route('admin.daftarpesanan.index') }}" class="menu-item">
@@ -151,8 +155,8 @@
         Daftar Pesanan
     </a>
     <a href="{{ route('admin.laporan.index') }}" class="menu-item">
-        <i class="fa-solid fa-file"></i>
-        Laporan
+        <i class="fa-solid fa-chart-bar"></i>
+        Laporan Keuangan
     </a>
     <a href="{{ route('admin.transaksi.index') }}" class="menu-item">
         <i class="fa-solid fa-credit-card"></i>
@@ -161,14 +165,6 @@
     <a href="{{ route('admin.metodepembayaran.index') }}" class="menu-item">
         <i class="fa-solid fa-circle-dollar-to-slot"></i>
         Metode Pembayaran
-    </a>
-    <a href="{{ route('admin.statuspembayaran.index') }}" class="menu-item">
-        <i class="fa-solid fa-box-open"></i>
-        Status Pembayaran
-    </a>
-    <a href="{{ route('admin.statuspengiriman.index') }}" class="menu-item">
-        <i class="fa-solid fa-truck-fast"></i>
-        Status Pengiriman
     </a>
     <a href="{{ route('admin.penilaian.index') }}" class="menu-item">
         <i class="fa-solid fa-medal"></i>

@@ -150,6 +150,18 @@
             font-weight: bold;
             color: #333;
         }
+
+        .message-column {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message-content {
+            color: #666;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -159,7 +171,7 @@
 
     <div class="main-content">
         <div class="header">
-            <h1 class="page-title">{{ $title ?? 'Dashboard' }}</h1>
+            <h1 class="page-title">{{ $title ?? 'Daftar Pesanan' }}</h1>
             <div class="admin-controls">
                 <div class="notification-wrapper">
                     <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
@@ -202,6 +214,7 @@
                             <th>Lokasi</th>
                             <th>Total Harga</th>
                             <th>Status</th>
+                            <th>Pesan</th> <!-- Kolom baru -->
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -218,6 +231,11 @@
                                 <td>Rp.{{ number_format($pesanan->total_harga, 2) }}</td>
                                 <td class="status-{{ $pesanan->status_pengiriman }}">
                                     {{ ucfirst($pesanan->status_pengiriman) }}
+                                </td>
+                                <td class="message-column">
+                                    <span class="message-content" title="{{ $pesanan->pesan_untuk_penjual ?? '-' }}">
+                                        {{ $pesanan->pesan_untuk_penjual ?? '-' }}
+                                    </span>
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.daftarpesanan.edit', $pesanan) }}"

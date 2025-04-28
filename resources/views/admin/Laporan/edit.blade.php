@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catering Kita - Admin</title>
+    <title>Edit Laporan - Admin</title>
     <style>
         * {
             margin: 0;
@@ -13,97 +13,27 @@
         }
 
         body {
-            display: flex;
             background-color: #f3f4f6;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: #1e1b4b;
-            min-height: 100vh;
-            padding: 20px;
-            color: white;
-            position: fixed;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        .brand-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .menu-item {
-            padding: 12px 15px;
-            margin: 5px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .menu-item:hover {
-            background-color: #2d2a77;
-        }
-
-        .menu-item.active {
-            background-color: #2d2a77;
         }
 
         .main-content {
             margin-left: 250px;
-            width: calc(100% - 250px);
+            padding: 20px;
         }
 
         .header {
-            background-color: white;
+            background: white;
             padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .admin-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-        }
-
-        .content {
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .form-wrapper {
-            max-width: 1000px;
-            width: 100%;
+        .form-container {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .form-group {
@@ -112,150 +42,102 @@
 
         label {
             display: block;
+            margin-bottom: 8px;
             font-weight: 500;
             color: #333;
-            margin-bottom: 8px;
         }
 
-        .form-control {
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
             width: 100%;
-            padding: 12px 15px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             font-size: 14px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
             background-color: #f8f9fa;
-            color: #495057;
         }
 
-        .form-control::placeholder {
-            color: #999;
-            font-size: 14px;
-        }
-
-        textarea.form-control {
-            min-height: 100px;
+        textarea {
+            height: 100px;
             resize: vertical;
         }
 
-        select.form-control {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            padding-right: 40px;
-        }
-
-        .btn-tambahkan {
+        .btn-submit {
             background-color: #4040ff;
             color: white;
-            padding: 12px 30px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 14px;
+            border-radius: 25px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 14px;
         }
 
-        .btn-tambahkan:hover {
-            background-color: #3333ff;
+        .btn-submit:hover {
+            background-color: #3333cc;
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .btn-tambahkan {
-                width: 100%;
-            }
+        .btn-back {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-right: 10px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo-container">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="logo">
-            <span class="brand-name">CATERING KITA</span>
-        </div>
-
-        <div class="menu-item">Dashboard</div>
-        <div class="menu-item">Kelola Makanan</div>
-        <div class="menu-item">Stok Bahan</div>
-        <div class="menu-item">Daftar Pesanan</div>
-        <div class="menu-item active">Laporan</div>
-        <div class="menu-item">Transaksi</div>
-        <div class="menu-item">Metode Pembayaran</div>
-        <div class="menu-item">Status Pembayaran</div>
-        <div class="menu-item">Status Pengiriman</div>
-        <div class="menu-item">Penilaian</div>
-
-        <div class="logout-btn">Logout</div>
-    </div>
+    <x-sidebar></x-sidebar>
 
     <div class="main-content">
         <div class="header">
-            <h1 class="page-title">Edit Laporan</h1>
-            <div class="admin-profile">
-                <span>Admin</span>
-                <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
-            </div>
+            <h1>Edit Laporan</h1>
         </div>
 
-        <div class="content">
-            <div class="form-wrapper">
-                <form action="{{ route('admin.laporan.update', $laporans->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
+        <div class="form-container">
+            <form action="{{ route('admin.laporan.update', $laporan->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                
+                <div class="form-group">
+                    <label>Laporan</label>
+                    <input type="text" name="laporan" value="{{ $laporan->laporan }}" placeholder="Laporan apa: penjuala / pengeluaran" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="laporan">Laporan</label>
-                        <input type="text" name="laporan" id="laporan" class="form-control" value="{{ $laporans->laporan }}" required>
-                    </div>
+                <div class="form-group">
+                    <label>Jenis Laporan</label>
+                    <input type="text" name="jenis_laporan" value="{{ $laporan->jenis_laporan }}" placeholder="Hari / perbulan / mingguan" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="jenis_laporan">Jenis Laporan</label>
-                        <select name="jenis_laporan" id="jenis_laporan" class="form-control" required>
-                            <option value="Harian" {{ $laporans->jenis_laporan == 'Harian' ? 'selected' : '' }}>Harian</option>
-                            <option value="Mingguan" {{ $laporans->jenis_laporan == 'Mingguan' ? 'selected' : '' }}>Mingguan</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label>Tanggal buat laporannya</label>
+                    <input type="date" name="tanggal" value="{{ $laporan->tanggal }}" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="tanggal">Tanggal</label>
-                        <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ $laporans->tanggal }}" required>
-                    </div>
+                <div class="form-group">
+                    <label>Admin Yang buat</label>
+                    <input type="text" name="admin" value="{{ $laporan->admin }}" placeholder="Admin 1/2/3" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="admin">Admin</label>
-                        <input type="text" name="admin" id="admin" class="form-control" value="{{ $laporans->admin }}" required>
-                    </div>
+                <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea name="deskripsi" placeholder="Maksudnya laporan ini di buat untuk laporan apa ?" required>{{ $laporan->deskripsi }}</textarea>
+                </div>
 
-                    <div class="form-group">
-                        <label for="deskripsi">Deskripsi</label>
-                        <textarea name="deskripsi" id="deskripsi" class="form-control">{{ $laporans->deskripsi }}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <input type="text" name="status" value="{{ $laporan->status }}" placeholder="selesai / masih belum lengkap /pending" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select name="status" id="status" class="form-control" required>
-                            <option value="Selesai" {{ $laporans->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                            <option value="Pending" {{ $laporans->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn-tambahkan">Simpan Perubahan</button>
-                </form>
-            </div>
+                <div>
+                    <a href="{{ route('admin.laporan.index') }}" class="btn-back">Kembali</a>
+                    <button type="submit" class="btn-submit">Perbarui</button>
+                </div>
+            </form>
         </div>
     </div>
 </body>

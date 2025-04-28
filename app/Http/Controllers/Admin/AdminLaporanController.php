@@ -3,98 +3,43 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Laporan;
+use App\Exports\LaporanExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 
-class AdminLaporanController extends Controller
+class AdminLaporanController extends Controller 
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $laporans = Laporan::all(); // Mengambil semua data laporan
-        return view('admin.laporan.index', compact('laporans')); // Mengarahkan ke view
+        $laporans = Laporan::latest()->get();
+        return view('admin.laporan.index', compact('laporans'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('admin.laporan.create'); // Mengarahkan ke form pembuatan laporan
+        return view('admin.laporan.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Validasi input
-        $request->validate([
+        $validated = $request->validate([
             'laporan' => 'required',
             'jenis_laporan' => 'required',
             'tanggal' => 'required|date',
             'admin' => 'required',
-            'deskripsi' => 'nullable',
-            'status' => 'required|in:Selesai,Pending',
+            'deskripsi' => 'required',
+            'status' => 'required'
         ]);
 
-        // Menyimpan data ke database
-        Laporan::create($request->all());
+        Laporan::create($validated);
 
-        return redirect()->route('admin.laporan.index')->with('success', 'Laporan berhasil ditambahkan!');
+        return redirect()->route('admin.laporan.index')
+            ->with('success', 'Laporan berhasil dibuat');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function export()
     {
-        $laporans = Laporan::findOrFail($id); // Mengambil data berdasarkan ID
-        return view('admin.laporan.show', compact('laporans')); // Mengarahkan ke detail laporan
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $laporans = Laporan::findOrFail($id); // Mengambil data berdasarkan ID
-        return view('admin.laporan.edit', compact('laporans')); // Mengarahkan ke form edit
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        // Validasi input
-        $request->validate([
-            'laporan' => 'required',
-            'jenis_laporan' => 'required',
-            'tanggal' => 'required|date',
-            'admin' => 'required',
-            'deskripsi' => 'nullable',
-            'status' => 'required|in:Selesai,Pending',
-        ]);
-
-        // Mengupdate data di database
-        $laporans = Laporan::findOrFail($id);
-        $laporans->update($request->all());
-
-        return redirect()->route('admin.laporan.index')->with('success', 'Laporan berhasil diperbarui!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        // Menghapus data berdasarkan ID
-        $laporans = Laporan::findOrFail($id);
-        $laporans->delete();
-
-        return redirect()->route('admin.laporan.index')->with('success', 'Laporan berhasil dihapus!');
+        return Excel::download(new LaporanExport, 'laporan-keuangan.xlsx');
     }
 }

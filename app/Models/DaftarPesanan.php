@@ -14,7 +14,8 @@ class DaftarPesanan extends Model
         'tanggal_acara',
         'lokasi_pengiriman',
         'total_harga',
-        'status_pengiriman'
+        'status_pengiriman',
+        'pesan_untuk_penjual' // Add this line
     ];
 
     protected $casts = [

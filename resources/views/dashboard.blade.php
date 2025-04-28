@@ -55,6 +55,10 @@
             align-items: center;
             padding: 40px;
             background-color: #ffffff;
+            overflow: visible;
+            /* Allow content to overflow */
+            position: relative;
+            z-index: 1;
         }
 
         .hero-content {
@@ -108,14 +112,15 @@
             border-radius: 0 0 0 200px;
             clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 85%);
             overflow: hidden;
-            /* Add this to contain the absolute positioned image */
+            margin-top: -40px;
+            /* Add negative margin to move it up */
         }
 
         .main-hero-image {
             width: 500px;
             position: relative;
             z-index: 2;
-            /* Higher z-index to appear in front */
+            object-fit: cover;
         }
 
         .background-curve {
@@ -123,9 +128,13 @@
             bottom: 0;
             right: -150px;
             z-index: 1;
-            /* Lower z-index to appear behind */
             width: 100%;
             height: 100%;
+            /* Increase height */
+            margin-top: -120%;
+            /* Move curve up */
+            transform: translateY(-10%);
+            /* Fine-tune vertical position */
         }
 
         .about {
@@ -789,11 +798,11 @@
             width: 200px;
             height: auto;
             position: absolute;
-            top: -40px;
+            top: -30px;
             left: -80px;
             /* Adjust left position */
             z-index: 1;
-            margin-left: 20px
+            margin-left: 60px
         }
 
         .hero-content h1 {

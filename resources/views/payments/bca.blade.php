@@ -175,7 +175,7 @@
 
         <div class="form-group">
             <label class="form-label">Bukti Transferan</label>
-            <input type="file" class="file-upload" name="payment_proof" accept="images/*">
+            <input type="file" class="file-upload" name="payment_proof" accept="storage/*">
         </div>
 
         <button class="confirm-btn">Konfirmasi Pembayaran</button>
@@ -183,6 +183,12 @@
     </div>
 
     <script>
+            function generateOrderId() {
+            const timestamp = new Date().getTime();
+            const random = Math.floor(Math.random() * 1000);
+            return `ORD${timestamp}${random}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const paymentTotal = document.getElementById('payment-total');
 
@@ -237,62 +243,68 @@
         });
 
         document.querySelector('.confirm-btn').addEventListener('click', async function() {
-    const fileInput = document.querySelector('.file-upload');
+            const fileInput = document.querySelector('.file-upload');
 
-    if (!fileInput.files.length) {
-        alert('Silakan upload bukti pembayaran');
-        return;
-    }
-
-    const confirmBtn = document.querySelector('.confirm-btn');
-    confirmBtn.disabled = true;
-    confirmBtn.textContent = 'Memproses...';
-
-    try {
-        // ➡️ Deklarasikan orderData dulu sebelum dipakai
-        const orderData = {
-            total: parseInt(document.getElementById('payment-total').textContent.replace(/[^\d]/g, '')),
-            date: new Date().toISOString(),
-            items: JSON.parse(localStorage.getItem('cartItems')) || [],
-            shipping: localStorage.getItem('selectedShipping'),
-            shippingData: {
-                deliveryDate: localStorage.getItem('deliveryDate'),
-                deliveryTime: localStorage.getItem('deliveryTime'),
-                address: localStorage.getItem('address')
+            if (!fileInput.files.length) {
+                alert('Silakan upload bukti pembayaran');
+                return;
             }
-        };
 
-        const formData = new FormData();
-        formData.append('payment_proof', fileInput.files[0]);
-        formData.append('total', document.getElementById('payment-total').textContent.replace(/[^\d]/g, ''));
-        formData.append('order_data', JSON.stringify(orderData));
-        formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+            const confirmBtn = document.querySelector('.confirm-btn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = 'Memproses...';
 
-        const response = await fetch('/payment/bca/confirm', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
+            try {
+                const orderData = {
+                    total: parseInt(document.getElementById('payment-total').textContent.replace(/[^\d]/g, '')),
+                    date: new Date().toISOString(),
+                    items: JSON.parse(localStorage.getItem('cartItems')) || [],
+                    shipping: localStorage.getItem('selectedShipping'),
+                    shippingData: {
+                        deliveryDate: localStorage.getItem('deliveryDate'),
+                        deliveryTime: localStorage.getItem('deliveryTime'),
+                        address: localStorage.getItem('address')
+                    }
+                };
+
+                const formData = new FormData();
+                formData.append('payment_proof', fileInput.files[0]);
+                formData.append('total', orderData.total);
+                formData.append('order_data', JSON.stringify(orderData));
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+                const response = await fetch('/payment/bca/confirm', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Create success order data
+                    const successOrderData = {
+                        id: generateOrderId(),
+                        total: orderData.total,
+                        shipping: JSON.parse(localStorage.getItem('shippingData'))
+                    };
+                    
+                    localStorage.setItem('currentOrder', JSON.stringify(successOrderData));
+                    window.location.href = '/payment/bca/success';
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal mengonfirmasi pembayaran: ' + error.message);
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Konfirmasi Pembayaran';
             }
         });
-
-        const data = await response.json();
-
-        if (data.success) {
-            localStorage.setItem('currentOrder', JSON.stringify(orderData));
-            window.location.href = '/payment/bca/success';
-        } else {
-            throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Gagal mengonfirmasi pembayaran: ' + error.message);
-    } finally {
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = 'Konfirmasi Pembayaran';
-    }
-});
     </script>
 </body>
 

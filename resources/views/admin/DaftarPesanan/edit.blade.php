@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catering Kita - Update Daftar Pesanan</title>
+    <title>Edit Pesanan</title>
     <style>
+        /* Use the same styles as create.blade.php */
         .page-title {
             font-size: 1.5rem;
             font-weight: bold;
@@ -116,59 +117,64 @@
     <x-sidebar></x-sidebar>
 
     <div class="main-content">
-        <div class="header">
-            <h1 class="page-title"></h1>
-            <div class="admin-profile">
-                <span>Admin</span>
-                <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
-            </div>
-        </div><br><br>      
+        <div class="form-container">
+            <h2>Edit Pesanan</h2>
 
-        <h2 class="page-title" style="text-align: center">Edit Pesanan</h2>
-        <div class="content">
-            <div class="form-wrapper">
-                <form action="{{ route('admin.daftarpesanan.update', $pesanan->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="form-group">
-                        <label for="nama_pesanan">Nama Pesanan</label>
-                        <input type="text" name="nama_pesanan" id="nama_pesanan" class="form-control" value="{{ old('nama_pesanan', $pesanan->nama_pesanan) }}" placeholder="Masukkan nama pesanan" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nama_pelanggan">Nama Pelanggan</label>
-                        <input type="text" name="nama_pelanggan" id="nama_pelanggan" class="form-control" value="{{ old('nama_pelanggan', $pesanan->nama_pelanggan) }}" placeholder="Masukkan nama pelanggan" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="tanggal_pesanan">Tanggal Pesanan</label>
-                        <input type="date" name="tanggal_pesanan" id="tanggal_pesanan" class="form-control" value="{{ old('tanggal_pesanan', $pesanan->tanggal_pesanan) }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="jumlah_pesanan">Jumlah Pesanan</label>
-                        <input type="number" name="jumlah_pesanan" id="jumlah_pesanan" class="form-control" value="{{ old('jumlah_pesanan', $pesanan->jumlah_pesanan) }}" placeholder="Masukkan jumlah pesanan" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="tanggal_acara">Tanggal Acara</label>
-                        <input type="date" name="tanggal_acara" id="tanggal_acara" class="form-control" value="{{ old('tanggal_acara', $pesanan->tanggal_acara) }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="lokasi_pengiriman">Lokasi Pengiriman</label>
-                        <input type="text" name="lokasi_pengiriman" id="lokasi_pengiriman" class="form-control" value="{{ old('lokasi_pengiriman', $pesanan->lokasi_pengiriman) }}" placeholder="Masukkan lokasi pengiriman" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="total_harga">Total Harga</label>
-                        <input type="number" name="total_harga" id="total_harga" class="form-control" value="{{ old('total_harga', $pesanan->total_harga) }}" placeholder="Masukkan total harga" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="status_pengiriman">Status Pengiriman</label>
-                        <select name="status_pengiriman" id="status_pengiriman" class="form-control" required>
-                            <option value="diproses" {{ $pesanan->status_pengiriman == 'diproses' ? 'selected' : '' }}>Diproses</option>
-                            <option value="pending" {{ $pesanan->status_pengiriman == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="selesai" {{ $pesanan->status_pengiriman == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-tambahkan">Simpan Perubahan</button>
-                </form>
-            </div>            
+            <form action="{{ route('admin.daftarpesanan.update', $pesanan->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                
+                <div class="form-group">
+                    <label for="nama_pesanan">Nama Pesanan</label>
+                    <input type="text" id="nama_pesanan" name="nama_pesanan" value="{{ $pesanan->nama_pesanan }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nama_pelanggan">Nama Pelanggan</label>
+                    <input type="text" id="nama_pelanggan" name="nama_pelanggan" value="{{ $pesanan->nama_pelanggan }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggal_pesanan">Tanggal Pesanan</label>
+                    <input type="date" id="tanggal_pesanan" name="tanggal_pesanan" value="{{ $pesanan->tanggal_pesanan->format('Y-m-d') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="jumlah_pesanan">Jumlah Pesanan</label>
+                    <input type="number" id="jumlah_pesanan" name="jumlah_pesanan" value="{{ $pesanan->jumlah_pesanan }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggal_acara">Tanggal Acara</label>
+                    <input type="date" id="tanggal_acara" name="tanggal_acara" value="{{ $pesanan->tanggal_acara->format('Y-m-d') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lokasi_pengiriman">Lokasi Pengiriman</label>
+                    <textarea id="lokasi_pengiriman" name="lokasi_pengiriman" required>{{ $pesanan->lokasi_pengiriman }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="total_harga">Total Harga</label>
+                    <input type="number" id="total_harga" name="total_harga" value="{{ $pesanan->total_harga }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status_pengiriman">Status Pengiriman</label>
+                    <select id="status_pengiriman" name="status_pengiriman" required>
+                        <option value="pending" {{ $pesanan->status_pengiriman === 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="diproses" {{ $pesanan->status_pengiriman === 'diproses' ? 'selected' : '' }}>Diproses</option>
+                        <option value="selesai" {{ $pesanan->status_pengiriman === 'selesai' ? 'selected' : '' }}>Selesai</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pesan_untuk_penjual">Pesan untuk Penjual</label>
+                    <textarea id="pesan_untuk_penjual" name="pesan_untuk_penjual" rows="3">{{ $pesanan->pesan_untuk_penjual }}</textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Update Pesanan</button>
+            </form>
         </div>
     </div>
 </body>

@@ -28,101 +28,149 @@
             font-weight: bold;
         }
         
+        /* Container utama */
         .container {
-            max-width: 480px;
-            margin: 0 auto;
+            max-width: 400px; /* Diperkecil dari 480px */
+            margin: 20px auto; /* Tambah margin atas-bawah */
             background-color: white;
-            min-height: calc(100vh - 48px);
-            padding: 20px;
+            min-height: auto; /* Ubah dari calc(100vh - 48px) */ 
+            padding: 15px; /* Diperkecil dari 20px */
             display: flex;
             flex-direction: column;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
+        /* Informasi order detail */
+        .payment-info {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .order-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        /* Detail pesanan section */
+        .order-items {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .item-name {
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .item-quantity {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .item-price {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* Informasi pengiriman */
+        .shipping-info-box {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px; 
+            margin: 15px 0;
+        }
+        
+        .shipping-title {
+            font-size: 14px; /* Diperkecil dari 16px */
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .shipping-detail {
+            margin-bottom: 16px;
+        }
+        
+        .shipping-detail strong {
+            display: block;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .shipping-detail div {
+            color: #333;
+            font-size: 14px;
+        }
+        
+        /* Button styles */
+        .home-button {
+            background-color: rgb(79, 94, 193);
+            color: white;
+            padding: 12px; /* Diperkecil dari 15px */
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        
+        .home-button:hover {
+            background-color: rgb(63, 75, 154);
+        }
+        
+        /* Success icon */
         .success-icon {
-            width: 80px;
-            height: 80px;
+            width: 60px; /* Diperkecil dari 80px */
+            height: 60px;
             background-color: #4CAF50;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 30px auto;
+            margin: 20px auto; /* Diperkecil dari 30px */
         }
         
+        /* Text styles */
         .success-title {
             text-align: center;
-            font-size: 20px;
+            font-size: 20px; /* Diperkecil dari 24px */
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            color: #333;
         }
         
         .success-subtitle {
             text-align: center;
             font-size: 14px;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 20px; /* Diperkecil dari 30px */
         }
         
-        .order-details {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .payment-info {
-            margin-top: 16px;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .detail-title {
-            font-weight: bold;
-            margin: 16px 0 8px 0;
-        }
-        
-        .item-details {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .shipping-info-box {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 16px 0;
-        }
-        
-        .shipping-title {
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
-        
-        .shipping-detail {
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .home-button {
-            background-color: #2c2c77;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            margin-top: auto;
-            cursor: pointer;
-            width: 100%;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-        }
-        
+        /* Price formatting */
         .price {
-            font-weight: bold;
+            font-weight: 600;
+            color: #333;
         }
     </style>
 </head>
@@ -184,31 +232,51 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get order data from localStorage
-            const orderData = JSON.parse(localStorage.getItem('currentOrder'));
-            const shippingData = JSON.parse(localStorage.getItem('shippingData'));
-            
-            if (orderData) {
-                document.getElementById('orderId').textContent = orderData.id;
+            try {
+                // Get data from localStorage
+                const orderData = JSON.parse(localStorage.getItem('currentOrder')) || {};
+                const shippingData = JSON.parse(localStorage.getItem('shippingData')) || {};
+                const orderTotal = localStorage.getItem('orderTotal');
+                
+                // Display order info
+                if (orderData.id) {
+                    document.getElementById('orderId').textContent = orderData.id;
+                }
+                
+                // Display current date as order date
                 document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'
                 });
-                document.getElementById('totalPayment').textContent = `Rp ${parseInt(localStorage.getItem('orderTotal')).toLocaleString('id-ID')}`;
-            }
+                
+                // Display payment total
+                if (orderTotal) {
+                    document.getElementById('totalPayment').textContent = `Rp ${parseInt(orderTotal).toLocaleString('id-ID')}`;
+                }
 
-            if (shippingData) {
-                document.getElementById('deliveryDate').textContent = shippingData.deliveryDate;
-                document.getElementById('deliveryTime').textContent = shippingData.deliveryTime;
-                document.getElementById('deliveryAddress').textContent = shippingData.address;
-            }
+                // Display shipping info
+                if (shippingData) {
+                    document.getElementById('deliveryDate').textContent = shippingData.deliveryDate || '-';
+                    document.getElementById('deliveryTime').textContent = shippingData.deliveryTime || '-';
+                    document.getElementById('deliveryAddress').textContent = shippingData.address || '-';
+                }
 
-            // Clear localStorage after displaying
-            localStorage.removeItem('currentOrder');
-            localStorage.removeItem('shippingData');
-            localStorage.removeItem('orderTotal');
-            localStorage.removeItem('cartItems');
+                // Clear localStorage after successful display
+                setTimeout(() => {
+                    localStorage.removeItem('currentOrder');
+                    localStorage.removeItem('shippingData');
+                    localStorage.removeItem('orderTotal');
+                    localStorage.removeItem('cartItems');
+                }, 1000); // Delay 1 detik untuk memastikan data sudah ditampilkan
+
+            } catch (error) {
+                console.error('Error displaying order data:', error);
+                // Set default values if there's an error
+                document.getElementById('deliveryDate').textContent = '-';
+                document.getElementById('deliveryTime').textContent = '-';
+                document.getElementById('deliveryAddress').textContent = '-';
+            }
         });
     </script>
 </body>

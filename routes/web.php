@@ -39,6 +39,7 @@ use App\Http\Controllers\Admin\AdminPenilaianController;
 use App\Http\Controllers\Admin\TentangKamiController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\NotificationAdminController;
+use App\Http\Controllers\Admin\KaryawanController;
 use App\Http\Controllers\SearchController;
 
 Route::get('/', [WelcomeController::class, 'index']);
@@ -179,7 +180,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Daftar Pesanan
     Route::resource('daftarpesanan', AdminDaftarPesananController::class);
 
-    // Laporan
+    // Laporan routes
+    Route::get('laporan/export', [AdminLaporanController::class, 'export'])->name('laporan.export');
     Route::resource('laporan', AdminLaporanController::class);
 
     // Transaksi
@@ -200,6 +202,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Tentang Kami routes
     Route::resource('tentangkami', TentangKamiController::class);
 
+    // Daftar Karyawan
+    Route::resource('karyawan', KaryawanController::class);
+
+    // Laporan
+     Route::resource('laporan', AdminLaporanController::class);
     // Notification
     
 
