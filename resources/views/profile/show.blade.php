@@ -363,7 +363,11 @@
     <div class="container">
         <div class="user-profile-header">
             <div class="profile-image">
-                <img src="{{ $profile->avatar_url }}" alt="{{ $profile->first_name }}'s Profile" />
+                @if($profile->avatar_url)
+                    <img src="{{ $profile->avatar_url }}" alt="{{ $profile->first_name }}'s Profile" />
+                @else
+                    <img src="https://ui-avatars.com/api/?name={{ substr($profile->first_name, 0, 1) }}&background=2c2c77&color=fff&size=120" alt="Profile">
+                @endif
             </div>
             <div class="user-name">{{ $profile->first_name }} {{ $profile->last_name }}</div>
         </div>

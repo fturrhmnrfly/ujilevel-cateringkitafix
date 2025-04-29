@@ -17,29 +17,28 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-        
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'required|string|max:15',
-            'address' => 'required|string|max:255',
-            'bio' => 'nullable|string'
+            'address' => 'required|string',
+            'bio' => 'nullable|string',
+            'email' => 'required|email'
         ]);
 
-        $user->email = $validated['email'];
-        $user->save();
+        // Update user's email
+        $user->update([
+            'email' => $validated['email']
+        ]);
 
-        $user->profile()->updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'phone' => $validated['phone'],
-                'address' => $validated['address'],
-                'bio' => $validated['bio'] ?? null
-            ]
-        );
+        // Update profile
+        $user->profile()->update([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'phone' => $validated['phone'],
+            'address' => $validated['address'],
+            'bio' => $validated['bio']
+        ]);
 
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully.');
     }

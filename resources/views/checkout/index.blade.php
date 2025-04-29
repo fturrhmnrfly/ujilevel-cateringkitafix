@@ -1828,12 +1828,11 @@
         // Add this to your existing JavaScript
         document.querySelector('.payment-method-link').addEventListener('click', function(e) {
             // Validate if shipping is selected before proceeding to payment
-            const selectedShipping = document.querySelector('input[name="shipping_option"]:checked');
-            if (!selectedShipping) {
-                e.preventDefault();
-                alert('Silakan pilih opsi pengiriman terlebih dahulu');
-                return false;
-            }
+    const selectedOption = document.querySelector('input[name="shipping_option"]:checked');
+    if (!selectedOption) {
+        alert('Silakan pilih opsi pengiriman terlebih dahulu');
+        return false;
+    }
 
             // Get shipping cost from the summary span instead
             const shippingCostText = document.querySelector('.summary-item:nth-child(2) span:last-child')
@@ -1841,13 +1840,14 @@
             const shippingCost = parseFloat(shippingCostText.replace(/[^\d]/g, '') || '0');
 
             // Save shipping selection to session/local storage
-            const shippingData = {
-                option: selectedShipping.value,
-                price: shippingCost,
-                deliveryDate: document.getElementById('delivery-date').value,
-                deliveryTime: document.getElementById('delivery-time').value
-            };
-            localStorage.setItem('shippingData', JSON.stringify(shippingData));
+            const shippingData = {  
+    option: selectedOption.value,
+    price: shippingCost,
+    deliveryDate: document.getElementById('delivery-date').value,
+    deliveryTime: document.getElementById('delivery-time').value,
+    address: document.getElementById('address').value // Tambahkan ini
+};
+localStorage.setItem('shippingData', JSON.stringify(shippingData));
         });
 
         function showPaymentModal(e) {
@@ -1994,99 +1994,135 @@
             return `ORD${timestamp}${random}`;
         }
 
-        function submitOrder(e) {
-            e.preventDefault();
-
-            const userName = document.getElementById('user-name').value;
-            if (!userName) {
-                alert('Silakan login terlebih dahulu');
-                window.location.href = '/login';
-                return;
-            }
-
-            // Get cart items to determine category
-            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-            if (!cartItems.length) {
-                alert('Keranjang belanja kosong');
-                return;
-            }
-
-            // Determine kategori_pesanan based on product names
-const nasiBoxItems = cartItems.some(item => 
-    item.nama_produk.toLowerCase().includes('nasi box')
-);
-const prasmananItems = cartItems.some(item => 
-    item.nama_produk.toLowerCase().includes('prasmanan')
-);
-
-let kategoriPesanan;
-if (nasiBoxItems && prasmananItems) {
-    kategoriPesanan = 'Nasi Box & Prasmanan';
-} else if (nasiBoxItems) {
-    kategoriPesanan = 'Nasi Box';
-} else if (prasmananItems) {
-    kategoriPesanan = 'Prasmanan';
+        function validateFields(fields) {
+    for (const field of fields) {
+        const el = document.getElementById(field.id);
+        if (!el || !el.value.trim()) {
+            alert(field.message);
+            el.focus();
+            return false;
+        }
+    }
+    return true;
 }
 
-            const orderData = {
-                order_id: generateOrderId(),
-                nama_pelanggan: userName,
-                kategori_pesanan: kategoriPesanan,
-                tanggal_pesanan: new Date().toISOString(),
-                jumlah_pesanan: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-                tanggal_pengiriman: document.getElementById('delivery-date').value,
-                waktu_pengiriman: document.getElementById('delivery-time').value,
-                lokasi_pengiriman: document.getElementById('address').value,
-                nomor_telepon: document.getElementById('phone').value,
-                pesan: document.getElementById('notes').value,
-                opsi_pengiriman: document.querySelector('input[name="shipping_option"]:checked').value,
-                total_harga: parseFloat(document.getElementById('total').textContent.replace(/[^\d]/g, '')),
-                status_pengiriman: 'diproses',
-                status_pembayaran: 'pending',
-                items: cartItems // Tambahkan items ke orderData
-            };
+function submitOrder(e) {
+    e.preventDefault();
 
-            fetch('{{ route('admin.daftarpesanan.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify(orderData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const selectedPayment = localStorage.getItem('selectedPaymentMethod');
+    // Validasi login
+    const userName = document.getElementById('user-name').value;
+    if (!userName) {
+        alert('Silakan login terlebih dahulu');
+        window.location.href = '/login';
+        return;
+    }
 
-                        // Make sure we have both order_id and payment method before redirect
-                        if (!data.data.order_id || !selectedPayment) {
-                            throw new Error('Missing order ID or payment method');
-                        }
+    // Validasi keranjang
+    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    if (!cartItems.length) {
+        alert('Keranjang belanja kosong');
+        return;
+    }
 
-                        // Use the order_id from the response data
-                        const redirectUrl = `/metodepembayaran/${selectedPayment}`;
+    // Validasi form
+    const isValid = validateFields([
+        { id: 'delivery-date', message: 'Tanggal pengiriman wajib diisi.' },
+        { id: 'delivery-time', message: 'Waktu pengiriman wajib diisi.' },
+        { id: 'address', message: 'Alamat pengiriman wajib diisi.' },
+        { id: 'phone', message: 'Nomor telepon wajib diisi.' }
+    ]);
+    if (!isValid) return;
 
-                        // Store cart items temporarily
-                        sessionStorage.setItem('tempCart', localStorage.getItem('cartItems'));
+    // Validasi opsi pengiriman (radio)
+    const shippingOptionElement = document.querySelector('input[name="shipping_option"]:checked');
+    if (!shippingOptionElement) {
+        alert('Silakan pilih opsi pengiriman.');
+        return;
+    }
 
-                        // Redirect to payment page
-                        window.location.href = redirectUrl;
+    // Siapkan data pesanan
+    const orderData = {
+        order_id: generateOrderId(),
+        nama_pelanggan: userName,
+        kategori_pesanan: determineOrderCategory(cartItems),
+        tanggal_pesanan: new Date().toISOString(),
+        jumlah_pesanan: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+        tanggal_pengiriman: document.getElementById('delivery-date').value,
+        waktu_pengiriman: document.getElementById('delivery-time').value,
+        lokasi_pengiriman: document.getElementById('address').value,
+        nomor_telepon: document.getElementById('phone').value,
+        pesan: document.getElementById('notes').value,
+        opsi_pengiriman: shippingOptionElement.value,
+        total_harga: parseFloat(document.getElementById('total').textContent.replace(/[^\d]/g, '')),
+        status_pengiriman: 'diproses',
+        status_pembayaran: 'pending',
+        items: cartItems
+    };
 
-                        // Clear cart after successful redirect
-                        localStorage.removeItem('cartItems');
-                    } else {
-                        throw new Error(data.message || 'Gagal membuat pesanan');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (sessionStorage.getItem('tempCart')) {
-                        localStorage.setItem('cartItems', sessionStorage.getItem('tempCart'));
-                        sessionStorage.removeItem('tempCart');
-                    }
-                    alert('Terjadi kesalahan saat mengirim pesanan: ' + error.message);
-                });
+    // Simpan sementara keranjang
+    sessionStorage.setItem('tempCart', JSON.stringify(cartItems));
+
+    // Kirim pesanan ke server
+    fetch('{{ route('admin.daftarpesanan.store') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            throw new Error('Server mengembalikan format tidak valid. Pastikan sudah login.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data.success) {
+            throw new Error(data.message || 'Gagal membuat pesanan');
+        }
+
+        // Success handling
+        localStorage.removeItem('cartItems');
+        sessionStorage.removeItem('tempCart');
+
+        const selectedPayment = localStorage.getItem('selectedPaymentMethod');
+        if (!selectedPayment) {
+            throw new Error('Metode pembayaran belum dipilih');
+        }
+
+        window.location.href = `/metodepembayaran/${selectedPayment}`;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        // Restore cart if failed
+        const tempCart = sessionStorage.getItem('tempCart');
+        if (tempCart) {
+            localStorage.setItem('cartItems', tempCart);
+            sessionStorage.removeItem('tempCart');
+        }
+        
+        alert('Terjadi kesalahan: ' + error.message);
+    });
+}
+
+
+        function determineOrderCategory(cartItems) {
+            const nasiBoxItems = cartItems.some(item => 
+                item.nama_produk?.toLowerCase().includes('nasi box')
+            );
+            const prasmananItems = cartItems.some(item => 
+                item.nama_produk?.toLowerCase().includes('prasmanan')
+            );
+
+            if (nasiBoxItems && prasmananItems) return 'Nasi Box & Prasmanan';
+            if (nasiBoxItems) return 'Nasi Box';
+            if (prasmananItems) return 'Prasmanan';
+            return 'Lainnya';
         }
 
         function startCountdown(expiryTime) {

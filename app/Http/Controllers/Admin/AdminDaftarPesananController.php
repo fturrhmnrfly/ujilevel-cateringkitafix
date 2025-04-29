@@ -50,7 +50,7 @@ class AdminDaftarPesananController extends Controller
                 'pesan' => 'nullable|string',
                 'opsi_pengiriman' => 'required|string',
                 'total_harga' => 'required|numeric',
-                'status_pengiriman' => 'required|string|in:diproses,dikirim,selesai,dibatalkan', // Changed validation rule
+                'status_pengiriman' => 'required|string',
                 'status_pembayaran' => 'required|string'
             ]);
 
@@ -61,7 +61,7 @@ class AdminDaftarPesananController extends Controller
                 'success' => true,
                 'message' => 'Pesanan berhasil dibuat',
                 'data' => $daftarPesanan
-            ]);
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([

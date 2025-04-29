@@ -244,8 +244,15 @@
 
         document.querySelector('.confirm-btn').addEventListener('click', async function() {
             const fileInput = document.querySelector('.file-upload');
+            
+            // Check if fileInput exists first
+            if (!fileInput) {
+                console.error('File upload input not found');
+                return;
+            }
 
-            if (!fileInput.files.length) {
+            // Then check for files
+            if (!fileInput.files || !fileInput.files.length) {
                 alert('Silakan upload bukti pembayaran');
                 return;
             }
@@ -267,11 +274,17 @@
                     }
                 };
 
+                // Add CSRF token check
+                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                if (!csrfToken) {
+                    throw new Error('CSRF token not found');
+                }
+
                 const formData = new FormData();
                 formData.append('payment_proof', fileInput.files[0]);
                 formData.append('total', orderData.total);
                 formData.append('order_data', JSON.stringify(orderData));
-                formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+                formData.append('_token', csrfToken.content);
 
                 const response = await fetch('/payment/bca/confirm', {
                     method: 'POST',

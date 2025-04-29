@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Pembayaran Berhasil - Catering Kita</title>
     <style>
         * {
@@ -172,13 +173,53 @@
             font-weight: 600;
             color: #333;
         }
+
+        /* Add navbar styles */
+        .simple-navbar {
+            background-color: #2c2c77;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .simple-navbar img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .brand-text {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .brand-catering {
+            color: #FFA500;
+        }
+
+        .brand-kita {
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        Catering Kita
-    </div>
-    
+    <nav class="simple-navbar">
+        <a href="{{ route('dashboard') }}" class="navbar-brand">
+            <img src="{{ asset('assets/logo.png') }}" alt="Logo">
+            <div class="brand-text">
+                <span class="brand-catering">CATERING</span>
+                <span class="brand-kita">KITA</span>
+            </div>
+        </a>
+    </nav>
+
     <div class="container">
         <div class="success-icon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -236,25 +277,13 @@
                 // Get data from localStorage
                 const orderData = JSON.parse(localStorage.getItem('currentOrder')) || {};
                 const shippingData = JSON.parse(localStorage.getItem('shippingData')) || {};
-                const orderTotal = localStorage.getItem('orderTotal');
                 
                 // Display order info
-                if (orderData.id) {
-                    document.getElementById('orderId').textContent = orderData.id;
-                }
+                document.getElementById('orderId').textContent = orderData.id || '-';
+                document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID') || '-';
+                document.getElementById('totalPayment').textContent = 
+                    `Rp ${parseInt(localStorage.getItem('orderTotal') || 0).toLocaleString('id-ID')}`;
                 
-                // Display current date as order date
-                document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-                
-                // Display payment total
-                if (orderTotal) {
-                    document.getElementById('totalPayment').textContent = `Rp ${parseInt(orderTotal).toLocaleString('id-ID')}`;
-                }
-
                 // Display shipping info
                 if (shippingData) {
                     document.getElementById('deliveryDate').textContent = shippingData.deliveryDate || '-';
@@ -272,10 +301,6 @@
 
             } catch (error) {
                 console.error('Error displaying order data:', error);
-                // Set default values if there's an error
-                document.getElementById('deliveryDate').textContent = '-';
-                document.getElementById('deliveryTime').textContent = '-';
-                document.getElementById('deliveryAddress').textContent = '-';
             }
         });
     </script>
