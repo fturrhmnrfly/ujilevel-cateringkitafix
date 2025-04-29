@@ -24,7 +24,7 @@ class KeranjangController extends Controller
     {
         try {
             DB::beginTransaction();
-
+            
             // Validate input
             $validated = $request->validate([
                 'nama_produk' => 'required|string',
@@ -82,7 +82,7 @@ class KeranjangController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'success' => false,
+                'success' => false, 
                 'message' => 'Gagal menambahkan ke keranjang: ' . $e->getMessage()
             ], 500);
         }

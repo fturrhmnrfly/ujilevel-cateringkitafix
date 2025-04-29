@@ -22,7 +22,7 @@ class AdminKelolaMakananController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
+            $validated = $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'nama_makanan' => 'required|string|max:255',
                 'kategori' => 'required|string',
@@ -37,9 +37,9 @@ class AdminKelolaMakananController extends Controller
             $makanan = KelolaMakanan::create([
                 'image' => 'makanan/'.$imageName,
                 'nama_makanan' => $request->nama_makanan,
-                'kategori' => $request->kategori,
+                'kategori' => $request->kategori,    // Ambil dari form input
                 'harga' => $request->harga,
-                'status' => $request->status,
+                'status' => $request->status,        // Ambil dari form input
                 'deskripsi' => $request->deskripsi
             ]);
 

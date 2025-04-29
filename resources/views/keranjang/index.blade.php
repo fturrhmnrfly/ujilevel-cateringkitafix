@@ -266,6 +266,8 @@
             background-color: #3558d6;
         }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -335,35 +337,61 @@
 
     <script>
         async function removeItem(itemId) {
-            if (confirm('Apakah anda yakin ingin menghapus item ini?')) {
-                try {
-                    const response = await fetch(`/keranjang/remove/${itemId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        }
-                    });
+    // Show SweetAlert2 confirmation dialog
+    const result = await Swal.fire({
+        title: 'Delete',
+        text: 'apakah kamu yakin kamu akan menghapus produk tersebut',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ok',
+        cancelButtonText: 'Cancel'
+    });
 
-                    const data = await response.json();
-
-                    if (data.success) {
-                        // Hapus elemen dari tampilan
-                        const itemRow = document.querySelector(`tr.cart-item[data-id="${itemId}"]`);
-                        if (itemRow) {
-                            itemRow.remove();
-                        }
-                        
-                        // Refresh halaman setelah menghapus
-                        window.location.reload();
-                    } else {
-                        throw new Error(data.message);
-                    }
-                } catch (error) {
-                    alert('Gagal menghapus item: ' + error.message);
+    // If user confirms deletion
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(`/keranjang/delete/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Show success message
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Menu Berhasil Di Hapus',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                // Remove item from view
+                const itemRow = document.querySelector(`tr.cart-item[data-id="${itemId}"]`);
+                if (itemRow) {
+                    itemRow.remove();
+                }
+                
+                // Reload page to update totals
+                window.location.reload();
+            } else {
+                throw new Error(data.message);
             }
+        } catch (error) {
+            // Show error message
+            await Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Gagal menghapus item: ' + error.message
+            });
         }
+    }
+}
 
         // Tambahkan fungsi untuk update quantity
         async function updateQuantity(itemId, change) {

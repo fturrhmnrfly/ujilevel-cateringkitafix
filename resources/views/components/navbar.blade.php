@@ -489,18 +489,15 @@
     <!-- Navigation Links -->
     <ul class="nav-links">
         <li><a href="{{ route('dashboard') }}">Home</a></li>
-        <li><a href="{{ route('about.index') }}">About</a></li>
+        <li><a href="{{ route('about.index') }}">Tentang Kami</a></li>
         <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
         <li><a href="{{ route('contact.index') }}">Contact</a></li>
     </ul>
 
-    <div class="navbar-right">
-        <div class="notification-wrapper">
-            {{-- <a href="{{ route('notifications.index') }}" class="notification-icon"> --}}
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">0</span>
-            </a>
-        </div>
+        <a href="{{ route('notifications.index') }}" class="notification-icon">
+    <i class="fas fa-bell"></i>
+    <span class="notification-badge">0</span>
+</a>
 
         <div class="cart-icon">
             <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
@@ -632,4 +629,29 @@ async function syncCartCounter() {
         console.error('Error syncing cart:', error);
     }
 }
+
+// Tambahkan setelah syncCartCounter()
+
+async function updateNotificationBadge() {
+    try {
+        const response = await fetch('/notifications/count');
+        const data = await response.json();
+        
+        const badge = document.querySelector('.notification-badge');
+        if (badge) {
+            badge.textContent = data.count || '0';
+            badge.style.display = data.count > 0 ? 'block' : 'none';
+        }
+    } catch (error) {
+        console.error('Error updating notification badge:', error);
+    }
+}
+
+// Update badge setiap 30 detik
+setInterval(updateNotificationBadge, 30000);
+
+// Update saat halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    updateNotificationBadge();
+});
 </script>

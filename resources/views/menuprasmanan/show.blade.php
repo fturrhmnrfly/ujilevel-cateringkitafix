@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $menu->nama_produk }} - Detail</title>
+    <!-- Add SweetAlert2 CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- ...rest of head content... -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -163,6 +167,27 @@
         .add-to-cart:hover {
             background-color: #1a1a5c;
         }
+
+        /* SweetAlert custom styles */
+        .swal2-confirm {
+            background-color: #2c2c77 !important;
+            color: white !important;
+        }
+
+        .swal2-cancel {
+            background-color: #6c757d !important;
+            color: white !important;
+        }
+
+        /* Cart icon hover effect */
+        .cart-icon {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
@@ -177,22 +202,22 @@
                 <img src="{{ asset($menu->image) }}" alt="{{ $menu->nama_produk }}">
             </div>
             <div class="product-info">
-                <h1 class="product-title">{{ $menu->nama_produk }}</h1>
+                <h1 class="product-title">{{ $menu->nama_makanan     }}</h1>
                 <div class="product-rating">
                     <div class="stars">★★★★★</div>
                     <span>(5.0) ratings</span>
                 </div>
                 <p class="product-description">{{ $menu->deskripsi }}</p>
                 
-                <div class="section-title">Bahan Utama:</div>
+                {{-- <div class="section-title">Bahan Utama:</div>
                 <ul class="ingredients">
                     @foreach(explode(',', $menu->deskripsi) as $item)
                         <li>{{ trim($item) }}</li>
                     @endforeach
-                </ul>
+                </ul> --}}
 
                 <div class="product-price">
-                    Rp {{ number_format($menu->price, 0, ',', '.') }}
+                    Rp {{ number_format($menu->harga, 0, ',', '.') }}
                 </div>
 
                 <div class="product-actions">
@@ -209,12 +234,22 @@
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Make cart icon clickable
+    const cartIcon = document.querySelector('.cart-icon');
+    if (cartIcon) {
+        cartIcon.style.cursor = 'pointer';
+        cartIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '{{ route("keranjang.index") }}';
+        });
+    }
+
+    // Existing counter code...
     const countInput = document.querySelector('.count');
     const minusButton = document.querySelector('.minus');
     const plusButton = document.querySelector('.plus');
     const addToCartButton = document.querySelector('.add-to-cart');
     
-    // Get menu ID from the current page
     const menuId = {{ $menu->id }};
     
     // Get saved quantity from localStorage
@@ -244,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem(`menu_${menuId}_quantity`, value);
     });
 
-    // Handle add to cart
+    // Updated add to cart handler with enhanced SweetAlert
     addToCartButton.addEventListener('click', async () => {
         const quantity = parseInt(countInput.value) || 0;
         
@@ -257,25 +292,58 @@ document.addEventListener('DOMContentLoaded', function() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({
-                        nama_produk: '{{ $menu->nama_produk }}',
-                        price: {{ $menu->price }},
+                        nama_produk: '{{ $menu->nama_makanan }}',
+                        price: {{ $menu->harga }},
                         quantity: quantity,
-                        image: '{{ $menu->image }}'
+                        image: '{{ Storage::url($menu->image) }}'
                     })
                 });
 
                 const data = await response.json();
                 if (data.success) {
-                    alert('Item berhasil ditambahkan ke keranjang!');
+                    // Enhanced success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil Ditambahkan!',
+                        text: `${quantity} ${quantity > 1 ? 'items' : 'item'} telah ditambahkan ke keranjang`,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Lihat Keranjang',
+                        showCancelButton: true,
+                        cancelButtonText: 'Lanjut Belanja',
+                        customClass: {
+                            confirmButton: 'swal2-confirm',
+                            cancelButton: 'swal2-cancel'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '{{ route("keranjang.index") }}';
+                        }
+                    });
+                    
                     countInput.value = 0;
+                    localStorage.setItem(`menu_${menuId}_quantity`, 0);
+                    
+                    // Update cart counter
+                    if (cartIcon) {
+                        const currentCount = parseInt(cartIcon.getAttribute('data-count')) || 0;
+                        cartIcon.setAttribute('data-count', currentCount + quantity);
+                    }
                 } else {
                     throw new Error(data.message);
                 }
             } catch (error) {
-                alert('Gagal menambahkan ke keranjang: ' + error.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Gagal menambahkan ke keranjang: ' + error.message
+                });
             }
         } else {
-            alert('Silakan pilih jumlah item terlebih dahulu!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: 'Silakan pilih jumlah item terlebih dahulu!'
+            });
         }
     });
 });

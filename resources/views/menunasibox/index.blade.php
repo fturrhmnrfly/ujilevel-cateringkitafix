@@ -342,19 +342,23 @@
             <div class="menu-grid">
                 @foreach($menuItems as $item)
                 <div class="menu-item">
-                    <img src="{{ asset($item['image']) }}" alt="{{ $item['nama_produk'] }}">
+                        @if($item->image && Storage::disk('public')->exists($item->image))
+                        <img src="{{ Storage::url($item->image) }}" alt="{{ $item->nama_makanan }}">
+                    @else
+                        <img src="{{ asset('assets/default-food.png') }}" alt="Default food image">
+                    @endif
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">{{ $item['nama_produk'] }}</h3>
-                        <p class="menu-item-title-p">{{ $item['deskripsi'] }}</p>
+                        <h3 class="menu-item-title">{{ $item->nama_makanan }}</h3>
+                        <p class="menu-item-title-p">{{ $item->deskripsi }}</p>
                         <div class="menu-item-details">
-                            <p class="menu-item-price">Rp {{ number_format($item['price'], 0, ',', '.') }}</p>
+                            <p class="menu-item-price">Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
                             <div class="counter">
                                 <button class="minus">-</button>
                                 <input type="number" class="count" value="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="{{ route('menunasibox.show', $item['id']) }}" class="menu-item-button">Detail Menu</a>
+                        <a href="{{ route('menunasibox.show', $item->id) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
                 @endforeach

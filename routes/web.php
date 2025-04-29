@@ -42,6 +42,7 @@ use App\Http\Controllers\Admin\NotificationAdminController;
 use App\Http\Controllers\Admin\KaryawanController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 
@@ -126,6 +127,10 @@ Route::post('/payment/cod/confirm', [PaymentController::class, 'confirmCodPaymen
         Route::get('/pembayaran/{method}/{orderId}', [PaymentController::class, 'show'])->name('payment.show');
     });
 
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/count', [NotificationController::class, 'getUnreadCount'])->name('notifications.count');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
     Route::post('/keranjang/add', [KeranjangController::class, 'addToCart'])->name('keranjang.add');
@@ -209,8 +214,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Laporan
      Route::resource('laporan', AdminLaporanController::class);
+
     // Notification
-    
+    Route::get('/notifications', [NotificationAdminController::class, 'index'])
+        ->name('notifications.index');
+    Route::post('/notifications/{notification}/mark-read', [NotificationAdminController::class, 'markAsRead'])
+        ->name('notifications.markAsRead');
 
     // Profile Admin
     Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile.show');
@@ -219,7 +228,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 });
 
 // Notifications
-Route::get('/notifications', [NotificationAdminController::class, 'index'])->name('admin.notifications.index');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     Route::resource('kategori', KategoriController::class);

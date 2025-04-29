@@ -7,7 +7,9 @@ use App\Models\Transaksi;
 use App\Models\OrderItem;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Notification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller 
 {
@@ -196,7 +198,7 @@ class PaymentController extends Controller
     }
 
 
-    public function confirm($orderId)
+    public function confirm(Request $request, $orderId)
     {
         try {
             $order = Order::findOrFail($orderId);
@@ -210,6 +212,16 @@ class PaymentController extends Controller
             $order->update([
                 'payment_status' => 'paid',
                 'status' => 'processing'
+            ]);
+
+            // Create notification after payment is confirmed
+            Notification::create([
+                'user_id' => Auth::id(),
+                'title' => 'Pembayaran Berhasil',
+                'message' => "Pembayaran untuk pesanan #{$orderId} telah dikonfirmasi",
+                'icon_type' => 'credit-card',
+                'order_id' => $orderId,
+                'is_read' => false
             ]);
 
             return redirect()->route('orders.index')->with('success', 'Pembayaran berhasil dikonfirmasi.');

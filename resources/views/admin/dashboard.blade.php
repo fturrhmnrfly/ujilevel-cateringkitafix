@@ -239,7 +239,7 @@
             <h1 class="page-title">{{ $title ?? 'Dashboard' }}</h1>
             <div class="admin-controls">
                 <div class="notification-wrapper">
-                    <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
+                    <a href="{{ route('notifications.index') }}" class="notification-icon">
                         <i class="fa-solid fa-bell"></i>
                         @php
                             $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())

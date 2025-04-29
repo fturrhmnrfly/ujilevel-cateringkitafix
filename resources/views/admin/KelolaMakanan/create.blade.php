@@ -224,6 +224,9 @@
             <label for="kategori">Kategori:</label>
             <select id="kategori" name="kategori" class="form-control" required>
                 <option value="">Pilih Kategori</option>
+
+                <option value="Prasmanan">Prasmanan</option>
+                <option value="Nasi Box">Nasi Box</option>
                 <option value="Paket Pernikahan">Paket Pernikahan</option>
                 <option value="Paket Harian">Paket Harian</option>
                 <option value="Ala Carte">Ala Carte</option>
@@ -287,4 +290,24 @@ function previewImage(input) {
             });
         }
     });
+
+    // Add price formatting
+    document.getElementById('harga').addEventListener('input', function(e) {
+        // Remove non-numeric characters
+        let value = this.value.replace(/\D/g, '');
+        
+        // Ensure we're working with numbers
+        value = parseInt(value) || 0;
+        
+        // Format the number
+        this.value = value;
+    });
+
+    // Format price before form submission
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const hargaInput = document.getElementById('harga');
+        // Remove any formatting and multiply by 1 to ensure we store the full amount
+        hargaInput.value = parseInt(hargaInput.value.replace(/\D/g, '')) || 0;
+    });
 </script>
+</html>

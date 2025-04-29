@@ -6,6 +6,8 @@
     <title>Detail Menu - {{ $menu->nama_produk }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -143,6 +145,17 @@
 .cart-icon:hover {
     transform: scale(1.1);
 }
+
+/* SweetAlert custom styles */
+.swal2-confirm {
+    background-color: #2c2c77 !important;
+    color: white !important;
+}
+
+.swal2-cancel {
+    background-color: #6c757d !important;
+    color: white !important;
+}
     </style>
 </head>
 <body>
@@ -155,11 +168,11 @@
 
         <div class="detail-container">
             <div class="menu-image">
-                <img src="{{ asset($menu->image) }}" alt="{{ $menu->nama_produk }}">
+                <img src="{{ asset($menu->image) }}" alt="{{ $menu->nama_makanan }}">
             </div>
             
             <div class="menu-info">
-                <h1 class="menu-title">{{ $menu->nama_produk }}</h1>
+                <h1 class="menu-title">{{ $menu->nama_makanan }}</h1>
                 
                 <div class="rating">
                     <div class="stars">
@@ -175,7 +188,7 @@
                 <p class="menu-description">{{ $menu->deskripsi }}</p>
                 
                 <div class="menu-price">
-                    Rp {{ number_format($menu->price, 0, ',', '.') }}
+                    Rp {{ number_format($menu->harga, 0, ',', '.') }}
                 </div>
 
                 <div class="quantity-control">
@@ -193,13 +206,13 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const countInput = document.querySelector('.count');
     const minusButton = document.querySelector('.minus');
     const plusButton = document.querySelector('.plus');
     const addToCartButton = document.querySelector('.add-to-cart');
+    const cartIcon = document.querySelector('.cart-icon');
     
-    // Get menu ID from current page
     const menuId = {{ $menu->id }};
     
     // Get saved quantity from localStorage
@@ -229,7 +242,7 @@
         localStorage.setItem(`menu_${menuId}_quantity`, value);
     });
 
-    // Handle add to cart
+    // Enhanced add to cart with SweetAlert2
     addToCartButton.addEventListener('click', async (e) => {
         e.preventDefault();
         const quantity = parseInt(countInput.value) || 0;
@@ -243,36 +256,69 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({
-                        nama_produk: '{{ $menu->nama_produk }}',
-                        price: {{ $menu->price }},
+                        nama_produk: '{{ $menu->nama_makanan }}',
+                        price: {{ $menu->harga }},
                         quantity: quantity,
-                        image: '{{ $menu->image }}'
+                        image: '{{ Storage::url($menu->image) }}'
                     })
                 });
 
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Item berhasil ditambahkan ke keranjang!');
+                    // Enhanced success message with SweetAlert2
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil Ditambahkan!',
+                        text: `${quantity} ${quantity > 1 ? 'items' : 'item'} telah ditambahkan ke keranjang`,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Lihat Keranjang',
+                        showCancelButton: true,
+                        cancelButtonText: 'Lanjut Belanja',
+                        customClass: {
+                            confirmButton: 'swal2-confirm',
+                            cancelButton: 'swal2-cancel'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '{{ route("keranjang.index") }}';
+                        }
+                    });
+                    
                     countInput.value = 0;
                     localStorage.setItem(`menu_${menuId}_quantity`, 0);
-                    window.location.reload(); // Refresh halaman untuk update cart counter
+                    
+                    // Update cart counter
+                    if (cartIcon) {
+                        const currentCount = parseInt(cartIcon.getAttribute('data-count')) || 0;
+                        cartIcon.setAttribute('data-count', currentCount + quantity);
+                    }
                 } else {
-                    throw new Error(data.message || 'Gagal menambahkan ke keranjang');
+                    throw new Error(data.message);
                 }
             } catch (error) {
-                alert('Gagal menambahkan ke keranjang: ' + error.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Gagal menambahkan ke keranjang: ' + error.message
+                });
             }
         } else {
-            alert('Silakan pilih jumlah item terlebih dahulu!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: 'Silakan pilih jumlah item terlebih dahulu!'
+            });
         }
     });
 
-    // Cart icon functionality
-    document.querySelector('.cart-icon').addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '{{ route("keranjang.index") }}';
-    });
+    // Cart icon click handler
+    if (cartIcon) {
+        cartIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '{{ route("keranjang.index") }}';
+        });
+    }
 });
     </script>
 </body>

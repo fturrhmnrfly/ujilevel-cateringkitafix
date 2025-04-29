@@ -16,6 +16,8 @@
         <div class="form-group">
             <label for="kategori">Kategori:</label>
             <select id="kategori" name="kategori" class="form-control" required>
+                <option value="Prasmanan" {{ $kelolamakanan->kategori == 'Prasmanan' ? 'selected' : '' }}>Prasmanan</option>
+                <option value="Nasi Box" {{ $kelolamakanan->kategori == 'Nasi Box' ? 'selected' : '' }}>Nasi Box</option>
                 <option value="Paket Pernikahan" {{ $kelolamakanan->kategori == 'Paket Pernikahan' ? 'selected' : '' }}>Paket Pernikahan</option>
                 <option value="Paket Harian" {{ $kelolamakanan->kategori == 'Paket Harian' ? 'selected' : '' }}>Paket Harian</option>
                 <option value="Ala Carte" {{ $kelolamakanan->kategori == 'Ala Carte' ? 'selected' : '' }}>Ala Carte</option>

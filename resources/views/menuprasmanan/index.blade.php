@@ -62,7 +62,7 @@
     }
 
     .navbar .search-bar {
-        display
+        display: flex;
         align-items: center;
         background-color: #fff;
         padding: 10px;
@@ -311,7 +311,7 @@
             <!-- Navigation Links -->
             <ul class="nav-links">
                 <li><a href="{{ route('home') }}">Home</a></li>
-                <li><a href="{{ route('catering.index') }}">Catering</a></li>
+                <li><a href="{{ route('about.index') }}">Tentang Kami</a></li>
                 <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
                 <li><a href="{{ route('contact.index') }}">Contact</a></li>
             </ul>
@@ -334,159 +334,27 @@
         <div class="menu-section">
             <h2 class="section-title">Prasmanan</h2>
             <div class="menu-grid">
-                <!-- Item 1 -->
-                <div class="menu-item" data-id="1">
-                    <img src="{{ asset('assets/homeassets3.jpg') }}" alt="Ayam Geprek">
+                @foreach($menuItems as $menu)
+                <div class="menu-item" data-id="{{ $menu->id }}">
+                    @if($menu->image && Storage::disk('public')->exists($menu->image))
+                        <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->nama_makanan }}">
+                    @else
+                        <img src="{{ asset('assets/default-food.png') }}" alt="Default food image">
+                    @endif
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Ayam Geprek</h3>
+                        <h3 class="menu-item-title">{{ $menu->nama_makanan }}</h3>
                         <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 12.000</p>
+                            <p class="menu-item-price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
                             <div class="counter">
                                 <button class="minus">-</button>
                                 <input type="number" class="count" value="0" min="0">
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="{{ route('menuprasmanan.show', 1) }}" class="menu-item-button">Detail Menu</a>
+                        <a href="{{ route('menuprasmanan.show', $menu->id) }}" class="menu-item-button">Detail Menu</a>
                     </div>
                 </div>
-                
-
-                <!-- Item 2 -->
-                <div class="menu-item" data-id="2">
-                    <img src="{{ asset('assets/homeassets6.jpg') }}" alt="Ayam Kecap">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Ayam Kecap</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 9.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="{{ route('menuprasmanan.show', 2) }}" class="menu-item-button">Detail Menu</a>
-                    </div>
-                </div>
-
-                <!-- Item 3 -->
-                <div class="menu-item" data-id="3">
-                    <img src="{{ asset('assets/ikanbunjaergulai.png') }}" alt="Ikan Goreng">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Ikan Bunjer Gulai</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 10.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="{{ route('menuprasmanan.show', 3) }}" class="menu-item-button">Detail Menu</a>
-                    </div>
-                </div>
-
-                <!-- Item 4 -->
-                <div class="menu-item" data-id="4">
-                    <img src="{{ asset('assets/cumibalado.png') }}" alt="Cumi Balado">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Cumi Balado</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 15.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="{{ route('menuprasmanan.show', 4) }}" class="menu-item-button">Detail Menu</a>
-                    </div>
-                </div>
-
-                <!-- Item 5 -->
-                <div class="menu-item" data-id="5">
-                    <img src="{{ asset('assets/homeassets5.jpg') }}" alt="Ikan Goreng">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Ikan Goreng</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 20.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="{{ route('menuprasmanan.show', 5) }}" class="menu-item-button">Detail Menu</a>
-                    </div>
-                </div>
-
-                <!-- Item 6 -->
-                <div class="menu-item" data-id="6">
-                    <img src="{{ asset('assets/kentangbalado.png') }}" alt="Kentang Balado">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Kentang Balado</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 8.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="{{ route('menuprasmanan.show', 6) }}" class="menu-item-button">Detail Menu</a>
-                    </div>
-                </div>
-
-                <!-- Item 7 -->
-                <div class="menu-item" data-id="7">
-                    <img src="{{ asset('assets/tempeorek.png') }}" alt="Tempe Orek">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Tempe Orek</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 5.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="{{ route('menuprasmanan.show', 7) }}" class="menu-item-button">Detail Menu</a>
-                    </div>
-                </div>
-
-                <!-- Item 8 -->
-                <div class="menu-item" data-id="8">
-                    <img src="{{ asset('assets/ayamgoreng.png') }}" alt="Ayam Goreng">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Ayam Goreng</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 8.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="{{ route('menuprasmanan.show', 8) }}" class="menu-item-button">Detail Menu</a>
-                    </div>
-                </div>
-
-                <!-- Item 9 -->
-                <div class="menu-item" data-id="9">
-                    <img src="{{ asset('assets/homeassets4.jpg') }}" alt="Telur Balado">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Telur Balado</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 6.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="{{ route('menuprasmanan.show', 9) }}" class="menu-item-button">Detail Menu</a>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
 </body>
