@@ -315,77 +315,32 @@
 <div class="container">
     @if(isset($orders) && count($orders) > 0)
         @foreach($orders as $order)
-            <!-- Order Details Card -->
-            <div class="order-details" style="max-width: 800px; margin: 20px auto; background: white; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px;">
-                <!-- Order Header -->
-                <div style="margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h3 style="font-size: 16px; margin: 0; color: #333;">
-                                Order #{{ str_pad($order->order_number, 8, '0', STR_PAD_LEFT) }}
-                            </h3>
-                            <p style="color: #666; font-size: 14px; margin: 5px 0;">
-                                Tanggal Pemesanan: {{ $order->created_at->format('d F Y') }}
-                            </p>
-                        </div>
-                        <span style="
-                            padding: 5px 12px;
-                            background: #FFF3CD;
-                            color: #856404;
-                            border-radius: 15px;
-                            font-size: 13px;
-                            display: inline-block;
-                        ">{{ ucfirst($order->status) }}</span>
-                    </div>
+        <div class="order-card">
+            <div class="order-header">
+                <h3>Order #{{ $order->order_number }}</h3>
+                <span class="status {{ $order->status }}">{{ ucfirst($order->status) }}</span>
+            </div>
+            <div class="order-details">
+                <div class="delivery-info">
+                    <p>Tanggal Pengiriman: {{ $order->delivery_date }}</p>
+                    <p>Waktu: {{ $order->delivery_time }}</p>
+                    <p>Alamat: {{ $order->address }}</p>
                 </div>
-
-                <!-- Order Items -->
-                <div style="margin-bottom: 20px;">
+                <div class="items-list">
                     @foreach($order->items as $item)
-                    <div style="display: flex; align-items: center; background: white; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
-                        <img src="{{ asset($item->image) }}" alt="{{ $item->name }}" 
-                            style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
-                        <div style="flex-grow: 1;">
-                            <h4 style="margin: 0; font-size: 14px; color: #333;">{{ $item->name }}</h4>
-                            <p style="color: #666; margin: 3px 0; font-size: 12px;">{{ $item->quantity }}x</p>
-                        </div>
-                        <div style="text-align: right;">
-                            <span style="font-size: 14px; color: #333;">Rp {{ number_format($item->price, 0, ',', '.') }}</span>
-                        </div>
+                    <div class="item">
+                        <span>{{ $item->name }} x {{ $item->quantity }}</span>
+                        <span>Rp {{ number_format($item->price, 0, ',', '.') }}</span>
                     </div>
                     @endforeach
                 </div>
-
-                <!-- Order Summary -->
-                <div style="margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color: #666; font-size: 14px;">Subtotal</span>
-                        <span style="color: #333; font-size: 14px;">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color: #666; font-size: 14px;">Biaya Pengiriman</span>
-                        <span style="color: #333; font-size: 14px;">Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
-                        <span style="color: #333; font-size: 14px;">Total</span>
-                        <span style="color: #333; font-size: 14px; font-weight: 600;">
-                            Rp {{ number_format(($order->subtotal + $order->shipping_cost), 0, ',', '.') }}
-                        </span>
-                    </div>
+                <div class="order-summary">
+                    <p>Subtotal: Rp {{ number_format($order->subtotal, 0, ',', '.') }}</p>
+                    <p>Ongkir: Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</p>
+                    <p class="total">Total: Rp {{ number_format($order->total, 0, ',', '.') }}</p>
                 </div>
-
-                <!-- Delivery Schedule -->
-                <div style="display: flex; align-items: center; background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                    <i class="far fa-calendar" style="color: #666; margin-right: 8px;"></i>
-                    <span style="color: #666; font-size: 14px;">Pengiriman dijadwalkan: {{ \Carbon\Carbon::parse($order->delivery_date)->format('d F Y') }}, {{ $order->delivery_time }}</span>
-                </div>
-
-                <!-- Detail Button -->
-                <a href="{{ route('pesanan.show', $order->id) }}" 
-                style="display: block; text-align: center; padding: 12px; background: #27276e; color: white; border-radius: 8px; text-decoration: none; font-weight: 500;">
-                    Lihat Detail
-                </a>
             </div>
+        </div>
         @endforeach
     @else
         <!-- Empty State -->

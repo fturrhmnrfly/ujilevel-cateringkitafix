@@ -3,42 +3,59 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\Payment;
 use App\Models\Transaksi;
 use App\Models\OrderItem;
+use App\Models\Order;
+use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 
-class PaymentController extends Controller
+class PaymentController extends Controller 
 {
-    public function store(Request $request)
-    {
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'total_amount' => $request->total,
-            'payment_method' => $request->payment_method,
-            'shipping_address' => $request->address,
-            'phone_number' => $request->phone,
-            'delivery_date' => $request->delivery_date . ' ' . $request->delivery_time,
-            'notes' => $request->notes,
-            'status' => 'pending',
-            'payment_status' => 'unpaid'
-        ]);
-
-        // Redirect to payment page with order ID
-        return redirect()->route('payment.show', ['orderId' => $order->id]);
-    }
-
+    // Remove or comment out the index() method since we're not using it
+    
     public function show($method)
     {
         // Validate payment method
-        if (!in_array($method, ['bca', 'dana', 'gopay', 'cod'])) {
-            abort(404);
-        }
+        $allowedMethods = ['bca', 'dana', 'gopay', 'cod'];
         
-        return view("payments.{$method}");
+        if (!in_array($method, $allowedMethods)) {
+            abort(404, 'Metode pembayaran tidak valid');
+        }
+
+        // Get latest transaction
+        $transaksi = Transaksi::latest()->first();
+
+        // Payment method specific data
+        $paymentData = [
+            'bca' => [
+                'title' => 'Pembayaran BCA Virtual Account',
+                'account_number' => '123456789',
+                'account_name' => 'CATERING KITA',
+                'bank_name' => 'Bank BCA'
+            ],
+            'dana' => [
+                'title' => 'Pembayaran DANA',
+                'account_number' => '085712345678',
+                'account_name' => 'CATERING KITA'
+            ],
+            'gopay' => [
+                'title' => 'Pembayaran GoPay',
+                'account_number' => '085712345678',
+                'account_name' => 'CATERING KITA'
+            ],
+            'cod' => [
+                'title' => 'Cash on Delivery (COD)',
+                'min_dp' => '30%'
+            ]
+        ];
+
+        $data = $paymentData[$method];
+        $data['method'] = $method;
+        $data['transaksi'] = $transaksi;
+
+        return view("metodepembayaran.{$method}", $data);
     }
-    
+
     public function process(Request $request)
     {
         try {

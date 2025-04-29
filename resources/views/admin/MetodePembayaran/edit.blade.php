@@ -1,6 +1,3 @@
-
-
-@section('content')
 <div class="container mx-auto p-6">
     <h1 class="text-2xl font-bold mb-4">Edit Metode Pembayaran</h1>
     <form action="{{ route('admin.metodepembayaran.update', $metodePembayaran->id) }}" method="POST">
@@ -34,4 +31,4 @@
         </div>
     </form>
 </div>
-@endsection
+

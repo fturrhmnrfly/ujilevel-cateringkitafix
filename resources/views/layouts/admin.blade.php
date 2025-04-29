@@ -15,3 +15,4 @@
     <button class="nav-item">Penilaian</button>
     <button class="logout-btn">Logout</button>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

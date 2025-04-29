@@ -3,41 +3,55 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pesanan;
+use App\Models\AdminProfile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminProfileController extends Controller
 {
-    public function updateStatus(Request $request, $id)
-{
-    try {
-        // Validasi input
-        $request->validate([
-            'status_pengiriman' => 'required|in:diproses,dikirim,diterima,dibatalkan',
-            'catatan' => 'nullable|string'
+    public function show()
+    {
+        $user = Auth::user();
+        $profile = $user->adminProfile ?? $user->adminProfile()->create([
+            'phone' => '',
+            'bio' => 'Hello guys'
         ]);
-
-        // Cari pesanan
-        $pesanan = Pesanan::findOrFail($id);
         
-        // Update status
-        $pesanan->update([
-            'status_pengiriman' => $request->status_pengiriman,
-            'catatan' => $request->catatan
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Status berhasil diupdate'
-        ]);
-
-    } catch (\Exception $e) {
-        \Log::error('Error updating order status: ' . $e->getMessage());
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal mengupdate status: ' . $e->getMessage() 
-        ], 500);
+        return view('admin.profileadmin.show', compact('user', 'profile'));
     }
-}
+
+    public function edit()
+    {
+        $user = Auth::user();
+        $profile = $user->adminProfile;
+        return view('admin.profileadmin.edit', compact('user', 'profile'));
+    }
+
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+        
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:15',
+            'bio' => 'nullable|string'
+        ]);
+
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email']
+        ]);
+
+        $user->adminProfile()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'phone' => $validated['phone'],
+                'bio' => $validated['bio']
+            ]
+        );
+
+        return redirect()->route('admin.profile.show')
+                        ->with('success', 'Profile updated successfully.');
+    }
 }

@@ -40,15 +40,13 @@ use App\Http\Controllers\Admin\TentangKamiController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\NotificationAdminController;
 use App\Http\Controllers\Admin\KaryawanController;
+use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\SearchController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 
-Route::get('admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware(['auth', 'verified'])->name('admin.dashboard');
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-Route::get('/admin/dashboard', [AdminTransaksiController::class, 'dashboard'])->name('admin.dashboard');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -181,7 +179,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('stokbahan/search', [AdminStokBahanController::class, 'index'])->name('stokbahan.search');
 
     // Daftar Pesanan
-    Route::resource('daftarpesanan', AdminDaftarPesananController::class);
+    Route::resource('/daftarpesanan', AdminDaftarPesananController::class);
+    Route::post('/daftarpesanan/{id}/status', [AdminDaftarPesananController::class, 'updateStatus'])->name('daftarpesanan.updateStatus');
 
     // Laporan routes
     Route::get('laporan/export', [AdminLaporanController::class, 'export'])->name('laporan.export');
@@ -214,9 +213,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     
 
     // Profile Admin
-    Route::get('/profileadmin', [ProfileController::class, 'show'])->name('profileadmin.show');
-    Route::get('/profileadmin/edit', [ProfileController::class, 'edit'])->name('profileadmin.edit');
-    Route::post('/profileadmin/update', [ProfileController::class, 'update'])->name('profileadmin.update');
+    Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [AdminProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
 });
 
 // Notifications
@@ -228,7 +227,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
 
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::post('/checkout/process', [CheckOutController::class, 'process'])->name('checkout.process');
 
 // Order routes
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

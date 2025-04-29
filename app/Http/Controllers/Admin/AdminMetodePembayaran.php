@@ -47,7 +47,8 @@ class AdminMetodePembayaran extends Controller
 
         MetodePembayaran::create($request->only(['metode_pembayaran', 'deskripsi', 'status', 'admin']));
 
-        return redirect()->route('admin.metodepembayaran.index')->with('success', 'Metode pembayaran berhasil ditambahkan.');
+        return redirect()->route('admin.metodepembayaran.index')
+            ->with('success', 'Metode pembayaran berhasil ditambahkan');
     }
 
     /**
@@ -74,7 +75,7 @@ class AdminMetodePembayaran extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'metode_pembayaran' => 'required|string|max:255',
@@ -90,17 +91,19 @@ class AdminMetodePembayaran extends Controller
         $metodePembayaran = MetodePembayaran::findOrFail($id);
         $metodePembayaran->update($request->only(['metode_pembayaran', 'deskripsi', 'status', 'admin']));
 
-        return redirect()->route('admin.metodepembayaran.index')->with('success', 'Metode pembayaran berhasil diperbarui.');
+        return redirect()->route('admin.metodepembayaran.index')
+            ->with('success', 'Metode pembayaran berhasil diperbarui');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $metodePembayaran = MetodePembayaran::findOrFail($id);
         $metodePembayaran->delete();
 
-        return redirect()->route('admin.metodepembayaran.index')->with('success', 'Metode pembayaran berhasil dihapus.');
+        return redirect()->route('admin.metodepembayaran.index')
+            ->with('success', 'Metode pembayaran berhasil dihapus');
     }
 }

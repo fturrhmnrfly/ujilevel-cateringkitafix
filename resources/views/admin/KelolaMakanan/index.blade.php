@@ -149,6 +149,20 @@
             font-weight: bold;
             color: #333;
         }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: block;
+        }
+
+        .image-cell {
+            padding: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -204,7 +218,17 @@
                         @foreach ($makanans as $index => $item)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td><img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->nama_makanan }}" width="50"></td>
+                                <td class="image-cell">
+                                    @if($item->image && Storage::disk('public')->exists($item->image))
+                                        <img src="{{ Storage::url($item->image) }}" 
+                                             alt="{{ $item->nama_makanan }}" 
+                                             class="product-image">
+                                    @else
+                                        <img src="{{ asset('assets/default-food.png') }}" 
+                                             alt="Default food image" 
+                                             class="product-image">
+                                    @endif
+                                </td>
                                 <td>{{ $item->nama_makanan }}</td>
                                 <td>{{ $item->kategori }}</td>
                                 <td>Rp.{{ number_format($item->harga, 0, ',', '.') }}</td>
@@ -216,10 +240,12 @@
                                 <td>{{ $item->deskripsi }}</td>
                                 <td>
                                     <a href="{{ route('admin.kelolamakanan.edit', $item->id) }}" class="btn-warning">Edit</a>
-                                    <form action="{{ route('admin.kelolamakanan.destroy', $item->id) }}" method="POST" style="display: inline-block;">
+                                    <form id="delete-form-{{ $item->id }}" action="{{ route('admin.kelolamakanan.destroy', $item->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Delete</button>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete('delete-form-{{ $item->id }}')">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -243,7 +269,7 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + id).submit();
+                    document.getElementById(id).submit();
                     Swal.fire({
                         title: 'Berhasil!',
                         text: 'Data berhasil dihapus.',

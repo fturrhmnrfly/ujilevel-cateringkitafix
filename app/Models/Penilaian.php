@@ -2,12 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Penilaian extends Model
 {
-    use HasFactory;
+    protected $table = 'penilaians';
+    
+    protected $fillable = [
+        'pesanan_id',
+        'rating',
+        'komentar'
+    ];
 
-    protected $fillable = ['nama_pembeli', 'nama_produk', 'rating'];
+    public function pesanan()
+    {
+        return $this->belongsTo(DaftarPesanan::class, 'pesanan_id');
+    }
 }

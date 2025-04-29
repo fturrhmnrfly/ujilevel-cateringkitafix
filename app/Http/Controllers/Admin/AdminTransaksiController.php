@@ -12,6 +12,7 @@ class AdminTransaksiController extends Controller
     public function index()
     {
         $transaksis = Transaksi::orderBy('tanggal_transaksi', 'desc')->get();
+
         
         // Ensure dates are Carbon instances
         $transaksis->transform(function($transaksi) {

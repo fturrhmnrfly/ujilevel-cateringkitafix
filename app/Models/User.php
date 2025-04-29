@@ -30,8 +30,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function profile()
+    /**
+     * Get the admin profile associated with the user.
+     */
+    public function adminProfile()
     {
-        return $this->hasOne(Profile::class);
+        return $this->hasOne(AdminProfile::class);
     }
 }

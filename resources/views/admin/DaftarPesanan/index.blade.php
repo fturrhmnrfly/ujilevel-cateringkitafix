@@ -358,7 +358,7 @@
             <div class="stats-container">
                 <div class="stat-card">
                     <h3>{{ $stats['total'] }}</h3>
-                    <p>Semuah Pesanan</p>
+                    <p>Semua Pesanan</p>
                 </div>
                 <div class="stat-card">
                     <h3>{{ $stats['belum_bayar'] }}</h3>
@@ -488,12 +488,11 @@
 
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            // Update the URL to match the route
-            fetch(`/admin/daftarpesanan/${currentOrderId}/status`, {
-                method: 'POST', // Keep this as POST to match the route
+            fetch("{{ route('admin.daftarpesanan.updateStatus', '') }}/" + currentOrderId, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    'Accept': 'application/json', 
                     'X-CSRF-TOKEN': token
                 },
                 body: JSON.stringify({
@@ -509,6 +508,7 @@
             })
             .then(data => {
                 if (data.success) {
+                    // Update status badge in the table
                     const row = document.querySelector(`tr[data-order-id="${currentOrderId}"]`);
                     const statusBadge = row.querySelector('.badge');
                     statusBadge.className = `badge badge-${newStatus}`;

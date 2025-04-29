@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\CheckOut;
 use App\Models\Transaksi;
+use App\Models\DaftarPesanan; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CheckOutController extends Controller
 {
@@ -45,78 +47,87 @@ class CheckOutController extends Controller
         ));
     }
 
-    public function store(Request $request)
-{
-    try {
-        DB::beginTransaction();
+    public function process(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            
+            // Validate request
+            $validated = $request->validate([
+                'items' => 'required|array',
+                'shipping' => 'required|array',
+                'shipping.method' => 'required|string',
+                'shipping.address' => 'required|string',
+                'shipping.phone' => 'required|string',
+                'shipping.notes' => 'nullable|string',
+                'shipping.delivery_date' => 'required|date',
+                'shipping.delivery_time' => 'required',
+                'payment_method' => 'required|string',
+                'total' => 'required|numeric',
+                'shipping_cost' => 'required|numeric',
+                'subtotal' => 'required|numeric'
+            ]);
 
-        // Validasi request
-        $validated = $request->validate([
-            'delivery_date' => 'required|date',
-            'delivery_time' => 'required',
-            'address' => 'required|string',
-            'phone' => 'required|string',
-            'notes' => 'nullable|string',
-            'subtotal' => 'required|numeric',
-            'shipping_cost' => 'required|numeric',
-            'total' => 'required|numeric',
-            'items' => 'required|array'
-        ]);
+            // Create checkout record
+            $checkout = CheckOut::create([
+                'user_id' => Auth::id(),
+                'delivery_date' => $validated['shipping']['delivery_date'],
+                'delivery_time' => $validated['shipping']['delivery_time'],
+                'address' => $validated['shipping']['address'],
+                'phone' => $validated['shipping']['phone'],
+                'notes' => $validated['shipping']['notes'],
+                'subtotal' => $validated['subtotal'],
+                'shipping_cost' => $validated['shipping_cost'],
+                'total' => $validated['total'],
+                'status' => 'pending'
+            ]);
 
-        // Buat checkout record
-$checkout = CheckOut::create([
-    'user_id' => Auth::id(),
-    'delivery_date' => $validated['delivery_date'],
-    'delivery_time' => $validated['delivery_time'],
-    'address' => $validated['address'],
-    'phone' => $validated['phone'],
-    'notes' => $validated['notes'],
-    'subtotal' => $validated['subtotal'],
-    'shipping_cost' => $validated['shipping_cost'],
-    'total' => $validated['total'],
-    'status' => 'pending'
-]);
+            // Generate unique transaction ID
+            $transactionId = 'TRX-' . time() . '-' . Str::random(6);
 
-// Buat transaksi record
-    Transaksi::create([
-    'nama_admin' => 'Admin', // atau ambil dari Auth kalau perlu
-    'nama_pelanggan' => Auth::user()->name ?? 'Guest', // atau custom
-    'tanggal_transaksi' => now(),
-    'id_transaksi' => 'ORD-' . strtoupper(uniqid()), // buat ID unik
-    'jenis_tindakan' => 'Checkout Produk', // bisa disesuaikan
-    'deskripsi_tindakan' => 'Pelanggan melakukan checkout.',
-    'total_harga' => $validated['total'],
-    'status_transaksi' => 'pending',
-    'bukti_pembayaran' => null, // atau default dulu
-]);
+            // Create record in daftar_pesanan
+            DaftarPesanan::create([
+                'order_id' => 'ORD-' . Str::uuid(),
+                'nama_pelanggan' => Auth::user()->name,
+                'kategori_pesanan' => 'Online Order',
+                'tanggal_pesanan' => now(),
+                'jumlah_pesanan' => count($validated['items']),
+                'tanggal_pengiriman' => $validated['shipping']['delivery_date'],
+                'waktu_pengiriman' => $validated['shipping']['delivery_time'],
+                'lokasi_pengiriman' => $validated['shipping']['address'],
+                'nomor_telepon' => $validated['shipping']['phone'],
+                'pesan' => $validated['shipping']['notes'],
+                'opsi_pengiriman' => $validated['shipping']['method'],
+                'total_harga' => $validated['total'],
+                'status_pengiriman' => 'diproses',
+                'status_pembayaran' => 'pending'
+            ]);
 
+            // Create transaction record with unique ID
+            Transaksi::create([
+                'nama_admin' => 'System',
+                'nama_pelanggan' => Auth::user()->name, 
+                'tanggal_transaksi' => now(),
+                'id_transaksi' => $transactionId,
+                'jenis_tindakan' => 'Checkout',
+                'deskripsi_tindakan' => 'Pesanan baru',
+                'total_harga' => $validated['total'],
+                'status_transaksi' => 'Pending'
+            ]);
 
-        // Tambahkan juga ke tabel transaksi admin
-        Transaksi::create([
-            'nama_admin' => 'System', // atau kosong, nanti admin edit
-            'nama_pelanggan' => Auth::user()->name ?? 'Guest', // pastikan user login
-            'tanggal_transaksi' => now(),
-            'id_transaksi' => '#ORD-' . strtoupper(uniqid()), // bikin kode unik
-            'jenis_tindakan' => 'Checkout',
-            'deskripsi_tindakan' => 'Pesanan baru dari pelanggan.',
-            'total_harga' => $validated['total'],
-            'status_transaksi' => 'Menunggu',
-        ]);
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Checkout berhasil'
+            ]);
 
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Checkout berhasil',
-            'checkout_id' => $checkout->id
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollback();
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal memproses checkout: ' . $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false, 
+                'message' => 'Gagal memproses checkout: ' . $e->getMessage()
+            ], 500);
+        }
     }
-}
 }

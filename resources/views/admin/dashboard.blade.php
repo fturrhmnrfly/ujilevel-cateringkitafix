@@ -200,6 +200,34 @@
             height: 35px;
             border-radius: 50%;
         }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .transaction-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .transaction-date {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .income {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        
+        .value {
+            color: #333;
+            font-weight: bold; 
+        }
     </style>
 </head>
 
@@ -253,7 +281,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>Pesanan Hari Ini</h3>
-                    <div class="value" id="total-expense">Rp. {{ number_format($pengeluaran, 0, ',', '.') }}</div>
+                    <div class="value" id="total-expense">{{ $todayOrders->count() }} Pesanan</div>
                 </div>
             </div>
             <div class="stat-card">
@@ -273,8 +301,37 @@
 
         <div class="transactions">
             <h3>Transaksi Terbaru</h3>
-            <div id="transaction-list"></div>
+            <div id="transaction-list">
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <strong>Pesanan Hari Ini</strong>
+                        <span class="transaction-date">{{ now()->format('d/m/Y') }}</span>
+                    </div>
+                    <div class="value">
+                        @php
+                            $todayOrderCount = \App\Models\DaftarPesanan::whereDate('created_at', today())
+                                ->sum('jumlah_pesanan');
+                        @endphp
+                        {{ $todayOrderCount }} box
+                    </div>
+                </div>
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <strong>Pendapatan Catering</strong>  
+                        <span class="transaction-date">Total Pendapatan</span>
+                    </div>
+                    <div class="income">
+                        @php
+                            $totalRevenue = \App\Models\DaftarPesanan::where('status_pembayaran', 'like', '%paid%')
+                                ->whereIn('status_pengiriman', ['diterima', 'selesai'])
+                                ->sum('total_harga');
+                        @endphp
+                        +Rp. {{ number_format($totalRevenue, 0, ',', '.') }}
+                    </div>
+                </div>
+            </div>
         </div>
+        
     </div>
 
     <script>

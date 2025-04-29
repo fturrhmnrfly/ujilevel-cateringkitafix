@@ -1,35 +1,31 @@
 <?php
-
+// app/Models/DaftarPesanan.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DaftarPesanan extends Model
+class DaftarPesanan extends Model 
 {
-    protected $table = 'daftar_pesanans'; // Pastikan nama tabel sesuai
-
     protected $fillable = [
-        'status_pengiriman',
-        'catatan_status',
         'order_id',
-        'nama_pelanggan', 
+        'nama_pelanggan',
+        'kategori_pesanan',
         'tanggal_pesanan',
         'jumlah_pesanan',
+        'tanggal_pengiriman',
+        'waktu_pengiriman',
         'lokasi_pengiriman',
         'nomor_telepon',
+        'pesan',
+        'opsi_pengiriman',
         'total_harga',
         'status_pengiriman',
         'status_pembayaran',
-        'opsi_pengiriman',
-        'pesan_untuk_penjual'
+        'catatan_status'
     ];
 
     protected $casts = [
         'tanggal_pesanan' => 'datetime',
         'total_harga' => 'decimal:2'
     ];
-	public function user()
-	{
-		return $this->belongsTo(User::class, 'user_id');
-	}
 }

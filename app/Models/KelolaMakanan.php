@@ -11,11 +11,11 @@ class KelolaMakanan extends Model
 
     protected $table = 'kelola_makanans';
     protected $fillable = [
+        'image',
         'nama_makanan',
         'kategori',
         'harga',
         'status',
-        'deskripsi',
-        'image',
+        'deskripsi'
     ];
 }

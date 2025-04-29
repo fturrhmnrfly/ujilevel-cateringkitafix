@@ -195,6 +195,38 @@
             border-radius: 50%;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+function confirmDelete(formId) {
+    Swal.fire({
+        title: 'Apakah kamu yakin?',
+        text: "Data ini akan dihapus secara permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(formId).submit();
+        }
+    });
+}
+
+// Success message after delete
+document.addEventListener('DOMContentLoaded', function() {
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            timer: 1500,
+            showConfirmButton: false
+        });
+    @endif
+});
+</script>
 </head>
 <body>
     <x-sidebar></x-sidebar>
@@ -261,7 +293,13 @@
                             <td><a href="#" class="btn-view">View File</a></td>
                             <td class="action-buttons">
                                 <a href="{{ route('admin.laporan.edit', $laporan->id) }}" class="btn-edit">edit</a>
-                                <button class="btn-delete">Delete</button>
+                                <form id="delete-form-{{ $laporan->id }}" action="{{ route('admin.laporan.destroy', $laporan->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn-delete" onclick="confirmDelete('delete-form-{{ $laporan->id }}')">
+                                        Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach

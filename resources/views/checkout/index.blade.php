@@ -971,6 +971,7 @@
     </div>
 
     <div class="container">
+        <input type="hidden" id="user-name" value="{{ Auth::user()->name }}">
         <a href="/keranjang" class="back-button">← Kembali Ke Menu</a>
         <h1 class="checkout-title">Checkout</h1>
 
@@ -1121,7 +1122,117 @@
         </div>
     </div>
     <script>
-        // Letakkan di dalam file checkout.js atau dalam tag <script> di halaman checkout
+        // First, define updateShippingDisplay function globally
+        function updateShippingDisplay(option) {
+            const mainShippingOptions = document.querySelector('.shipping-options');
+            const shippingCostSpan = document.querySelector('.summary-item:nth-child(2) span:last-child');
+            const totalSpan = document.getElementById('total');
+
+            if (!option) {
+                mainShippingOptions.innerHTML = `
+            <div class="shipping-option">
+                <div class="shipping-option-label">
+                    <div class="option-content">
+                        <div class="option-description">
+                            <div>Silakan pilih opsi pengiriman</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+                shippingCostSpan.textContent = '-';
+                const subtotal = parseFloat(document.getElementById('subtotal').textContent.replace(/[^0-9]/g, ''));
+                totalSpan.textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
+                return;
+            }
+
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+            const shippingOptions = {
+                'self': {
+                    title: 'Ambil Sendiri',
+                    price: 0,
+                    icon: '🏪',
+                    description: () => 'Ambil Pesanan mu di outlet kami'
+                },
+                'instant': {
+                    title: 'Garansi Tepat Waktu',
+                    price: 10000,
+                    icon: '⚡',
+                    description: () => {
+                        if (totalQuantity <= 5) return 'Garansi tiba dalam 30-45 menit';
+                        if (totalQuantity <= 10) return 'Garansi tiba dalam 45-60 menit';
+                        return 'Estimasi tiba dalam 5 Jam';
+                    }
+                },
+                'regular': {
+                    title: 'Regular',
+                    price: 5000,
+                    icon: '🚚',
+                    description: () => {
+                        if (totalQuantity <= 20) return 'Estimasi tiba: 2-3 jam';
+                        if (totalQuantity <= 50) return 'Estimasi tiba: 3-4 jam';
+                        return 'Estimasi tiba: 4-5 jam';
+                    }
+                },
+                'economy': {
+                    title: 'Hemat',
+                    price: 2000,
+                    icon: '💰',
+                    description: () => {
+                        if (totalQuantity <= 20) return 'Estimasi tiba: 3-4 jam';
+                        if (totalQuantity <= 50) return 'Estimasi tiba: 4-6 jam';
+                        return 'Estimasi tiba: 5-7 jam';
+                    }
+                }
+            };
+
+            const selectedOption = shippingOptions[option];
+
+            mainShippingOptions.innerHTML = `
+        <div class="shipping-option">
+            <input type="radio" id="selected-delivery" name="shipping_option" value="${option}" checked>
+            <label for="selected-delivery" class="shipping-option-label">
+                <div class="option-content">
+                    <div class="option-header">
+                        <div class="option-title">
+                            <span class="delivery-icon">${selectedOption.icon}</span>
+                            ${selectedOption.title}
+                        </div>
+                        <div class="option-price">Rp${selectedOption.price.toLocaleString('id-ID')}</div>
+                    </div>
+                    <div class="option-description">
+                        <div>${selectedOption.description()}</div>
+                        ${totalQuantity > 50 ? '<div class="quantity-notice">* Pesanan dalam jumlah besar memerlukan waktu lebih lama</div>' : ''}
+                    </div>
+                </div>
+            </label>
+        </div>
+    `;
+
+            const subtotal = parseFloat(document.getElementById('subtotal').textContent.replace(/[^0-9]/g, ''));
+            shippingCostSpan.textContent = `Rp ${selectedOption.price.toLocaleString('id-ID')}`;
+            const newTotal = subtotal + selectedOption.price;
+            totalSpan.textContent = `Rp ${newTotal.toLocaleString('id-ID')}`;
+        }
+
+        // Then define confirmShippingOption
+        function confirmShippingOption() {
+            const selectedOption = document.querySelector('.shipping-options-modal input[type="radio"]:checked');
+            if (selectedOption) {
+                const modal = document.getElementById('shippingModal');
+                updateShippingDisplay(selectedOption.value);
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+            } else {
+                alert('Silakan pilih opsi pengiriman');
+            }
+            checkFormCompletion();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const checkoutForm = document.getElementById('checkoutForm');
 
@@ -1241,19 +1352,6 @@
             document.querySelectorAll('input[name="shipping_option"]').forEach(option => {
                 option.addEventListener('change', updateTotals);
             });
-
-            // 3. Update fungsi confirmShippingOption
-            function confirmShippingOption() {
-                const selectedOption = document.querySelector(
-                '.shipping-options-modal input[type="radio"]:checked');
-                if (selectedOption) {
-                    updateShippingDisplay(selectedOption.value);
-                    updateTotals(); // Tambahkan ini
-                    closeModal();
-                } else {
-                    alert('Silakan pilih opsi pengiriman');
-                }
-            }
 
             // Function to remove item
             window.removeItem = function(itemId) {
@@ -1751,7 +1849,7 @@
             };
             localStorage.setItem('shippingData', JSON.stringify(shippingData));
         });
-        // Add this to your existing JavaScript
+
         function showPaymentModal(e) {
             e.preventDefault();
 
@@ -1825,6 +1923,15 @@
             document.body.appendChild(modal);
             setTimeout(() => modal.classList.add('show'), 10);
 
+            // Add event listeners for payment methods after modal is created
+            const paymentOptions = modal.querySelectorAll('input[name="payment_method"]');
+            paymentOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    localStorage.setItem('selectedPaymentMethod', this.value);
+                    checkFormCompletion();
+                });
+            });
+
             // Store order data in localStorage
             const orderData = {
                 id: orderId,
@@ -1890,87 +1997,56 @@
         function submitOrder(e) {
             e.preventDefault();
 
-            const shippingData = {
-                deliveryDate: document.getElementById('delivery-date').value,
-                deliveryTime: document.getElementById('delivery-time').value,
-                address: document.getElementById('address').value,
-                phone: document.getElementById('phone').value
-            };
-            localStorage.setItem('shippingData', JSON.stringify(shippingData));
-
-            const requiredFields = [{
-                    id: 'delivery-date',
-                    message: 'Tanggal pengiriman harus diisi'
-                },
-                {
-                    id: 'delivery-time',
-                    message: 'Waktu pengiriman harus diisi'
-                },
-                {
-                    id: 'address',
-                    message: 'Alamat harus diisi'
-                },
-                {
-                    id: 'phone',
-                    message: 'Nomor telepon harus diisi'
-                }
-            ];
-
-            for (const field of requiredFields) {
-                const el = document.getElementById(field.id);
-                if (!el.value.trim()) {
-                    alert(field.message);
-                    el.focus();
-                    return;
-                }
+            const userName = document.getElementById('user-name').value;
+            if (!userName) {
+                alert('Silakan login terlebih dahulu');
+                window.location.href = '/login';
+                return;
             }
 
-            const selectedShipping = document.querySelector('input[name="shipping_option"]:checked');
-            const selectedPayment = localStorage.getItem('selectedPaymentMethod');
+            // Get cart items to determine category
             const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
-            if (!selectedShipping || !selectedPayment) {
-                alert('Silakan pilih opsi pengiriman dan metode pembayaran terlebih dahulu');
+            if (!cartItems.length) {
+                alert('Keranjang belanja kosong');
                 return;
             }
 
-            if (cartItems.length === 0) {
-                alert('Keranjang kosong');
-                return;
-            }
+            // Determine kategori_pesanan based on product names
+const nasiBoxItems = cartItems.some(item => 
+    item.nama_produk.toLowerCase().includes('nasi box')
+);
+const prasmananItems = cartItems.some(item => 
+    item.nama_produk.toLowerCase().includes('prasmanan')
+);
 
-            const formattedItems = cartItems.map(item => ({
-                name: item.nama_produk, // ✅ diambil dari nama_produk
-                price: parseFloat(item.price), // konversi karena awalnya string
-                quantity: item.quantity,
-                image: item.image
-            }));
-
+let kategoriPesanan;
+if (nasiBoxItems && prasmananItems) {
+    kategoriPesanan = 'Nasi Box & Prasmanan';
+} else if (nasiBoxItems) {
+    kategoriPesanan = 'Nasi Box';
+} else if (prasmananItems) {
+    kategoriPesanan = 'Prasmanan';
+}
 
             const orderData = {
-                items: formattedItems,
-                shipping: {
-                    method: selectedShipping.value,
-                    address: document.getElementById('address').value,
-                    phone: document.getElementById('phone').value,
-                    notes: document.getElementById('notes').value,
-                    delivery_date: document.getElementById('delivery-date').value,
-                    delivery_time: document.getElementById('delivery-time').value
-                },
-                payment_method: localStorage.getItem('selectedPaymentMethod'), // Tambahkan payment method
-                total: parseFloat(document.getElementById('total').textContent.replace(/[^\d]/g, '')),
-                shipping_cost: parseFloat(document.querySelector('.summary-item:nth-child(2) span:last-child')
-                    .textContent.replace(/[^\d]/g, '')) || 0,
-                subtotal: parseFloat(document.getElementById('subtotal').textContent.replace(/[^\d]/g, ''))
+                order_id: generateOrderId(),
+                nama_pelanggan: userName,
+                kategori_pesanan: kategoriPesanan,
+                tanggal_pesanan: new Date().toISOString(),
+                jumlah_pesanan: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+                tanggal_pengiriman: document.getElementById('delivery-date').value,
+                waktu_pengiriman: document.getElementById('delivery-time').value,
+                lokasi_pengiriman: document.getElementById('address').value,
+                nomor_telepon: document.getElementById('phone').value,
+                pesan: document.getElementById('notes').value,
+                opsi_pengiriman: document.querySelector('input[name="shipping_option"]:checked').value,
+                total_harga: parseFloat(document.getElementById('total').textContent.replace(/[^\d]/g, '')),
+                status_pengiriman: 'diproses',
+                status_pembayaran: 'pending',
+                items: cartItems // Tambahkan items ke orderData
             };
 
-            // Validasi payment method
-            if (!orderData.payment_method) {
-                alert('Silakan pilih metode pembayaran terlebih dahulu');
-                return;
-            }
-
-            fetch('{{ route('orders.store') }}', {
+            fetch('{{ route('admin.daftarpesanan.store') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1981,17 +2057,37 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        handleOrderSuccess(data.order_id);
+                        const selectedPayment = localStorage.getItem('selectedPaymentMethod');
+
+                        // Make sure we have both order_id and payment method before redirect
+                        if (!data.data.order_id || !selectedPayment) {
+                            throw new Error('Missing order ID or payment method');
+                        }
+
+                        // Use the order_id from the response data
+                        const redirectUrl = `/metodepembayaran/${selectedPayment}`;
+
+                        // Store cart items temporarily
+                        sessionStorage.setItem('tempCart', localStorage.getItem('cartItems'));
+
+                        // Redirect to payment page
+                        window.location.href = redirectUrl;
+
+                        // Clear cart after successful redirect
+                        localStorage.removeItem('cartItems');
                     } else {
                         throw new Error(data.message || 'Gagal membuat pesanan');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    if (sessionStorage.getItem('tempCart')) {
+                        localStorage.setItem('cartItems', sessionStorage.getItem('tempCart'));
+                        sessionStorage.removeItem('tempCart');
+                    }
                     alert('Terjadi kesalahan saat mengirim pesanan: ' + error.message);
                 });
         }
-
 
         function startCountdown(expiryTime) {
             const countdownElement = document.querySelector('.countdown');
@@ -2129,12 +2225,6 @@
             });
 
             // Initial check
-            checkFormCompletion();
-        });
-
-        // Saat memilih metode pembayaran COD
-        document.querySelector('input[value="cod"]').addEventListener('change', function() {
-            localStorage.setItem('selectedPaymentMethod', 'cod');
             checkFormCompletion();
         });
     </script>

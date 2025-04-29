@@ -155,6 +155,39 @@
             cursor: pointer;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    // Delete confirmation
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Apakah kamu yakin?',
+            text: "Data ini akan dihapus secara permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        });
+    }
+
+    // Success messages for Create, Update, Delete
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        @endif
+    });
+</script>
 </head>
 <body>
     <x-sidebar/>
@@ -194,12 +227,6 @@
             </a>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
         <div class="table-container">
             <table>
                 <thead>
@@ -220,10 +247,10 @@
                             <td>{{ $item->deskripsi }}</td>
                             <td class="action-buttons">
                                 <a href="{{ route('admin.tentangkami.edit', $item->id) }}" class="edit-btn">edit</a>
-                                <form action="{{ route('admin.tentangkami.destroy', $item->id) }}" method="POST" class="d-inline">
+                                <form id="delete-form-{{ $item->id }}" action="{{ route('admin.tentangkami.destroy', $item->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="delete-btn" onclick="return confirm('Yakin ingin menghapus?')">Delete</button>
+                                    <button type="button" class="delete-btn" onclick="confirmDelete({{ $item->id }})">Delete</button>
                                 </form>
                             </td>
                         </tr>

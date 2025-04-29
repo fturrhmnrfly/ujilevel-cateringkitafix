@@ -15,21 +15,36 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
-            $order = Order::create([    
-                'id' => Str::random(20),
-                'order_number' => 'ORD' . now()->timestamp . rand(100, 999),
+            DB::beginTransaction();
+
+            // Create order
+            $order = Order::create([
+                'order_number' => 'ORD-' . strtoupper(uniqid()),
                 'user_id' => auth()->id(),
+                'status' => 'pending',
+                'payment_status' => 'unpaid',
+                'delivery_date' => $request->deliveryDate,
+                'delivery_time' => $request->deliveryTime,
+                'address' => $request->address,
+                'phone' => $request->phone,
+                'notes' => $request->notes,
+                'shipping_method' => $request->shipping['method'],
                 'subtotal' => $request->subtotal,
                 'shipping_cost' => $request->shipping_cost,
-                'total_amount' => $request->total,
-                'shipping_address' => $request->shipping['address'],
-                'phone_number' => $request->shipping['phone'],
-                'notes' => $request->shipping['notes'],
-                'delivery_date' => $request->shipping['delivery_date'] . ' ' . $request->shipping['delivery_time'],
-                'payment_method' => $request->payment_method,
-                'status' => 'pending',
-                'payment_status' => 'unpaid'
+                'total' => $request->total
             ]);
+
+            // Create order items
+            foreach ($request->items as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'name' => $item['name'],
+                    'quantity' => $item['quantity'], 
+                    'price' => $item['price']
+                ]);
+            }
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
@@ -37,6 +52,7 @@ class OrderController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat pesanan: ' . $e->getMessage()

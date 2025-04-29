@@ -10,11 +10,12 @@ return new class extends Migration
     {
         Schema::create('laporans', function (Blueprint $table) {
             $table->id();
-            $table->string('laporan');
-            $table->string('jenis_laporan');
             $table->date('tanggal');
-            $table->string('admin');
+            $table->string('jenis_laporan');
+            $table->string('laporan');
             $table->text('deskripsi');
+            $table->decimal('total', 12, 2)->default(0);
+            $table->string('admin');
             $table->string('status');
             $table->timestamps();
         });

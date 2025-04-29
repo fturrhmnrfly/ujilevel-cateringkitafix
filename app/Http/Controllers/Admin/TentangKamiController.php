@@ -43,6 +43,34 @@ class TentangKamiController extends Controller
         return view('admin.tentangkami.edit', compact('tentangkami'));
     }
 
+    public function update(Request $request, $id)
+    {
+        $tentangkami = TentangKami::findOrFail($id);
+        
+        $request->validate([
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'deskripsi' => 'required|string'
+        ]);
+
+        $data = [
+            'deskripsi' => $request->deskripsi
+        ];
+
+        if ($request->hasFile('foto')) {
+            // Delete old image
+            if ($tentangkami->foto) {
+                \Storage::disk('public')->delete($tentangkami->foto);
+            }
+            // Store new image
+            $data['foto'] = $request->file('foto')->store('tentangkami', 'public');
+        }
+
+        $tentangkami->update($data);
+
+        return redirect()->route('admin.tentangkami.index')
+            ->with('success', 'Data berhasil diperbarui');
+    }
+
     public function destroy($id)
     {
         $tentangkami = TentangKami::findOrFail($id);
@@ -50,6 +78,7 @@ class TentangKamiController extends Controller
             \Storage::disk('public')->delete($tentangkami->foto);
         }
         $tentangkami->delete();
-        return redirect()->route('admin.tentangkami.index')->with('success', 'Data berhasil dihapus');
+        return redirect()->route('admin.tentangkami.index')
+            ->with('success', 'Data berhasil dihapus');
     }
 }

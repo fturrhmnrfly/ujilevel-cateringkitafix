@@ -922,7 +922,7 @@
         .notification-icon {
             display: flex;
             align-items: center;
-            color: #fff;
+            color: #2c2c77;
             text-decoration: none;
             position: relative;
             padding: 8px;
@@ -933,14 +933,11 @@
             opacity: 0.8;
         }
 
-        .notification-icon svg {
-            width: 20px;
-            height: 20px;
+        .notification-icon i {
+            font-size: 20px;
         }
 
-        /* Add this if you want to show a notification badge */
-        .notification-icon[data-count]:after {
-            content: attr(data-count);
+        .notification-badge {
             position: absolute;
             top: 0;
             right: 0;
@@ -958,7 +955,7 @@
 <body>
     <header>
         <x-navbar></x-navbar>
-
+            
         <div class="breadcrumb-container">
             <div class="breadcrumb">
                 <!-- You can add breadcrumb content here if needed -->

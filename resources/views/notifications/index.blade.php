@@ -3,131 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifications - Catering Kita</title>
+    <title>Notifications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .notification-container {
-            max-width: 600px;
+        .notifications-container {
+            max-width: 800px;
             margin: 20px auto;
             padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .notification-header h1 {
-            font-size: 24px;
-            color: #333;
-            margin: 0;
-            text-align: center;
-            width: 100%; /* Add this to ensure full width */
-            position: relative; /* Add this for better positioning */
-            left: 20px; /* Offset to compensate for the close button space */
-        }
-
-        .notification-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            position: relative; /* Add this for better child positioning */
-        }
-
-        .notification-header .close-btn {
-            font-size: 24px;
-            color: #666;
-            cursor: pointer;
-            border: none;
-            background: none;
         }
 
         .notification-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
-            align-items: flex-start;
-            padding: 20px 0;
-            border-bottom: 1px solid #eee;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .notification-icon {
-            width: 50px;
-            height: 50px;
-            margin-right: 15px;
-            object-fit: contain;
+        .notification-item.unread {
+            border-left: 4px solid #2c2c77;
         }
 
         .notification-content {
-            flex: 1;
+            flex-grow: 1;
         }
 
         .notification-title {
-            font-size: 16px;
             font-weight: bold;
-            color: #333;
-            margin: 0 0 5px 0;
+            margin-bottom: 5px;
         }
 
         .notification-message {
-            font-size: 14px;
             color: #666;
-            margin: 0 0 5px 0;
         }
 
         .notification-time {
-            font-size: 12px;
             color: #999;
-            margin: 0;
+            font-size: 0.8em;
+            margin-top: 5px;
         }
 
-        @media (max-width: 768px) {
-            .notification-container {
-                margin: 10px;
-                border-radius: 0;
-            }
+        .mark-read-btn {
+            background: #2c2c77;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="notification-container">
-        <div class="notification-header">
-            <h1>Notifikasi</h1>
-            <button class="close-btn">&times;</button>
-        </div>
-
-        <!-- Delivery Notification 1 -->
-        <div class="notification-item">
-            <img src="{{ asset('assets/box-icon.png') }}" alt="Delivery" class="notification-icon">
-            <div class="notification-content">
-                <h3 class="notification-title">Pesanan Telah Dikirim</h3>
-                <p class="notification-message">Pesanan #CK2304150 sedang dalam perjalanan dan akan tiba dalam waktu 30 menit</p>
-                <p class="notification-time">5 hari yang lalu, 09:45</p>
+    <x-navbar />
+    
+    <div class="notifications-container">
+        <h1>Notifications</h1>
+        @forelse ($notifications as $notification)
+            <div class="notification-item {{ !$notification->is_read ? 'unread' : '' }}">
+                <div class="notification-content">
+                    <div class="notification-title">{{ $notification->title }}</div>
+                    <div class="notification-message">{{ $notification->message }}</div>
+                    <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
+                </div>
+                @if (!$notification->is_read)
+                    <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="mark-read-btn">Mark as Read</button>
+                    </form>
+                @endif
             </div>
-        </div>
-
-        <!-- Delivery Notification 2 -->
-        <div class="notification-item">
-            <img src="{{ asset('assets/delivery-icon.png') }}" alt="Delivery" class="notification-icon">
-            <div class="notification-content">
-                <h3 class="notification-title">Pesanan Telah Dikirim</h3>
-                <p class="notification-message">Pesanan #CK2304150 sedang dalam perjalanan dan akan tiba dalam waktu 30 menit</p>
-                <p class="notification-time">5 hari yang lalu, 09:45</p>
-            </div>
-        </div>
-
-        <!-- Rating Notification -->
-        <div class="notification-item">
-            <img src="{{ asset('assets/star-icon.png') }}" alt="Rating" class="notification-icon">
-            <div class="notification-content">
-                <h3 class="notification-title">Beri Rating untuk Pesanan Sebelumnya</h3>
-                <p class="notification-message">Bagaimana pengalaman Anda dengan pesanan #CK2304149? Beri rating dan ulasan untuk membantu kami meningkatkan layanan.</p>
-                <p class="notification-time">1 minggu yang lalu, 10:10</p>
-            </div>
-        </div>
+        @empty
+            <p>No notifications found.</p>
+        @endforelse
     </div>
-
-    <script>
-        document.querySelector('.close-btn').addEventListener('click', function() {
-            window.history.back();
-        });
-    </script>
 </body>
 </html> --}}

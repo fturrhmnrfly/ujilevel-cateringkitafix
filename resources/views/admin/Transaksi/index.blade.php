@@ -241,11 +241,14 @@
                             <td>
                                 @if($transaksi->bukti_pembayaran)
                                 <button class="view-file-btn" onclick="viewImage('{{ asset('storage/' . $transaksi->bukti_pembayaran) }}', '{{ $transaksi->id_transaksi }}', '{{ $transaksi->nama_pelanggan }}', '{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d/m/Y') }}', '{{ number_format($transaksi->total_harga, 0, ',', '.') }}')">
-                                    Lihat Bukti
+                                    Lihat Bukti 
                                 </button>
                                 @else
                                     -
                                 @endif
+                                {{ asset('storage/' . $transaksi->bukti_pembayaran) }}
+                                <img src="{{ asset('storage/' . $transaksi->bukti_pembayaran) }}" alt="gambar">
+
                             </td>
                             <td class="{{ $transaksi->status_transaksi === 'Selesai' ? 'status-selesai' : 'status-dibatalkan' }}">
                                 {{ $transaksi->status_transaksi }}

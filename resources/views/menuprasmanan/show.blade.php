@@ -9,14 +9,14 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding-top: 80px; /* Tambahkan padding-top */
             min-height: 100vh;
             background-color: #f5f5f5;
         }
 
         .product-detail {
             max-width: 1200px;
-            margin: 40px auto;
+            margin: 100px auto 40px; /* Ubah margin-top menjadi 100px */
             padding: 20px;
         }
 
@@ -166,6 +166,7 @@
     </style>
 </head>
 <body>
+    <x-navbar />
     <div class="product-detail">
         <a href="{{ route('menuprasmanan.index') }}" class="back-button">
             <span>←</span> Kembali

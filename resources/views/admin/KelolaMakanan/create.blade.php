@@ -110,16 +110,111 @@
         font-weight: bold;
         color: #333;
     }
+
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        border-color: #2c2c77;
+        outline: none;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    select.form-control {
+        background-color: white;
+    }
+
+    .btn-primary {
+        background-color: #2c2c77;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+    }
+
+    .btn-primary:hover {
+        background-color: #1a1a5c;
+    }
+
+    /* Perbaikan style untuk image preview */
+    .form-group .image-preview {
+        width: 100%;
+        max-width: 300px;
+        height: 200px;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+
+    .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .image-preview-text {
+        color: #999;
+        font-size: 14px;
+        text-align: center;
+    }
 </style>
 
 {{-- <x-sidebar></x-sidebar> --}}
 <div class="form-container">
     <h2>Tambah Makanan</h2>
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     <form action="{{ route('admin.kelolamakanan.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
-            <label for="image">Image Produk:</label>
-            <input type="file" id="image" name="image" class="form-control" accept="image/*" required>
+            <label for="image">Gambar Makanan</label>
+            <input type="file" name="image" id="image" class="form-control" required accept="image/*" onchange="previewImage(this)">
+            <div id="imagePreview" class="mt-2"></div>
         </div>
         <div class="form-group">
             <label for="nama_makanan">Nama Makanan:</label>
@@ -152,3 +247,44 @@
         <button type="submit" class="btn-primary">Simpan</button>
     </form>
 </div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = '';
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '200px';
+            img.style.height = 'auto';
+            preview.appendChild(img);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: "{{ session('error') }}",
+        });
+    @endif
+
+    // Form submission handling
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!this.checkValidity()) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Please fill all required fields correctly.',
+            });
+        }
+    });
+</script>

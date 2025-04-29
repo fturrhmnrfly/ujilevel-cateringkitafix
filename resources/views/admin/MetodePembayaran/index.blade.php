@@ -153,6 +153,7 @@
             color: #333;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -212,10 +213,10 @@
                             <td>{{ $item->admin }}</td>
                             <td>
                                 <a href="{{ route('admin.metodepembayaran.edit', $item->id) }}" class="btn-warning">Edit</a>
-                                <form action="{{ route('admin.metodepembayaran.destroy', $item->id) }}" method="POST" style="display: inline-block;">
+                                <form id="delete-form-{{ $item->id }}" action="{{ route('admin.metodepembayaran.destroy', $item->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Delete</button>
+                                    <button type="button" class="btn-danger" onclick="confirmDelete('delete-form-{{ $item->id }}')">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -231,6 +232,37 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+function confirmDelete(formId) {
+    Swal.fire({
+        title: 'Apakah kamu yakin?',
+        text: "Data ini akan dihapus secara permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(formId).submit();
+        }
+    });
+}
+
+// Success messages for Create, Update, Delete
+document.addEventListener('DOMContentLoaded', function() {
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            timer: 1500,
+            showConfirmButton: false
+        });
+    @endif
+});
+</script>
 </body>
 
 </html>

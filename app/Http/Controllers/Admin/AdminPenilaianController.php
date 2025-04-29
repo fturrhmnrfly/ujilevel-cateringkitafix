@@ -30,7 +30,8 @@ class AdminPenilaianController extends Controller
 
         Penilaian::create($request->all());
 
-        return redirect()->route('admin.penilaian.index')->with('success', 'Penilaian berhasil ditambahkan.');
+        return redirect()->route('admin.penilaian.index')
+            ->with('success', 'Penilaian berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -50,7 +51,8 @@ class AdminPenilaianController extends Controller
         $penilaian = Penilaian::findOrFail($id);
         $penilaian->update($request->all());
 
-        return redirect()->route('admin.penilaian.index')->with('success', 'Penilaian berhasil diperbarui.');
+        return redirect()->route('admin.penilaian.index')
+            ->with('success', 'Penilaian berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -58,6 +60,7 @@ class AdminPenilaianController extends Controller
         $penilaian = Penilaian::findOrFail($id);
         $penilaian->delete();
 
-        return redirect()->route('admin.penilaian.index')->with('success', 'Penilaian berhasil dihapus.');
+        return redirect()->route('admin.penilaian.index')
+            ->with('success', 'Penilaian berhasil dihapus');
     }
 }

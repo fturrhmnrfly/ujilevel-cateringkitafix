@@ -136,25 +136,40 @@
             gap: 8px;
         }
 
-        .edit-btn {
-            background-color: #ffc107;
-            color: #000;
-            border: none;
+        .edit-btn, .delete-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             padding: 6px 12px;
             border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .edit-btn i, .delete-btn i {
+            font-size: 14px;
         }
 
         .delete-btn {
             background-color: #dc3545;
-            color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: #ffc107;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .edit-btn:hover {
+            background-color: #e0a800;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <x-sidebar/>
@@ -199,36 +214,72 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Kategori</th>
+                        <th>Nama Menu</th>
                         <th>Deskripsi</th>
-                        <th>Jumlah Item</th>
+                        <th>Jumlah Tersedia</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($kategoris as $kategori)
+                    @forelse($kategoris as $menu)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $kategori->nama_kategori }}</td>
-                            <td>{{ $kategori->deskripsi }}</td>
-                            <td>{{ $kategori->jumlah_item }}</td>
+                            <td>{{ $menu['nama_kategori'] }}</td>
+                            <td>{{ $menu['deskripsi'] }}</td>
+                            <td>{{ $menu['jumlah_item'] }}</td>
                             <td class="action-buttons">
-                                <a href="{{ route('admin.kategori.edit', $kategori->id) }}" class="edit-btn">edit</a>
-                                <form action="{{ route('admin.kategori.destroy', $kategori->id) }}" method="POST" class="d-inline">
+                                <a href="{{ route('admin.kategori.edit', ['kategori' => $menu['id'], 'type' => $menu['type']]) }}" class="edit-btn">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form id="delete-form-{{ $menu['id'] }}" action="{{ route('admin.kategori.destroy', $menu['id']) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="delete-btn" onclick="return confirm('Yakin ingin menghapus?')">Delete</button>
+                                    <button type="button" class="delete-btn" onclick="confirmDelete('delete-form-{{ $menu['id'] }}')">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">Belum ada data</td>
+                            <td colspan="5" class="text-center">Belum ada menu tersedia</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+function confirmDelete(formId) {
+    Swal.fire({
+        title: 'Apakah kamu yakin?',
+        text: "Data ini akan dihapus secara permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(formId).submit();
+        }
+    });
+}
+
+// Success message after delete
+document.addEventListener('DOMContentLoaded', function() {
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            timer: 1500,
+            showConfirmButton: false
+        });
+    @endif
+});
+</script>
 </body>
 </html>

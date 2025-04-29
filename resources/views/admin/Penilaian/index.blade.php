@@ -1,4 +1,3 @@
-php
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,6 +173,7 @@ php
             font-size: 18px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <x-sidebar></x-sidebar>
@@ -204,7 +204,6 @@ php
 
         <div class="content">
             <div class="content-header">
-                <a href="{{ route('admin.penilaian.create') }}" class="btn-primary">Tambah Penilaian</a>
                 <input type="text" class="search-input" placeholder="Search penilaian...">
             </div>
 
@@ -231,11 +230,12 @@ php
                                     @endfor
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.penilaian.edit', $penilaian->id) }}" class="btn-warning">Edit</a>
-                                    <form action="{{ route('admin.penilaian.destroy', $penilaian->id) }}" method="POST" class="d-inline">
+                                    <form id="delete-form-{{ $penilaian->id }}" action="{{ route('admin.penilaian.destroy', $penilaian->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Delete</button>
+                                        <button type="button" class="btn-danger" onclick="confirmDelete('delete-form-{{ $penilaian->id }}')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -247,5 +247,36 @@ php
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+function confirmDelete(formId) {
+    Swal.fire({
+        title: 'Apakah kamu yakin?',
+        text: "Data penilaian ini akan dihapus secara permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(formId).submit();
+        }
+    });
+}
+
+// Success messages for Create, Update, Delete
+document.addEventListener('DOMContentLoaded', function() {
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            timer: 1500,
+            showConfirmButton: false
+        });
+    @endif
+});
+    </script>
 </body>
 </html>

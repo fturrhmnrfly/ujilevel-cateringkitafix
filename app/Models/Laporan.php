@@ -10,11 +10,14 @@ class Laporan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'laporan',
-        'jenis_laporan',
         'tanggal',
-        'admin',
+        'jenis_laporan',
+        'laporan',
         'deskripsi',
+        'total',
+        'admin',
         'status'
     ];
+
+    protected $dates = ['tanggal'];
 }

@@ -15,13 +15,14 @@ class AdminDaftarPesananController extends Controller
         // Ambil semua pesanan
         $pesanans = DaftarPesanan::latest()->get();
         
-        // Hitung statistik
+        // Hitung statistik dengan key yang benar
         $stats = [
             'total' => $pesanans->count(),
             'belum_bayar' => $pesanans->where('status_pembayaran', 'pending')->count(),
             'diproses' => $pesanans->where('status_pengiriman', 'diproses')->count(),
             'dikirim' => $pesanans->where('status_pengiriman', 'dikirim')->count(),
-            'selesai' => $pesanans->where('status_pengiriman', 'selesai')->count()
+            'selesai' => $pesanans->where('status_pengiriman', 'diterima')->count(), // Changed from selesai to diterima
+            'dibatalkan' => $pesanans->where('status_pengiriman', 'dibatalkan')->count()
         ];
 
         return view('admin.daftarpesanan.index', compact('pesanans', 'stats'));
@@ -34,22 +35,40 @@ class AdminDaftarPesananController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama_pesanan' => 'required',
-            'nama_pelanggan' => 'required',
-            'tanggal_pesanan' => 'required|date',
-            'jumlah_pesanan' => 'required',
-            'tanggal_acara' => 'required|date',
-            'lokasi_pengiriman' => 'required',
-            'total_harga' => 'required|numeric',
-            'status_pengiriman' => 'required|in:diproses,pending,selesai',
-            'pesan_untuk_penjual' => 'nullable|string'
-        ]);
+        try {
+            // Validate incoming request
+            $validated = $request->validate([
+                'order_id' => 'required|string',
+                'nama_pelanggan' => 'required|string',
+                'kategori_pesanan' => 'required|string',
+                'tanggal_pesanan' => 'required|date',
+                'jumlah_pesanan' => 'required|integer',
+                'tanggal_pengiriman' => 'required|date',
+                'waktu_pengiriman' => 'required',
+                'lokasi_pengiriman' => 'required|string',
+                'nomor_telepon' => 'required|string',
+                'pesan' => 'nullable|string',
+                'opsi_pengiriman' => 'required|string',
+                'total_harga' => 'required|numeric',
+                'status_pengiriman' => 'required|string|in:diproses,dikirim,selesai,dibatalkan', // Changed validation rule
+                'status_pembayaran' => 'required|string'
+            ]);
 
-        DaftarPesanan::create($validated);
+            // Create new order
+            $daftarPesanan = DaftarPesanan::create($validated);
 
-        return redirect()->route('admin.daftarpesanan.index')
-            ->with('success', 'Pesanan berhasil ditambahkan');
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan berhasil dibuat',
+                'data' => $daftarPesanan
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat pesanan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function edit($id)
@@ -70,7 +89,7 @@ class AdminDaftarPesananController extends Controller
             'tanggal_acara' => 'required|date',
             'lokasi_pengiriman' => 'required',
             'total_harga' => 'required|numeric',
-            'status_pengiriman' => 'required|in:diproses,pending,selesai',
+            'status_pengiriman' => 'required|in:diproses,dikirim,diterima,dibatalkan',
             'pesan_untuk_penjual' => 'nullable|string'
         ]);
 
@@ -105,14 +124,6 @@ class AdminDaftarPesananController extends Controller
                 'status_pengiriman' => $validated['status_pengiriman'],
                 'catatan_status' => $validated['catatan']
             ]);
-
-            // Update order status jika ada
-            $order = Order::where('order_id', $pesanan->order_id)->first();
-            if ($order) {
-                $order->update([
-                    'status' => $validated['status_pengiriman']
-                ]);
-            }
 
             return response()->json([
                 'success' => true,

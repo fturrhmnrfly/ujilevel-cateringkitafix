@@ -4,19 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    public function up(): void
+return new class extends Migration
+{
+    public function up()
     {
         Schema::create('penilaians', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_pembeli');
-            $table->string('nama_produk');
-            $table->integer('rating'); // Menyimpan jumlah bintang
+            $table->foreignId('pesanan_id')->constrained('daftar_pesanans')->onDelete('cascade');
+            $table->decimal('rating', 2, 1);
+            $table->text('komentar')->nullable();
             $table->timestamps();
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('penilaians');
     }
