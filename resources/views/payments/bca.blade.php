@@ -23,40 +23,24 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .modal-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .close-btn {
-            font-size: 24px;
-            color: #666;
-            cursor: pointer;
-            border: none;
-            background: none;
-        }
-
         .payment-info {
-            display: grid;
-            grid-template-columns: auto auto;
+            display: flex;
+            flex-direction: column;
             gap: 12px;
             margin-bottom: 20px;
         }
 
-        .payment-info-label {
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-row span:first-child {
             color: #666;
         }
 
-        .payment-info-value {
-            text-align: right;
+        .info-row span:last-child {
             font-weight: bold;
         }
 
@@ -132,6 +116,24 @@
             cursor: pointer;
             margin-top: 20px;
         }
+
+        .payment-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+        }
+
+        .payment-countdown {
+            color: #ff6b01;
+            font-weight: bold;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 
@@ -139,14 +141,21 @@
     <div class="modal-container">
         <div class="modal-header">
             <h2 class="modal-title">Konfirmasi Pembayaran</h2>
-            <button class="close-btn">&times;</button>
         </div>
 
         <div class="payment-info">
-            <span class="payment-info-label">Total:</span>
-            <span class="payment-info-value" id="payment-total">Rp 925.000</span>
-            <span class="payment-info-label">Metode Pembayaran:</span>
-            <span class="payment-info-value">BCA</span>
+            <div class="info-row">
+                <span>Total :</span>
+                <span id="payment-total">Rp 0</span>
+            </div>
+            <div class="info-row">
+                <span>Metode Pembayaran :</span>
+                <span>BCA</span>
+            </div>
+            <div class="info-row">
+                <span>Batas waktu pembayaran</span>
+                <span class="payment-countdown">05:00</span>
+            </div>
         </div>
 
         <div class="instruction-box">
@@ -157,18 +166,18 @@
                 <li>Upload bukti transfer pada form di bawah ini.</li>
                 <li>Klik tombol "Buat Pesanan" untuk menyelesaikan pesanan.</li>
             </ol>
-            <p class="deadline-text">Harap selesaikan pembayaran dalam 24 jam.</p>
+            <p class="deadline-text">Harap selesaikan pembayaran Sebelum Waktu Habis.</p>
         </div>
 
         <div class="form-group">
             <label class="form-label">Nama Rekening</label>
-            <div class="account-box">PT Catering Kita Indonesia</div>
+            <div class="account-box">LINA YUNINGSIH</div>
         </div>
 
         <div class="form-group">
             <label class="form-label">Nomor Rekening BCA</label>
             <div class="account-number">
-                <span>2233 4455 6666 8855</span>
+                <span>0954772485</span>
                 <button class="copy-btn">Salin</button>
             </div>
         </div>
@@ -183,140 +192,163 @@
     </div>
 
     <script>
-            function generateOrderId() {
-            const timestamp = new Date().getTime();
-            const random = Math.floor(Math.random() * 1000);
-            return `ORD${timestamp}${random}`;
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            const paymentTotal = document.getElementById('payment-total');
-
-            // Ambil total langsung dari orderTotal yang disimpan di checkout
-            const savedTotal = localStorage.getItem('orderTotal');
-
-            if (savedTotal) {
-                // Format dan tampilkan total yang sudah disimpan
-                const total = parseInt(savedTotal);
-                const formattedTotal = total.toLocaleString('id-ID');
-                paymentTotal.textContent = `Rp ${formattedTotal}`;
-            } else {
-                // Jika tidak ada total tersimpan, hitung ulang
-                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-                const selectedShipping = localStorage.getItem('selectedShipping');
-
-                // Hitung subtotal dari items
-                const subtotal = cartItems.reduce((sum, item) =>
-                    sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
-
-                // Definisikan biaya pengiriman
-                const shippingCosts = {
-                    'self': 0,
-                    'instant': 10000,
-                    'regular': 5000,
-                    'economy': 2000
-                };
-
-                // Ambil biaya pengiriman sesuai pilihan
-                const shippingCost = shippingCosts[selectedShipping] || 0;
-
-                // Hitung total akhir
-                const total = subtotal + shippingCost;
-
-                // Format dan tampilkan total
-                const formattedTotal = total.toLocaleString('id-ID');
-                paymentTotal.textContent = `Rp ${formattedTotal}`;
-
-                // Simpan total untuk halaman success
-                localStorage.setItem('orderTotal', total.toString());
-            }
-        });
-
-        document.querySelector('.copy-btn').addEventListener('click', function() {
-            const accNumber = '2233445566668855';
-            navigator.clipboard.writeText(accNumber)
-                .then(() => alert('Nomor rekening berhasil disalin!'));
-        });
-
-        document.querySelector('.close-btn').addEventListener('click', function() {
-            window.history.back();
-        });
-
-        document.querySelector('.confirm-btn').addEventListener('click', async function() {
-            const fileInput = document.querySelector('.file-upload');
+            // Add SweetAlert2 CDN
+            const sweetalertScript = document.createElement('script');
+            sweetalertScript.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+            document.head.appendChild(sweetalertScript);
             
-            // Check if fileInput exists first
-            if (!fileInput) {
-                console.error('File upload input not found');
-                return;
+            // Existing total logic
+            const orderTotal = localStorage.getItem('orderTotal');
+            const totalElement = document.querySelector('#payment-total');
+            
+            if (orderTotal && totalElement) {
+                totalElement.textContent = `Rp ${parseInt(orderTotal).toLocaleString('id-ID')}`;
             }
 
-            // Then check for files
-            if (!fileInput.files || !fileInput.files.length) {
-                alert('Silakan upload bukti pembayaran');
-                return;
-            }
+            // Add countdown timer logic
+            const startTime = new Date().getTime();
+            const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+            const endTime = startTime + fiveMinutes;
+            
+            function updateCountdown() {
+                const currentTime = new Date().getTime();
+                const timeLeft = endTime - currentTime;
 
-            const confirmBtn = document.querySelector('.confirm-btn');
-            confirmBtn.disabled = true;
-            confirmBtn.textContent = 'Memproses...';
+                const countdownElement = document.querySelector('.payment-countdown');
 
-            try {
-                const orderData = {
-                    total: parseInt(document.getElementById('payment-total').textContent.replace(/[^\d]/g, '')),
-                    date: new Date().toISOString(),
-                    items: JSON.parse(localStorage.getItem('cartItems')) || [],
-                    shipping: localStorage.getItem('selectedShipping'),
-                    shippingData: {
-                        deliveryDate: localStorage.getItem('deliveryDate'),
-                        deliveryTime: localStorage.getItem('deliveryTime'),
-                        address: localStorage.getItem('address')
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    countdownElement.textContent = "Waktu Habis";
+                    
+                    // Disable confirm button
+                    const confirmBtn = document.querySelector('.confirm-btn');
+                    if (confirmBtn) {
+                        confirmBtn.disabled = true;
+                        confirmBtn.style.backgroundColor = '#ccc';
                     }
-                };
-
-                // Add CSRF token check
-                const csrfToken = document.querySelector('meta[name="csrf-token"]');
-                if (!csrfToken) {
-                    throw new Error('CSRF token not found');
+                    
+                    // Show SweetAlert2 when time expires
+                    Swal.fire({
+                        title: 'Waktu Pembayaran Habis',
+                        text: 'Batas waktu pembayaran telah habis. Silakan buat pesanan baru.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#2c2c77',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/keranjang';
+                        }
+                    });
+                    
+                    return;
                 }
 
-                const formData = new FormData();
-                formData.append('payment_proof', fileInput.files[0]);
-                formData.append('total', orderData.total);
-                formData.append('order_data', JSON.stringify(orderData));
-                formData.append('_token', csrfToken.content);
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                
+                if (countdownElement) {
+                    countdownElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }
+            }
 
-                const response = await fetch('/payment/bca/confirm', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
+            // Start the countdown timer
+            const timerInterval = setInterval(updateCountdown, 1000);
+            updateCountdown(); // Initial call
+
+            // Add copy button notification with SweetAlert2
+            document.querySelector('.copy-btn').addEventListener('click', function() {
+                const accNumber = '2233445566668855';
+                navigator.clipboard.writeText(accNumber).then(() => {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Nomor rekening berhasil disalin',
+                        icon: 'success',
+                        confirmButtonColor: '#2c2c77',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                });
+            });
+
+            // Handle form submission with SweetAlert2
+            document.querySelector('.confirm-btn').addEventListener('click', async function() {
+                const fileInput = document.querySelector('.file-upload');
+                
+                if (!fileInput.files || !fileInput.files.length) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Silakan upload bukti pembayaran',
+                        icon: 'error',
+                        confirmButtonColor: '#2c2c77'
+                    });
+                    return;
+                }
+
+                // Show loading state
+                Swal.fire({
+                    title: 'Memproses Pembayaran',
+                    text: 'Mohon tunggu sebentar...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
                     }
                 });
 
-                const data = await response.json();
+                try {
+                    // Create FormData object
+                    const formData = new FormData();
+                    formData.append('payment_proof', fileInput.files[0]);
+                    formData.append('total', localStorage.getItem('orderTotal') || 0);
+                    formData.append('order_data', localStorage.getItem('currentOrder') || '{}');
+                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
 
-                if (data.success) {
-                    // Create success order data
-                    const successOrderData = {
-                        id: generateOrderId(),
-                        total: orderData.total,
-                        shipping: JSON.parse(localStorage.getItem('shippingData'))
-                    };
-                    
-                    localStorage.setItem('currentOrder', JSON.stringify(successOrderData));
-                    window.location.href = '/payment/bca/success';
-                } else {
-                    throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                    // Send request to server
+                    const response = await fetch('/payment/bca/confirm', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Get shipping and order data from localStorage
+                        const existingShippingData = JSON.parse(localStorage.getItem('shippingData') || '{}');
+                        const orderData = JSON.parse(localStorage.getItem('currentOrder') || '{}');
+                        
+                        // Store complete order data including shipping info
+                        localStorage.setItem('currentOrder', JSON.stringify({
+                            id: data.order_id || orderData.id,
+                            date: new Date().toISOString(),
+                            deliveryDate: existingShippingData.deliveryDate,
+                            deliveryTime: existingShippingData.deliveryTime, 
+                            address: existingShippingData.address,
+                            totalPayment: localStorage.getItem('orderTotal'),
+                            status: 'PAID'
+                        }));
+
+                        // Success handling with redirect
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Pembayaran berhasil dikonfirmasi',
+                            icon: 'success',
+                            confirmButtonColor: '#2c2c77',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '/payment/bca/success';
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Gagal mengonfirmasi pembayaran: ' + error.message,
+                        icon: 'error',
+                        confirmButtonColor: '#2c2c77'
+                    });
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal mengonfirmasi pembayaran: ' + error.message);
-            } finally {
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = 'Konfirmasi Pembayaran';
-            }
+            });
         });
     </script>
 </body>

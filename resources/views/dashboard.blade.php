@@ -1006,7 +1006,7 @@
 
             <!-- Free Box Feature -->
             <div class="feature-card">
-                <img src="{{ asset('assets/homeassets13.png') }}" alt="Free Box" class="feature-icon">
+                <img src="{{ asset('assets/freebox.png') }}" alt="Free Box" class="feature-icon">
                 <h3 class="feature-title">Free box</h3>
             </div>
 

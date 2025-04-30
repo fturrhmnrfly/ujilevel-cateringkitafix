@@ -27,6 +27,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 16px;
         }
 
         .modal-title {
@@ -131,20 +133,40 @@
             cursor: pointer;
             margin-top: 20px;
         }
+
+        /* Add countdown timer styles */
+        .payment-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+        }
+
+        .payment-countdown {
+            color: #ff6b01;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="modal-container">
         <div class="modal-header">
             <h2 class="modal-title">Konfirmasi Pembayaran</h2>
-            <button class="close-btn">&times;</button>
         </div>
 
         <div class="payment-info">
-            <span class="payment-info-label">Total:</span>
-            <span class="payment-info-value" id="payment-total">Rp 0</span>
-            <span class="payment-info-label">Metode Pembayaran:</span>
-            <span class="payment-info-value">Dana</span>
+            <div class="info-row">
+                <span>Total :</span>
+                <span id="payment-total">Rp 0</span>
+            </div>
+            <div class="info-row">
+                <span>Metode Pembayaran :</span>
+                <span>Dana</span>
+            </div>
+            <div class="info-row">
+                <span>Batas waktu pembayaran</span>
+                <span class="payment-countdown">05:00</span>
+            </div>
         </div>
 
         <div class="instruction-box">
@@ -180,121 +202,134 @@
     </div>
 
     <script>
-        function generateOrderId() {
-            const timestamp = new Date().getTime();
-            const random = Math.floor(Math.random() * 1000);
-            return `ORD${timestamp}${random}`;
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            const paymentTotal = document.getElementById('payment-total');
-            const savedTotal = localStorage.getItem('orderTotal');
-
-            if (savedTotal) {
-                const total = parseInt(savedTotal);
-                const formattedTotal = total.toLocaleString('id-ID');
-                paymentTotal.textContent = `Rp ${formattedTotal}`;
-            } else {
-                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-                const selectedShipping = localStorage.getItem('selectedShipping');
-
-                const subtotal = cartItems.reduce((sum, item) =>
-                    sum + (parseFloat(item.price) * parseInt(item.quantity)), 0);
-
-                const shippingCosts = {
-                    'self': 0,
-                    'instant': 10000,
-                    'regular': 5000,
-                    'economy': 2000
-                };
-
-                const shippingCost = shippingCosts[selectedShipping] || 0;
-                const total = subtotal + shippingCost;
-                const formattedTotal = total.toLocaleString('id-ID');
-                paymentTotal.textContent = `Rp ${formattedTotal}`;
-                localStorage.setItem('orderTotal', total.toString());
-            }
-        });
-
-        document.querySelector('.copy-btn').addEventListener('click', function() {
-            const accNumber = '081234567890';
-            navigator.clipboard.writeText(accNumber)
-                .then(() => alert('Nomor Dana berhasil disalin!'));
-        });
-
-        document.querySelector('.close-btn').addEventListener('click', function() {
-            window.history.back();
-        });
-
-        document.querySelector('.confirm-btn').addEventListener('click', async function() {
-            const fileInput = document.querySelector('.file-upload');
-            const confirmBtn = this;
-
-            if (!fileInput.files.length) {
-                alert('Silakan upload bukti pembayaran');
-                return;
+            // Add SweetAlert2 CDN
+            const sweetalertScript = document.createElement('script');
+            sweetalertScript.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+            document.head.appendChild(sweetalertScript);
+            
+            // Get saved total from localStorage
+            const orderTotal = localStorage.getItem('orderTotal');
+            const totalElement = document.querySelector('#payment-total');
+            
+            if (orderTotal && totalElement) {
+                totalElement.textContent = `Rp ${parseInt(orderTotal).toLocaleString('id-ID')}`;
             }
 
-            confirmBtn.disabled = true;
-            confirmBtn.textContent = 'Memproses...';
+            // Add countdown timer
+            const startTime = new Date().getTime();
+            const fiveMinutes = 1 * 60 * 1000;
+            const endTime = startTime + fiveMinutes;
+            
+            function updateCountdown() {
+                const currentTime = new Date().getTime();
+                const timeLeft = endTime - currentTime;
 
-            try {
-                const orderData = {
-                    total: parseInt(document.getElementById('payment-total').textContent.replace(/[^\d]/g, '')),
-                    date: new Date().toISOString(),
-                    items: JSON.parse(localStorage.getItem('cartItems')) || [],
-                    shipping: localStorage.getItem('selectedShipping'),
-                    shippingData: {
-                        deliveryDate: localStorage.getItem('deliveryDate'),
-                        deliveryTime: localStorage.getItem('deliveryTime'),
-                        address: localStorage.getItem('address')
+                const countdownElement = document.querySelector('.payment-countdown');
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    countdownElement.textContent = "Waktu Habis";
+                    
+                    Swal.fire({
+                        title: 'Waktu Pembayaran Habis',
+                        text: 'Batas waktu pembayaran telah habis. Silakan buat pesanan baru.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#2c2c77',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/keranjang';
+                        }
+                    });
+                    return;
+                }
+
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                
+                if (countdownElement) {
+                    countdownElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }
+            }
+
+            const timerInterval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+
+            // Copy button with SweetAlert2
+            document.querySelector('.copy-btn').addEventListener('click', function() {
+                const accNumber = '081234567890';
+                navigator.clipboard.writeText(accNumber).then(() => {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Nomor Dana berhasil disalin',
+                        icon: 'success',
+                        confirmButtonColor: '#2c2c77',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                });
+            });
+
+            // Handle payment confirmation
+            document.querySelector('.confirm-btn').addEventListener('click', async function() {
+                const fileInput = document.querySelector('.file-upload');
+                
+                if (!fileInput.files || !fileInput.files.length) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Silakan upload bukti pembayaran',
+                        icon: 'error',
+                        confirmButtonColor: '#2c2c77'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Memproses Pembayaran',
+                    text: 'Mohon tunggu sebentar...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
                     }
-                };
-
-                const token = document.querySelector('meta[name="csrf-token"]').content;
-                const formData = new FormData();
-                formData.append('payment_proof', fileInput.files[0]);
-                formData.append('total', orderData.total);
-                formData.append('order_data', JSON.stringify(orderData));
-                formData.append('_token', token);
-
-                const response = await fetch('/payment/dana/confirm', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json',
-                        // Hapus header Content-Type dan X-CSRF-TOKEN
-                    },
-                    credentials: 'same-origin' // Tambahkan ini
                 });
 
-                // Cek tipe konten response
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new TypeError("Response bukan JSON!");
-                }
+                try {
+                    const formData = new FormData();
+                    formData.append('payment_proof', fileInput.files[0]);
+                    formData.append('total', localStorage.getItem('orderTotal') || 0);
+                    formData.append('order_data', localStorage.getItem('currentOrder') || '{}');
+                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
 
-                const data = await response.json();
+                    const response = await fetch('/payment/dana/confirm', {
+                        method: 'POST',
+                        body: formData
+                    });
 
-                if (data.success) {
-                    const successOrderData = {
-                        id: generateOrderId(),
-                        total: orderData.total,
-                        shipping: JSON.parse(localStorage.getItem('shippingData'))
-                    };
-                    
-                    localStorage.setItem('currentOrder', JSON.stringify(successOrderData));
-                    window.location.href = '/payment/dana/success';
-                } else {
-                    throw new Error(data.message || 'Terjadi kesalahan saat memproses pembayaran');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Pembayaran berhasil dikonfirmasi',
+                            icon: 'success',
+                            confirmButtonColor: '#2c2c77',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '/payment/dana/success';
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Gagal mengonfirmasi pembayaran: ' + error.message,
+                        icon: 'error',
+                        confirmButtonColor: '#2c2c77'
+                    });
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal mengonfirmasi pembayaran: ' + error.message);
-            } finally {
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = 'Konfirmasi Pembayaran';
-            }
+            });
         });
     </script>
 </body>

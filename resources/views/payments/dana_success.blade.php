@@ -142,12 +142,51 @@
             font-weight: 600;
             color: #333;
         }
+
+        .simple-navbar {
+            background-color: #2c2c77;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .simple-navbar img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .brand-text {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .brand-catering {
+            color: #FFA500;
+        }
+
+        .brand-kita {
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        Catering Kita
-    </div>
+    <nav class="simple-navbar">
+        <a href="{{ route('dashboard') }}" class="navbar-brand">
+            <img src="{{ asset('assets/logo.png') }}" alt="Logo">
+            <div class="brand-text">
+                <span class="brand-catering">CATERING</span>
+                <span class="brand-kita">KITA</span>
+            </div>
+        </a>
+    </nav>
     
     <div class="container">
         <div class="success-icon">
@@ -211,19 +250,11 @@
             try {
                 // Get data from localStorage
                 const orderData = JSON.parse(localStorage.getItem('currentOrder')) || {};
-                const shippingData = JSON.parse(localStorage.getItem('shippingData')) || {};
                 const orderTotal = localStorage.getItem('orderTotal');
                 
                 // Display order info
-                if (orderData.id) {
-                    document.getElementById('orderId').textContent = orderData.id;
-                } else {
-                    // Generate new order ID if not exists
-                    document.getElementById('orderId').textContent = generateOrderId();
-                }
-                
-                // Display current date as order date
-                document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID', {
+                document.getElementById('orderId').textContent = orderData.id || generateOrderId();
+                document.getElementById('orderDate').textContent = new Date(orderData.date || new Date()).toLocaleDateString('id-ID', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'
@@ -234,27 +265,29 @@
                     document.getElementById('totalPayment').textContent = `Rp ${parseInt(orderTotal).toLocaleString('id-ID')}`;
                 }
 
-                // Display shipping info
-                if (shippingData) {
-                    document.getElementById('deliveryDate').textContent = shippingData.deliveryDate || '-';
-                    document.getElementById('deliveryTime').textContent = shippingData.deliveryTime || '-';
-                    document.getElementById('deliveryAddress').textContent = shippingData.address || '-';
+                // Display shipping info langsung dari orderData
+                if (orderData) {
+                    document.getElementById('deliveryDate').textContent = orderData.deliveryDate || '-';
+                    document.getElementById('deliveryTime').textContent = orderData.deliveryTime || '-';
+                    document.getElementById('deliveryAddress').textContent = orderData.address || '-';
                 }
 
                 // Clear localStorage after successful display
                 setTimeout(() => {
                     localStorage.removeItem('currentOrder');
-                    localStorage.removeItem('shippingData');
                     localStorage.removeItem('orderTotal');
                     localStorage.removeItem('cartItems');
                     localStorage.removeItem('selectedPaymentMethod');
-                }, 1000); // Delay 1 detik untuk memastikan data sudah ditampilkan
+                }, 1000);
 
             } catch (error) {
                 console.error('Error displaying order data:', error);
                 // Set default values if there's an error
+                document.getElementById('orderId').textContent = '-';
+                document.getElementById('orderDate').textContent = '-';
+                document.getElementById('totalPayment').textContent = '-';
                 document.getElementById('deliveryDate').textContent = '-';
-                document.getElementById('deliveryTime').textContent = '-';
+                document.getElementById('deliveryTime').textContent = '-'; 
                 document.getElementById('deliveryAddress').textContent = '-';
             }
         });

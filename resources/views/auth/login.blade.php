@@ -83,11 +83,11 @@
     </nav>
 
     <div class="flex items-center justify-between max-w-7xl mx-auto py-4 px-4">
-        <h1 class="text-xl">Login</h1>
+        <h1 class="text-xl">Masuk</h1>
         <div class="text-sm text-gray-600">
             <a href="/" class="hover:text-gray-800">Home</a>
             <span class="mx-2">»</span>
-            <span class="text-gray-400">Login</span>
+            <span class="text-gray-400">Masuk</span>
         </div>
     </div>
 
@@ -120,7 +120,7 @@
             </div>
 
             <button type="submit" class="login-btn">
-                Login
+                Masuk
             </button>
         </form>
 
@@ -132,7 +132,7 @@
             <p class="text-sm text-gray-600">
                 Belum Memiliki Akun? 
                 <a href="{{ route('register') }}" class="text-indigo-600 hover:underline">
-                    Register sekarang
+                    Daftar sekarang
                 </a>
             </p>
         </div>
