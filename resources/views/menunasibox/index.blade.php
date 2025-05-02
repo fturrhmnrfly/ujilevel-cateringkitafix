@@ -342,11 +342,7 @@
             <div class="menu-grid">
                 @foreach($menuItems as $item)
                 <div class="menu-item">
-                        @if($item->image && Storage::disk('public')->exists($item->image))
-                        <img src="{{ Storage::url($item->image) }}" alt="{{ $item->nama_makanan }}">
-                    @else
-                        <img src="{{ asset('assets/default-food.png') }}" alt="Default food image">
-                    @endif
+                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->nama_makanan }}" class="menu-image">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">{{ $item->nama_makanan }}</h3>
                         <p class="menu-item-title-p">{{ $item->deskripsi }}</p>

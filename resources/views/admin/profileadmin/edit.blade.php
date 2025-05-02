@@ -123,9 +123,105 @@
         .btn:hover {
             opacity: 0.9;
         }
+
+         /* Navbar Styles */
+         .navbar {
+            background-color: #2c2c77;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .navbar .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sign-out {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Breadcrumb Styles */
+        .breadcrumb-container {
+            background-color: #f3f4f6;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-top: 70px;
+            width: 100%;
+        }
+
+        .breadcrumb {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb-title {
+            font-size: 1.25rem;
+            color: #374151;
+        }
+
+        .breadcrumb-nav {
+            color: #6b7280;
+        }
+
+        .breadcrumb-nav a {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .container {
+            margin-top: 120px;
+        }
     </style>
 </head>
 <body>
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="logo">
+                <img src="{{ asset('assets/logo.png') }}" alt="Catering Kita">
+                <span style="color: white; font-weight: bold;">CATERING KITA</span>
+            </div>
+            <div class="nav-right">
+                <a href="{{ route('logout') }}" class="sign-out" 
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Sign Out
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            </div>
+        </nav>
+    
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-container">
+            <div class="breadcrumb">
+                <div class="breadcrumb-title">Profile</div>
+                <div class="breadcrumb-nav">
+                    <a href="{{ route('admin.dashboard') }}">Home</a> » Profile
+                </div>
+            </div>
+        </div>
     <div class="container">
         <div class="profile-header">
             <div class="profile-image">

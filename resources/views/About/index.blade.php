@@ -260,18 +260,19 @@
 </div>
 <div class="about">
     <div class="about-image">
-        <img src="{{ asset('assets/homeassets2.png') }}" alt="Nasi Box">
+        @if($tentangKami && $tentangKami->foto)
+            <img src="{{ asset('storage/' . $tentangKami->foto) }}" alt="About Us">
+        @else
+            <img src="{{ asset('assets/homeassets2.png') }}" alt="Default Image">
+        @endif
     </div>
     <div class="about-content">
         <h1>Tentang Kami</h1>
-        <h3>Always the Best Choice - SoDelicious, You'll Crave for More!</h3>
-        <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun, arisan,
-            syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek, nasi
-            kebuli, nasi tumpeng, dan banyak lagi, lengkap dengan sayur dan sambal khas. Dengan pengalaman lebih
-            dari 10
-            tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat, porsi
-            pas,
-            dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
+        @if($tentangKami)
+            <p>{{ $tentangKami->deskripsi }}</p>
+        @else
+            <p>Belum ada deskripsi tersedia.</p>
+        @endif
     </div>
 </div>
 <div class="features-container">

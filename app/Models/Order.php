@@ -7,34 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'id',
-        'order_number',
-        'user_id',
-        'subtotal',
-        'shipping_cost',
-        'total_amount',
-        'shipping_address',
-        'phone_number',
-        'notes',
-        'delivery_date',
-        'payment_method',
-        'payment_status',
-        'payment_proof',
-        'status'
+        'order_id',
+        'nama_pelanggan',
+        'kategori_pesanan',
+        'tanggal_pesanan',
+        'jumlah_pesanan',
+        'tanggal_pengiriman',
+        'waktu_pengiriman',
+        'lokasi_pengiriman',
+        'nomor_telepon',
+        'pesan',
+        'opsi_pengiriman',
+        'metode_pembayaran',
+        'total_harga',
+        'status_pengiriman',
+        'status_pembayaran'
     ];
 
     public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function getTotalAttribute()
-{
-    return $this->subtotal + $this->shipping_cost;
-}
 }

@@ -254,4 +254,12 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
+Route::get('/uploads/makanan/{filename}', function ($filename) {
+    $path = public_path('uploads/makanan/' . $filename);
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path);
+})->where('filename', '.*');
+
 require __DIR__.'/auth.php';

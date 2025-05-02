@@ -52,6 +52,12 @@
             text-decoration: none;
             border: none;
             font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .view-file-btn:hover {
+            background-color: #5a6268;
         }
 
         .update-status-btn {
@@ -177,9 +183,11 @@
         }
 
         .modal-image {
-            max-width: 100%;
-            max-height: 80vh;
+            max-width: 500px; /* Batasi lebar maksimum */
+            max-height: 500px; /* Batasi tinggi maksimum */
             object-fit: contain;
+            display: block;
+            margin: 0 auto;
         }
 
         .modal-transaction-info {
@@ -246,9 +254,6 @@
                                 @else
                                     -
                                 @endif
-                                {{ asset('storage/' . $transaksi->bukti_pembayaran) }}
-                                <img src="{{ asset('storage/' . $transaksi->bukti_pembayaran) }}" alt="gambar">
-
                             </td>
                             <td class="{{ $transaksi->status_transaksi === 'Selesai' ? 'status-selesai' : 'status-dibatalkan' }}">
                                 {{ $transaksi->status_transaksi }}

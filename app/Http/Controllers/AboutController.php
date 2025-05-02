@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\TentangKami;
 
 class AboutController extends Controller
 {
-    public function index() {
-        return view('about.index');
+    public function index()
+    {
+        // Get the latest TentangKami data
+        $tentangKami = TentangKami::latest()->first();
+        return view('About.index', compact('tentangKami'));
     }
 }

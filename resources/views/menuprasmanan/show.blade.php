@@ -199,23 +199,16 @@
 
         <div class="product-container">
             <div class="product-image">
-                <img src="{{ asset($menu->image) }}" alt="{{ $menu->nama_produk }}">
+                <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->nama_makanan }}">
             </div>
             <div class="product-info">
-                <h1 class="product-title">{{ $menu->nama_makanan     }}</h1>
+                <h1 class="product-title">{{ $menu->nama_makanan }}</h1>
                 <div class="product-rating">
                     <div class="stars">★★★★★</div>
                     <span>(5.0) ratings</span>
                 </div>
                 <p class="product-description">{{ $menu->deskripsi }}</p>
                 
-                {{-- <div class="section-title">Bahan Utama:</div>
-                <ul class="ingredients">
-                    @foreach(explode(',', $menu->deskripsi) as $item)
-                        <li>{{ trim($item) }}</li>
-                    @endforeach
-                </ul> --}}
-
                 <div class="product-price">
                     Rp {{ number_format($menu->harga, 0, ',', '.') }}
                 </div>
@@ -292,6 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({
+                        id: {{ $menu->id }},
                         nama_produk: '{{ $menu->nama_makanan }}',
                         price: {{ $menu->harga }},
                         quantity: quantity,
