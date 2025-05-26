@@ -10,7 +10,9 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding-top: 80px; /* Keep this for navbar space */
+            padding-top: 80px;
+            background: url('{{ asset('assets/backgroundpesanan.jpeg') }}') center center/cover no-repeat;
+            /* Ganti 'assets/bg-pesanan.jpg' dengan nama file dan lokasi gambar background yang baru saja Anda upload */
         }
 
         a {

@@ -1084,7 +1084,7 @@
             </div>
             <div class="hero-image">
                 <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box" class="main-hero-image">
-                <img src="{{ asset('assets/lengkung.png') }}" alt="lengkung" class="background-curve">
+                <img src="{{ asset('assets/lengkungan.png') }}" alt="lengkung" class="background-curve">
             </div>
         </div>
         <div class="about">

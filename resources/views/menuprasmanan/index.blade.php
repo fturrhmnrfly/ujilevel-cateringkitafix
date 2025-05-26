@@ -30,7 +30,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #2c2c77;
+        background-color: #fff;
         /* Warna biru navbar */
         padding: 15px 30px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -39,7 +39,7 @@
     .navbar .logo {
         display: flex;
         align-items: center;
-        color: #fff;
+        color: #000000;
     }
 
     .navbar .logo img {
@@ -58,7 +58,7 @@
     }
 
     .navbar .logo .text-navbar p:nth-child(2) {
-        color: #fff;
+        color: #000000;
     }
 
     .navbar .search-bar {
@@ -100,7 +100,7 @@
     }
 
     .navbar .nav-links li a {
-        color: #fff;
+        color: #000000;
         font-size: 16px;
         font-weight: bold;
         text-decoration: none;
@@ -115,7 +115,7 @@
     .cart-icon {
         position: relative;
         font-size: 24px;
-        color: #ffffff;
+        color: #000000;
         border-radius: 50%;
         width: 40px;
         height: 40px;
@@ -134,8 +134,7 @@
         position: absolute;
         top: -5px;
         right: -5px;
-        background: red;
-        color: white;
+        color: black;
         font-size: 12px;
         font-weight: bold;
         width: 18px;
@@ -177,7 +176,25 @@
 
     .menu-section {
         padding: 40px;
-        background-color: #fff;
+        background: url('{{ asset('assets/backgroundmenu.jpeg') }}') center center/cover no-repeat, #fff;
+        /* Ganti 'assets/bg-prasmanan.jpg' dengan path sesuai lokasi file gambar background Anda */
+        min-height: 500px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .menu-section::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(255,255,255,0.85); /* Supaya konten tetap jelas */
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .menu-section > * {
+        position: relative;
+        z-index: 3;
     }
 
     .section-title {
@@ -325,7 +342,7 @@
             <div class="breadcrumb">
                 <div class="breadcrumb-title">Catering</div>
                 <div class="breadcrumb-nav">
-                    <a href="{{ route('home') }}">Home</a> » Catering
+                    <a href="{{ route('home') }}">Home</a> » Menu Prasmanan
                 </div>
             </div>
         </div>

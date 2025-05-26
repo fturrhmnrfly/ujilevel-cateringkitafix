@@ -7,141 +7,105 @@
     <title>Dashboard - Catering Kita</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
         img {
             max-width: 100%;
             height: auto;
         }
 
-        /* Breadcrumb Styles */
-        .breadcrumb-container {
-            background-color: #f3f4f6;
-            /* Light gray color */
-            padding: 1rem 2rem;
-            border-bottom: 1px solid #e5e7eb;
-            margin-top: 80px;
-            /* Space below fixed navbar */
-            width: 100%;
-        }
-
-        .breadcrumb {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .breadcrumb-title {
-            font-size: 1.25rem;
-            color: #374151;
-        }
-
-        .breadcrumb-nav {
-            color: #6b7280;
-        }
-
-        .breadcrumb-nav a {
-            color: #6b7280;
-            text-decoration: none;
-        }
-
         /* Hero Section */
         .hero {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 40px;
-            background-color: #ffffff;
-            overflow: visible;
-            /* Allow content to overflow */
             position: relative;
-            z-index: 1;
+            height: 100vh;
+            width: 100%;
+            background-image: url("{{ asset('assets/paketassets5.png') }}");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
         }
 
         .hero-content {
-            max-width: 50%;
-            display: flex;
-            justify-content: center;
-            margin-right: 20px;
-        }
-
-        .hero-content h1 {
-            font-size: 110px;
-            color: #3d4750;
             position: relative;
             z-index: 2;
-            text-align: center;
-            /* Center the text */
+            padding: 20px;
         }
 
-        .hero-content .highlight {
-            color: #3d4750;
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: white; /* Make the default text color white */
         }
 
-        .hero-content p {
-            font-size: 18px;
-            margin: 20px 0;
-            color: #3d4750;
+        .hero-title span {
+            color: #ffd700; /* Make the word "kita" yellow */
         }
 
-        .hero-content .btn-shop {
-            display: inline-block;
-            padding: 10px 20px;
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .cta-button {
+            padding: 1rem 2rem;
+            background: #ffd700;
+            color: #000;
+            text-decoration: none;
             border-radius: 5px;
-            border: 2px solid #2c2c77;
-            color: #2c2c77;
             font-weight: bold;
-            transition: background-color 0.3s;
+            transition: background 0.3s;
         }
 
-        .hero-content .btn-shop:hover {
-            background-color: #1a1a5c;
-        }
-
-        .hero-image {
-            width: 50%;
-            height: 500px;
-            position: relative;
-            right: -5%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 0 0 0 200px;
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 85%);
-            overflow: hidden;
-            margin-top: -40px;
-            /* Add negative margin to move it up */
-        }
-
-        .main-hero-image {
-            width: 500px;
-            position: relative;
-            z-index: 2;
-            object-fit: cover;
-        }
-
-        .background-curve {
-            position: absolute;
-            bottom: 0;
-            right: -150px;
-            z-index: 1;
-            width: 100%;
-            height: 100%;
-            /* Increase height */
-            margin-top: -120%;
-            /* Move curve up */
-            transform: translateY(-10%);
-            /* Fine-tune vertical position */
+        .cta-button:hover {
+            background: #e6c200;
         }
 
         .about {
+            position: relative; /* Add relative positioning */
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 40px;
             background-color: #ffffff;
+            overflow: hidden; /* Ensure the lengkungan stays within bounds */
+        }
+
+        .about-image {
+            width: 500px;
+            position: relative;
+            z-index: 2;
+            /* Higher z-index to appear in front */
+            top: 100px;
+            right: -50px;
+        }
+
+        .about-image img {
+            width: 500px;
+            position: relative;
         }
 
         .about-content {
@@ -175,6 +139,18 @@
 
         .about-image img {
             width: 500px;
+        }
+
+        .background-curve {
+            position: absolute;
+            bottom: 0;
+            right: 50px;
+            z-index: 1;
+            /* Lower z-index to appear behind */
+            top: -400px;
+            right: 10%;
+            width: 100%;
+            height: 100%;
         }
 
         .menu-section {
@@ -252,7 +228,7 @@
         }
 
         .menu-item-price {
-            color: #2c2c77;
+            color: #683E0C;
             font-weight: bold;
         }
 
@@ -261,7 +237,7 @@
             display: block;
             width: 90%;
             padding: 10px;
-            background-color: #2c2c77;
+            background-color: #D38524;
             color: white;
             text-align: center;
             border-radius: 8px;
@@ -271,7 +247,7 @@
         }
 
         .menu-item-button:hover {
-            background-color: #1a1a5c;
+            background-color: #D38524;
         }
 
         /* Add smooth infinite scroll */
@@ -330,7 +306,7 @@
         .menu-item-button {
             display: inline-block;
             padding: 8px 20px;
-            background-color: #2c2c77;
+            background-color: #D38524;
             color: white;
             border-radius: 25px;
             text-decoration: none;
@@ -338,7 +314,7 @@
         }
 
         .menu-item-button:hover {
-            background-color: #1a1a5c;
+            background-color: #D38524;
         }
 
         .menu-item-details {
@@ -448,38 +424,65 @@
         }
 
         .promo-banner {
-            background-color: #6C7FD8;
+            background-color: #FFFFFF;
             border-radius: 15px;
             padding: 40px;
-            color: white;
+            margin: 40px auto;
+            max-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .promo-image {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .promo-image.left {
+            transform: rotate(-5deg);
+        }
+
+        .promo-image.right {
+            transform: rotate(5deg);
+        }
+
+        .promo-content {
             text-align: center;
-            margin-bottom: 50px;
+            padding: 0 40px;
+            flex: 1;
         }
 
         .promo-title {
-            font-size: 28px;
+            font-size: 36px;
             font-weight: bold;
-            margin-bottom: 15px;
+            color: #C17F3B;
+            margin-bottom: 20px;
         }
 
         .promo-description {
             font-size: 16px;
-            margin-bottom: 20px;
+            color: #9F7E6B;
+            margin-bottom: 30px;
+            line-height: 1.6;
         }
 
         .promo-button {
             display: inline-block;
             padding: 12px 30px;
-            background-color: white;
-            color: #4a4af4;
+            background-color: #E6C9B3;
+            color: #7B5E4B;
             border-radius: 25px;
             text-decoration: none;
-            font-weight: bold;
-            transition: transform 0.3s ease;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
         .promo-button:hover {
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         @media (max-width: 768px) {
@@ -492,9 +495,13 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 30px;
-            padding: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
+            padding: 40px 20px;
+            max-width: 100%;
+            margin-top: 100px;
+            margin: 50px 100; /* Increased top and bottom margin to 80px */
+            background-color: #4B3E2F;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .feature-card {
@@ -617,7 +624,7 @@
         }
 
         .footer {
-            background-color: #E5E5E5;
+            background-color: #B19370;
             padding: 40px 0;
             margin-top: 60px;
         }
@@ -682,7 +689,7 @@
         }
 
         .footer-text {
-            color: #666;
+            color: #fff;
             line-height: 1.6;
             font-size: 14px;
         }
@@ -697,14 +704,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #666;
+            color: #fff;
             font-size: 14px;
         }
 
         .contact-icon {
             width: 20px;
             height: 20px;
-            color: #666;
+            color: #F61515;
         }
 
         @media (max-width: 992px) {
@@ -828,7 +835,7 @@
 
         .hero-content h1 {
             font-size: 110px;
-            color: #3d4750;
+            color: #ffffff;
             position: relative;
             z-index: 2;
             text-align: center;
@@ -852,101 +859,183 @@
         }
 
         /* Add these styles to your existing CSS */
+        /* Update/tambahkan CSS berikut */
         .comments-section {
             padding: 40px;
+            margin: 40px 0;
             background-color: #fff;
         }
 
         .comments-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            display: flex;
+            flex-wrap: wrap;
             gap: 30px;
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-family: 'Poppins', serif;
+            font-size: 48px;
+            color: #4B3E2F;
+            text-align: center;
+            margin-bottom: 40px;
         }
 
         .comment-card {
-            background: white;
+            flex: 1;
+            min-width: 300px;
+            background: #FFFFFF;
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .comment-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .comment-info {
+            padding: 10px;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+            height: 280px;
+            /* Set fixed height */
             display: flex;
             flex-direction: column;
-            gap: 5px;
-        }
-
-        .user-name {
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
         }
 
         .rating {
             color: #FFD700;
-            font-size: 14px;
+            font-size: 24px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
         }
 
         .comment-text {
-            color: #666;
-            font-size: 14px;
+            font-size: 16px;
+            color: #333;
             line-height: 1.6;
-            margin: 0;
+            font-style: italic;
+            flex-grow: 1;
+            /* Allow text to take available space */
+            margin-bottom: 80px;
+            /* Space for commenter info */
         }
 
+        .commenter-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: absolute;
+            bottom: 25px;
+            /* Adjust position from bottom */
+            left: 30px;
+            z-index: 1;
+        }
+
+        .commenter-avatar {
+            width: 40px;
+            /* Slightly smaller avatar */
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .commenter-name {
+            font-size: 16px;
+            /* Slightly smaller font */
+            font-weight: 500;
+            color: #333;
+        }
+
+        .comment-curve {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            /* Reduced height of orange area */
+            background: #FFB800;
+            border-radius: 0 0 15px 15px;
+            z-index: 0;
+        }
+
+        /* Responsive styles */
         @media (max-width: 768px) {
-            .comments-container {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .features {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Add this to your existing navbar styles */
-        .notification-icon {
-            display: flex;
-            align-items: center;
-            color: #2c2c77;
-            text-decoration: none;
-            position: relative;
-            padding: 8px;
-            transition: opacity 0.3s;
-        }
-
-        .notification-icon:hover {
-            opacity: 0.8;
-        }
-
-        .notification-icon i {
-            font-size: 20px;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: #ff4444;
-            color: white;
-            font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 50%;
-            min-width: 15px;
+        .category-section {
+            padding: 40px;
             text-align: center;
+            background-color: #f8f8f8;
+        }
+
+        .category-title {
+            font-family: 'Poppins', serif;
+            font-size: 48px;
+            color: #4B3E2F;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .category-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .category-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .category-desc {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .category-menu-count {
+            color: #FF8C00;
+            font-size: 14px;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -955,39 +1044,12 @@
     <header>
         <x-navbar></x-navbar>
             
-        <div class="breadcrumb-container">
-            <div class="breadcrumb">
-                <!-- You can add breadcrumb content here if needed -->
-            </div>
-        </div>
         <div class="hero">
+            <div class="hero-overlay"></div>
             <div class="hero-content">
-                <div class="logo-container">
-                    <img src="{{ asset('assets/topikoki.png') }}" alt="topikoki" class="chef-hat">
-                    <h1>Catering <span class="highlight">Kita</span></h1>
-                </div>
-            </div>
-            <div class="hero-image">
-                <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box" class="main-hero-image">
-                <img src="{{ asset('assets/lengkung.png') }}" alt="lengkung" class="background-curve">
-            </div>
-        </div>
-        <div class="about">
-            <div class="about-image">
-                <img src="{{ asset('assets/homeassets2.png') }}" alt="Nasi Box">
-            </div>
-            <div class="about-content">
-                <h1>Tentang Kami</h1>
-                <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun,
-                    arisan,
-                    syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek,
-                    nasi
-                    kebuli, nasi tumpeng, dan banyak lagi, lengkap dengan sayur dan sambal khas. Dengan pengalaman lebih
-                    dari 10
-                    tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat,
-                    porsi pas,
-                    dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
-                <a href="about" class="btn-shop">Selengkapnya</a>
+                <h1 class="hero-title">Selamat datang di catering <span>kita</span></h1>
+                <p class="hero-subtitle">Kami senang memenuhi acara spesial anda</p>
+                <a href="#" class="cta-button">Pesan Sekarang</a>
             </div>
         </div>
 
@@ -1016,23 +1078,48 @@
                 <h3 class="feature-title">Pembayaran</h3>
             </div>
         </div>
-
-        <!-- Categories -->
-        <h2 class="section-title">Kategori</h2>
-        <div class="category">
-            <img src="{{ asset('assets/kategoriassets1.png') }}" alt="Prasmanan" class="category-image">
-            <div class="category-title">Prasmanan</div>
-            <div class="category-description">Hidangan lengkap dengan konsep prasmanan untuk berbagai acara</div>
-            <a href="/menuprasmanan" class="menu-link">50+ Menu</a>
+        
+        <div class="about">
+            <div class="about-image">
+                <img src="{{ asset('assets/homeassets1.jpg') }}" alt="Nasi Box" class="about-image">
+                <img src="{{ asset('assets/lengkungan.png') }}" alt="lengkung" class="background-curve">
+            </div>
+            <div class="about-content">
+                <h1>Tentang Kami</h1>
+                <p>Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun,
+                    arisan,
+                    syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek,
+                    nasi
+                    kebuli, nasi tumpeng, dan banyak lagi, lengkap dengan sayur dan sambal khas. Dengan pengalaman lebih
+                    dari 10
+                    tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat,
+                    porsi pas,
+                    dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
+                <a href="about" class="btn-shop">Selengkapnya</a>
+            </div>
         </div>
 
-        <div class="category">
-            <img src="{{ asset('assets/kategoriassets2.png') }}" alt="Nasi Box" class="category-image">
-            <div class="category-title">Nasi Box</div>
-            <div class="category-description">Paket nasi lengkap dengan lauk dalam kemasan praktis</div>
-            <a href="/menunasibox" class="menu-link">50+ Menu</a>
-        </div>
-        </div>
+        <section class="category-section">
+            <h2 class="category-title">Kategori</h2>
+            
+            <div class="category-container">
+                <!-- Prasmanan Category -->
+                <div class="category-card">
+                    <img src="{{ asset('assets/kategoriassets1.png') }}" alt="Prasmanan" class="category-icon">
+                    <h3 class="category-name">Prasmanan</h3>
+                    <p class="category-desc">Hidangan lengkap dengan konsep prasmanan untuk berbagai acara</p>
+                    <span class="category-menu-count">11 Menu</span>
+                </div>
+
+                <!-- Nasi Box Category -->
+                <div class="category-card">
+                    <img src="{{ asset('assets/kategoriassets2.png') }}" alt="Nasi Box" class="category-icon">
+                    <h3 class="category-name">Nasi Box</h3>
+                    <p class="category-desc">Paket nasi lengkap dengan lauk dalam kemasan praktis</p>
+                    <span class="category-menu-count">17 Box</span>
+                </div>
+            </div>
+        </section>
 
         <div class="menu-section">
             <!-- Popular Menu Section -->
@@ -1275,54 +1362,63 @@
 
         <!-- Add this section before the promo banner -->
         <div class="comments-section">
-            <h2 class="section-title">Komentar Pelanggan</h2>
+            <h2 class="section-title">Penilaian Pelanggan</h2>
             <div class="comments-container">
                 <!-- Comment 1 -->
                 <div class="comment-card">
-                    <div class="comment-header">
-                        <img src="{{ asset('assets/profil.png') }}" alt="User" class="user-avatar">
-                        <div class="comment-info">
-                            <h4 class="user-name">Ahmad Faizin</h4>
-                            <div class="rating">
-                                ⭐⭐⭐⭐⭐
-                            </div>
-                        </div>
-                    </div>
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
                     <p class="comment-text">
-                        "Saya sangat puas dengan pelayanan yang efektif. Tim profesional dan fast respon dalam
-                        berkomunikasi dan langgar ini sangat terasa ketika berkomunikasi dari awal sampai pesanan tiba
-                        dengan baik."
+                        "Saya sangat puas dengan pelayanan yang diberikan. Tim profesional dan produk berkualitas tinggi. Saya pasti akan merekomendasikan layanan ini kepada teman dan keluarga!"
                     </p>
+                    <div class="commenter-info">
+                        <img src="{{ asset('assets/profile.png') }}" alt="Wildan" class="commenter-avatar">
+                        <span class="commenter-name">Wildan Syah Nugraha</span>
+                    </div>
+                    <div class="comment-curve"></div>
                 </div>
 
                 <!-- Comment 2 -->
                 <div class="comment-card">
-                    <div class="comment-header">
-                        <img src="{{ asset('assets/profil.png') }}" alt="User" class="user-avatar">
-                        <div class="comment-info">
-                            <h4 class="user-name">Jhonarendra</h4>
-                            <div class="rating">
-                                ⭐⭐⭐⭐⭐
-                            </div>
-                        </div>
-                    </div>
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
                     <p class="comment-text">
-                        "Sangat senang dengan pelayanan yang diberikan oleh tim Catering Kita. Telah order lebih dari
-                        5x dan selalu puas dengan hasilnya."
+                        "Saya sangat puas dengan pelayanan yang diberikan. Tim profesional dan produk berkualitas tinggi. Saya pasti akan merekomendasikan layanan ini kepada teman dan keluarga!"
                     </p>
+                    <div class="commenter-info">
+                        <img src="{{ asset('assets/profil-raffy.png') }}" alt="Raffy" class="commenter-avatar">
+                        <span class="commenter-name">Raffy Faturacman</span>
+                    </div>
+                    <div class="comment-curve"></div>
+                </div>
+
+                <!-- Comment 3 -->
+                <div class="comment-card">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <p class="comment-text">
+                        "Saya sangat puas dengan pelayanan yang diberikan. Tim profesional dan produk berkualitas tinggi. Saya pasti akan merekomendasikan layanan ini kepada teman dan keluarga!"
+                    </p>
+                    <div class="commenter-info">
+                        <img src="{{ asset('assets/profil-siti.png') }}" alt="Siti" class="commenter-avatar">
+                        <span class="commenter-name">Siti Fadya Sari</span>
+                    </div>
+                    <div class="comment-curve"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Promotional Banner -->
-        <div class="promo-banner">
+        <!-- Update promo banner HTML -->
+    <div class="promo-banner">
+        <img src="{{ asset('assets/ayambakar.png') }}" alt="Ayam Bakar" class="promo-image left">
+        
+        <div class="promo-content">
             <h2 class="promo-title">Siap Memesan untuk Acara Anda?</h2>
-            <p class="promo-description">Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi
-                menu
-                yang sesuai dengan acara Anda.</p>
+            <p class="promo-description">
+                Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi menu yang sesuai dengan acara Anda.
+            </p>
             <a href="/contact" class="promo-button">Hubungi Kami</a>
         </div>
-    </header>
+
+        <img src="{{ asset('assets/nasiayam.png') }}" alt="Nasi Ayam" class="promo-image right">
+    </div>
 
     <footer class="footer">
         <div class="footer-container">
@@ -1604,6 +1700,33 @@
     document.querySelector('.cart-icon').addEventListener('click', function(e) {
         e.preventDefault();
         window.location.href = '/keranjang';
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Smooth scroll untuk tombol CTA
+    document.querySelector('.cta-button').addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector('#pesan');
+        target.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Animasi feature cards saat scroll
+    const featureCards = document.querySelectorAll('.feature-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    });
+
+    featureCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.5s ease-out';
+        observer.observe(card);
     });
 });
     </script>

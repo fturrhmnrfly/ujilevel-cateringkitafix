@@ -12,7 +12,7 @@
     /* Update these styles in navbar.blade.php */
     .cart-icon {
     position: relative;
-    color: #ffffff;
+    color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,6 +26,7 @@
 .cart-icon img {
     width: 40px;   /* Match original size */
     height: 40px;  /* Match original size */
+    filter: brightness(0); /* Tambahkan filter untuk membuat icon hitam */
 }
 
 .cart-icon::after {
@@ -33,8 +34,7 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    background: red;
-    color: white;
+    color: black;
     font-size: 12px;
     font-weight: bold;
     width: 18px;
@@ -43,7 +43,6 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.2);
     opacity: 0;
     transform: scale(0);
     transition: all 0.3s ease;
@@ -59,7 +58,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #2c2c77;
+        background-color: #fff;
         padding: 15px 30px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         position: fixed;
@@ -90,7 +89,7 @@
     }
 
     .navbar .logo .text-navbar p:nth-child(2) {
-        color: #fff;
+        color: #333;
     }
 
     .navbar .hamburger {
@@ -243,7 +242,7 @@
     }
 
     .navbar .nav-links li a {
-        color: #fff;
+        color: #333;
         font-size: 16px;
         font-weight: bold;
         text-decoration: none;
@@ -258,18 +257,14 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        color: white;
+        color: #000; /* Ubah dari white ke hitam */
     }
 
     .navbar .profile img {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-    }
-
-    .navbar .profile span {
-        font-size: 14px;
-        font-weight: bold;
+        filter: brightness(0); /* Tambahkan filter untuk membuat icon hitam */
     }
 
     /* Add these new styles to your existing navbar CSS */
@@ -347,14 +342,15 @@
     }
 
     .notification-icon {
-        color: #333;
-        font-size: 20px;
+        color: #000;
+        font-size: 24px;
         position: relative;
         text-decoration: none;
+        transition: color 0.3s ease;
     }
 
     .notification-icon:hover {
-        color: #2c2c77;
+        color: #444; /* Darker on hover */
     }
 
     .notification-badge {
@@ -363,7 +359,7 @@
         right: -8px;
         background-color: #ff4444;
         color: white;
-        font-size: 12px;
+        font-size: 11px;
         padding: 2px 6px;
         border-radius: 10px;
         min-width: 18px;
@@ -386,7 +382,7 @@
     }
 
     .notification-icon {
-        color: #fff;
+        color: #000;
         font-size: 24px;
         position: relative;
         text-decoration: none;
@@ -394,7 +390,7 @@
     }
 
     .notification-icon:hover {
-        color: #ffcc00;
+        color: #444; /* Darker on hover */
     }
 
     /* Update cart icon style */
@@ -405,9 +401,9 @@
     }
 
     .cart-icon img {
-        width: 30px;
-        height: 30px;
-        transition: transform 0.3s ease;
+        width: 40px;
+        height: 40px;
+        filter: brightness(0); /* Tambahkan filter untuk membuat icon hitam */
     }
 
     .cart-icon:hover img {

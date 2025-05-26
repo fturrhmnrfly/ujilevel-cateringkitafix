@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background-color: #C4A484;  /* Change base background color */
         }
 
         a {
@@ -173,98 +173,125 @@
         }
 
         .contact-container {
-            max-width: 1200px;
-            margin: 120px auto 40px;
-            padding: 0 20px;
+            max-width: 100%;
+            margin: 80px auto 0;
+            padding: 40px;
+            position: relative;
+            min-height: calc(100vh - 80px);
+            background-color: #C4A484;
         }
 
         .contact-grid {
+            max-width: 1200px;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 40px;
+            gap: 80px; /* Increased gap for title placement */
+            position: relative;
+            padding: 40px;
+            background: url('{{ asset('assets/backgroundcontact.jpeg') }}') center/cover no-repeat;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .map-container {
+        /* Move heading outside of contact-info */
+        .contact-heading {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 42px;
+            color: #4B3E2F;
             width: 100%;
-            height: 400px;
-            border-radius: 10px;
-            overflow: hidden;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            z-index: 1;
+        }
+
+        .contact-heading span {
+            color: #ffffff; /* Make 'Kami' white */
         }
 
         .contact-info {
-            padding: 20px;
+            background: url('{{ asset('assets/note-bg.png') }}') center/contain no-repeat;
+            padding: 40px;
+            border-radius: 15px;
+            height: 450px; /* Reduced height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-top: 40px; /* Add space for heading */
         }
 
-        .contact-heading {
-            font-size: 32px;
-            color: #2c2c77;
-            margin-bottom: 30px;
+        .contact-form {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
-        .contact-details {
-            margin-bottom: 30px;
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .whatsapp-btn {
             display: inline-block;
-            background-color: #25d366;
+            background-color: #C17F3B;
             color: white;
             padding: 12px 24px;
-            border-radius: 5px;
+            width: 100%;
+            text-align: center;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: bold;
-            margin-bottom: 20px;
+            font-weight: 500;
+            margin: 20px 0;
+            transition: background-color 0.3s;
         }
 
         .contact-text {
-            color: #666;
-            margin-bottom: 10px;
+            text-align: center;
+            color: #4B3E2F;
+            margin: 10px 0;
         }
 
         .phone-number {
-            font-size: 18px;
-            color: #2c2c77;
-            font-weight: bold;
-        }
-
-        .info-sections {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 40px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .info-section {
             text-align: center;
-            padding: 20px;
+            color: #4B3E2F;
+            font-size: 16px;
         }
 
-        .info-section h3 {
-            color: #2c2c77;
-            margin-bottom: 15px;
-        }
-
-        .info-section p {
-            color: #666;
-            line-height: 1.6;
+        .map-container {
+            width: 90%; /* Reduced from 100% */
+            height: 400px; /* Reduced from 450px */
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 60px; /* Increased from 40px to move down */
+            margin-left: auto; /* Center the reduced width map */
+            margin-right: auto;
         }
 
         @media (max-width: 768px) {
             .contact-grid {
                 grid-template-columns: 1fr;
+                padding-left: 20px;
+                background-position: top center;
             }
-
-            .info-sections {
-                grid-template-columns: 1fr;
+            
+            .contact-info {
+                padding: 20px;
             }
         }
         .footer {
-            background-color: #E5E5E5;
+            background-color: #4B3E2F;
             padding: 40px 0;
             margin-top: 60px;
         }
@@ -324,12 +351,12 @@
         .footer-title {
             font-size: 20px;
             font-weight: 600;
-            color: #333;
+            color: #000
             margin-bottom: 20px;
         }
 
         .footer-text {
-            color: #666;
+            color: #fff;
             line-height: 1.6;
             font-size: 14px;
         }
@@ -344,14 +371,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #666;
+            color: #fff;
             font-size: 14px;
         }
 
         .contact-icon {
-            width: 20px;
+            width: 50px;
             height: 20px;
-            color: #666;
+            color: #ff0303;
         }
 
         @media (max-width: 992px) {
@@ -374,18 +401,22 @@
 
     <div class="contact-container">
         <div class="contact-grid">
+            <h1 class="contact-heading">Hubungi <span>Kami</span></h1>
+            
             <div class="contact-info">
-                <h1 class="contact-heading">Hubungi Kami</h1>
-                
-                <div class="contact-details">
-                    <p class="contact-text">Kirim Via WhatsApp</p>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Nama Anda" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" placeholder="Pesan" rows="4" required></textarea>
+                    </div>
                     <a href="https://wa.me/6283115826505" class="whatsapp-btn">
                         Kirim Via WhatsApp
                     </a>
-                    
                     <p class="contact-text">Atau hubungi langsung:</p>
                     <p class="phone-number">+62 831-1582-6505</p>
-                </div>
+                </form>
             </div>
 
             <div class="map-container">
