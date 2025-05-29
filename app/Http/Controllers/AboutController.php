@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\TentangKami;
+use Illuminate\Http\Request;
 
 class AboutController extends Controller
 {
     public function index()
     {
-        // Get the latest TentangKami data
         $tentangKami = TentangKami::latest()->first();
         return view('About.index', compact('tentangKami'));
     }

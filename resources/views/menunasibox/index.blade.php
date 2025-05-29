@@ -13,7 +13,18 @@
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f5f5f5;
+        background: url('{{ asset("assets/backgroundmenu.jpeg") }}') center/cover fixed no-repeat;
+        position: relative;
+    }
+
+    /* Add overlay for better readability */
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
     }
 
     a {
@@ -34,6 +45,11 @@
         background-color: #2c2c77;
         padding: 15px 30px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
     }
 
     .navbar .logo {
@@ -149,6 +165,7 @@
         background-color: #f3f4f6;
         padding: 1rem 2rem;
         border-bottom: 1px solid #e5e7eb;
+        margin-top: 0;
     }
 
     .breadcrumb {
@@ -172,78 +189,95 @@
 
     /* Updated Menu Section Styles */
     .menu-section {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        position: relative;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.8s ease-out;
     }
 
     .section-title {
         font-size: 32px;
         font-weight: bold;
         color: #333;
-        margin-bottom: 30px;
+        margin: 0 auto 30px;
         text-align: center;
+        position: relative;
+        padding: 0 0 15px;
     }
 
-    /* Updated Menu Grid Styles */
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background-color: #e67e22;
+        border-radius: 2px;
+    }
+
+    /* Menu Grid Styles */
     .menu-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 30px;
-        justify-content: center;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 10px;
     }
 
     .menu-item {
-        background: #F8F8FB;
-        border-radius: 15px;
+        background: #fff;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
-    .menu-item:hover {
-        transform: translateY(-5px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: slideUp 0.5s ease-out forwards;
     }
 
     .menu-item img {
         width: 100%;
-        height: 200px;
+        height: 140px;
         object-fit: cover;
+        border-radius: 8px;
     }
 
     .menu-item-content {
-        padding: 20px;
+        padding: 12px 0;
     }
 
     .menu-item-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin: 0 0 10px 0;
+        font-size: 15px;
+        font-weight: 600;
         color: #333;
+        margin-bottom: 4px;
     }
 
-    .menu-item-title-p {
-        font-size: 10px;
-        font-weight: bold;
-        margin: 0 0 10px 0;
-        color: #333;
+    .menu-item-description {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .menu-item-details {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
 
     .menu-item-price {
-        color: #2c2c77;
-        font-weight: bold;
-        font-size: 16px;
-        margin: 0;
+        font-size: 14px;
+        color: #000;
+        font-weight: 600;
     }
 
     .counter {
@@ -252,82 +286,95 @@
         gap: 8px;
     }
 
-    .counter input {
-        width: 40px;
-        height: 25px;
-        text-align: center;
-        border: 1px solid #2c2c77;
-        border-radius: 4px;
-        font-size: 14px;
-        -moz-appearance: textfield;
-        /* Firefox */
-    }
-
-    /* Hilangkan tombol panah untuk Chrome, Safari, Edge, Opera */
-    .counter input::-webkit-outer-spin-button,
-    .counter input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
     .counter button {
-        background: #2c2c77;
-        color: white;
-        border: none;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+        color: #333;
         font-size: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .counter button:hover {
+        background-color: #f5f5f5;
+        transform: scale(1.1);
+    }
+
+    .counter input {
+        width: 30px;
+        height: 24px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
     }
 
     .menu-item-button {
+        background: #e67e22;
+        color: white;
+        padding: 8px 0;
+        font-size: 14px;
+        border-radius: 6px;
+        text-align: center;
         display: block;
         width: 100%;
-        padding: 10px 0;
-        background-color: #2c2c77;
-        color: white;
-        text-align: center;
-        border-radius: 25px;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     .menu-item-button:hover {
-        background-color: #1a1a5c;
+        background: #d35400;
+        transform: scale(1.02);
+    }
+
+    /* Animation keyframes */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Stagger menu item animations */
+    .menu-item {
+        animation-delay: calc(var(--index) * 0.1s);
+    }
+
+    /* Hover animations */
+    .menu-item {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .menu-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 </style>
 
 <body>
     <header>
-        <nav class="navbar">
-            <div class="logo">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo">
-                <div class="text-navbar">
-                    <p>CATERING</p>
-                    <p>KITA</p>
-                </div>
-            </div>
-
-            <form class="search-bar">
-                <input type="text" placeholder="Search products...">
-                <button type="submit"><i class="fas fa-search"></i></button>
-            </form>
-
-            <ul class="nav-links">
-                <li><a href="{{ route('dashboard') }}">Home</a></li>
-                <li><a href="{{ route('about.index') }}">About</a></li>
-                <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
-                <li><a href="{{ route('contact.index') }}">Contact</a></li>
-            </ul>
-
-            <div class="cart-icon">
-                <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
-            </div>
-        </nav>
+        <x-navbar />
         <div class="breadcrumb-container">
             <div class="breadcrumb">
                 <div class="breadcrumb-title">Paket Nasi Box</div>
@@ -342,19 +389,19 @@
             <div class="menu-grid">
                 @foreach($menuItems as $item)
                 <div class="menu-item">
-                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->nama_makanan }}" class="menu-image">
+                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->nama_makanan }}">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">{{ $item->nama_makanan }}</h3>
-                        <p class="menu-item-title-p">{{ $item->deskripsi }}</p>
+                        <p class="menu-item-description">{{ $item->deskripsi }}</p>
                         <div class="menu-item-details">
                             <p class="menu-item-price">Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
                             <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0">
-                                <button class="plus">+</button>
+                                <button class="minus" type="button">-</button>
+                                <input type="number" class="count" value="0" min="0" readonly>
+                                <button class="plus" type="button">+</button>
                             </div>
                         </div>
-                        <a href="{{ route('menunasibox.show', $item->id) }}" class="menu-item-button">Detail Menu</a>
+                        <a href="{{ route('menunasibox.show', $item->id) }}" class="menu-item-button">Keranjang</a>
                     </div>
                 </div>
                 @endforeach

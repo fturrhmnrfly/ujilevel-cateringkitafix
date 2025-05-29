@@ -125,21 +125,15 @@
         <div class="container">
             <form action="{{ route('admin.tentangkami.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                
                 <div class="form-group">
-                    <label class="form-label">Foto</label>
-                    <input type="file" class="form-control" name="foto" required>
+                    <label>Foto</label>
+                    <input type="file" name="foto" class="form-control" required>
                 </div>
-
                 <div class="form-group">
-                    <label class="form-label">Deskripsi</label>
-                    <textarea class="form-control" name="deskripsi" required></textarea>
+                    <label>Deskripsi</label>
+                    <textarea name="deskripsi" class="form-control" required></textarea>
                 </div>
-
-                <div class="action-buttons">
-                    <button type="submit" class="btn btn-primary">Tambahkan</button>
-                    <a href="{{ route('admin.tentangkami.index') }}" class="btn btn-secondary">Kembali</a>
-                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </form>
         </div>
     </div>

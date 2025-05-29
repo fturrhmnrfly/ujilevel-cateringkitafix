@@ -179,123 +179,235 @@
             padding: 20px 15px;
         }
 
-        /* Rest of your CSS remains unchanged */
+        /* Add these styles to your existing CSS */
+        .page-content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
         .order-card {
-            background-color: white;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        /* Add these new styles in your <style> section */
-        .back-button {
-            margin: 20px 0 0 20px;
-            display: inline-block;
-            font-size: 24px;
-            color: #27276e;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .back-button:hover {
-            color: #3a3a8c;
-        }
-
-        .order-details {
-            padding: 20px;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
             padding-bottom: 15px;
             border-bottom: 1px solid #eee;
+        }
+
+        .order-number {
+            color: #27276e;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+
+        .order-info {
             margin-bottom: 15px;
         }
 
-        .order-id {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .order-date {
+        .order-info p {
+            margin: 5px 0;
             color: #666;
             font-size: 14px;
-        }
-
-        .order-items {
-            margin-bottom: 20px;
-        }
-
-        .item-row {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-        .item-image {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-right: 15px;
-        }
-
-        .item-info {
-            flex-grow: 1;
-        }
-
-        .item-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .item-price {
-            color: #666;
         }
 
         .order-summary {
             background: #f8f9fa;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
+            margin-top: 15px;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         .summary-row.total {
-            border-top: 1px solid #eee;
-            padding-top: 12px;
-            margin-top: 4px;
+            border-top: 1px solid #ddd;
+            padding-top: 8px;
+            margin-top: 8px;
             font-weight: 600;
         }
 
-        .detail-button {
+        .action-button {
             display: block;
             width: 100%;
-            background: #2c2c77;
+            padding: 12px;
+            background-color: #27276e;
             color: white;
             text-align: center;
-            padding: 12px;
             border-radius: 8px;
             margin-top: 15px;
             text-decoration: none;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .detail-button:hover {
-            background: #1f1f5c;
+        .action-button:hover {
+            background-color: #1a1a5c;
+            transform: translateY(-1px);
+        }
+
+        /* New styles for the updated order card */
+        .order-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .order-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.pending {
+            background-color: #e2e3f3;
+            color: #6c757d;
+        }
+
+        .status-badge.process {
+            background-color: #cfe2ff;
+            color: #1e90ff;
+        }
+
+        .status-badge.shipped {
+            background-color: #d1e7dd;
+            color: #198754;
+        }
+
+        .status-badge.completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .order-info {
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .order-info p {
+            margin: 5px 0;
+        }
+
+        .order-summary {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .action-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .action-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Empty state styles */
+        .empty-state {
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .empty-state img {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state .action-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #2c2c77;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .empty-state .action-button:hover {
+            background-color: #1a1a5c;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -315,47 +427,57 @@
 </div>
 
 <div class="container">
-    @if(isset($orders) && count($orders) > 0)
-        @foreach($orders as $order)
-        <div class="order-card">
-            <div class="order-header">
-                <h3>Order #{{ $order->order_number }}</h3>
-                <span class="status {{ $order->status }}">{{ ucfirst($order->status) }}</span>
-            </div>
-            <div class="order-details">
-                <div class="delivery-info">
-                    <p>Tanggal Pengiriman: {{ $order->delivery_date }}</p>
+    <div class="page-content">
+        @if(isset($orders) && count($orders) > 0)
+            @foreach($orders as $order)
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-number">Order #{{ $order->order_number }}</div>
+                        <div style="color: #666; font-size: 14px;">{{ $order->created_at->format('d F Y') }}</div>
+                    </div>
+                    <span class="status-badge {{ strtolower($order->status) }}">
+                        {{ ucfirst($order->status) }}
+                    </span>
+                </div>
+
+                <div class="order-info">
+                    <p>Pengiriman: {{ $order->delivery_date->format('d F Y') }}</p>
                     <p>Waktu: {{ $order->delivery_time }}</p>
                     <p>Alamat: {{ $order->address }}</p>
                 </div>
-                <div class="items-list">
-                    @foreach($order->items as $item)
-                    <div class="item">
-                        <span>{{ $item->name }} x {{ $item->quantity }}</span>
-                        <span>Rp {{ number_format($item->price, 0, ',', '.') }}</span>
-                    </div>
-                    @endforeach
-                </div>
+
                 <div class="order-summary">
-                    <p>Subtotal: Rp {{ number_format($order->subtotal, 0, ',', '.') }}</p>
-                    <p>Ongkir: Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</p>
-                    <p class="total">Total: Rp {{ number_format($order->total, 0, ',', '.') }}</p>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Biaya Pengiriman</span>
+                        <span>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span>Rp {{ number_format($order->total, 0, ',', '.') }}</span>
+                    </div>
                 </div>
+
+                <a href="{{ route('pesanan.show', $order->id) }}" class="action-button">
+                    Lihat Detail
+                </a>
             </div>
-        </div>
-        @endforeach
-    @else
-        <!-- Empty State -->
-        <div style="text-align: center; padding: 50px 0;">
-            <img src="{{ asset('assets/empty-order.png') }}" alt="Tidak ada pesanan" style="max-width: 150px; margin-bottom: 20px;">
-            <h3>Belum Ada Pesanan</h3>
-            <p>Anda belum memiliki pesanan. Silahkan pesan makanan terlebih dahulu.</p>
-            <a href="{{ route('dashboard') }}" 
-            style="display: inline-block; padding: 12px 30px; background: #2c2c77; color: white; border-radius: 8px; margin-top: 20px; text-decoration: none;">
-                Pesan Sekarang
-            </a>
-        </div>
-    @endif
+            @endforeach
+        @else
+            <div class="empty-state">
+                <img src="{{ asset('assets/empty-order.png') }}" alt="Tidak ada pesanan">
+                <h3>Belum Ada Pesanan</h3>
+                <p>Anda belum memiliki pesanan. Silahkan pesan makanan terlebih dahulu.</p>
+                <a href="{{ route('dashboard') }}" class="action-button">
+                    Pesan Sekarang
+                </a>
+            </div>
+        @endif
+    </div>
 </div>
 
 <!-- Rest of your HTML remains the same -->

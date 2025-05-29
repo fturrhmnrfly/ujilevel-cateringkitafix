@@ -234,7 +234,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 });
 
 
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckOutController::class, 'store'])->name('checkout.store');
 Route::post('/checkout/process', [CheckOutController::class, 'process'])->name('checkout.process');
 
 // Order routes
@@ -263,8 +264,8 @@ Route::get('/uploads/makanan/{filename}', function ($filename) {
 })->where('filename', '.*');
 
 Route::middleware(['auth'])->group(function() {
-    Route::get('/checkout', 'CheckoutController@index')->name('checkout.index');
-    Route::post('/checkout', 'CheckoutController@store')->name('checkout.store');
+    Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckOutController::class, 'store'])->name('checkout.store');
 });
 
 require __DIR__.'/auth.php';

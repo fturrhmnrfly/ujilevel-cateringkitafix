@@ -12,15 +12,16 @@
     /* Update these styles in navbar.blade.php */
     .cart-icon {
     position: relative;
-    color: #000;
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease;
+    cursor: pointer; /* Add cursor pointer */
+    text-decoration: none;
+    color: inherit;
 }
 
 .cart-icon:hover {
     transform: scale(1.1);
+    transition: transform 0.3s ease;
 }
 
 .cart-icon img {
@@ -495,9 +496,10 @@
     <span class="notification-badge">0</span>
 </a>
 
-        <div class="cart-icon">
+        <!-- Update cart icon HTML section -->
+        <a href="{{ route('keranjang.index') }}" class="cart-icon">
             <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
-        </div>
+        </a>
 
         <!-- Profile Section -->
         <div class="profile">

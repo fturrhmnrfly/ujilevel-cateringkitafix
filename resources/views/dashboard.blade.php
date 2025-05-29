@@ -173,17 +173,15 @@
             display: flex;
             flex-wrap: nowrap;
             gap: 20px;
-            overflow-x: auto;
-            /* Change from hidden to auto */
+            overflow-x: hidden;
+            /* Change to hidden */
             padding: 20px 0;
             position: relative;
             width: 100%;
-            cursor: grab;
-            /* Add grab cursor */
-            scroll-behavior: smooth;
-            /* Add smooth scrolling */
-            -webkit-overflow-scrolling: touch;
-            /* Better touch scrolling */
+            cursor: default;
+            /* Change to default cursor */
+            pointer-events: none;
+            /* Prevent all interactions */
         }
 
         .menu-item,
@@ -193,15 +191,14 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: transform 0.3s ease;
             animation: slideIn 20s linear infinite;
             margin: 10px;
         }
 
-        /* Update animation keyframes */
+        /* Update animation for continuous movement */
         @keyframes slideIn {
             0% {
-                transform: translateX(100%);
+                transform: translateX(0);
             }
 
             100% {
@@ -209,45 +206,18 @@
             }
         }
 
-        /* Update menu item content styles */
-        .menu-item-content {
-            padding: 15px;
+        /* Remove hover effects */
+        .menu-item:hover,
+        .menu-item-p:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .menu-item-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .menu-item-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .menu-item-price {
-            color: #683E0C;
-            font-weight: bold;
-        }
-
-        /* Update button styles */
+        /* Remove interactive button styles */
         .menu-item-button {
-            display: block;
-            width: 90%;
-            padding: 10px;
-            background-color: #D38524;
-            color: white;
-            text-align: center;
-            border-radius: 8px;
-            margin-top: 15px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-
-        .menu-item-button:hover {
-            background-color: #D38524;
+            pointer-events: none;
+            cursor: default;
+            opacity: 0.7;
         }
 
         /* Add smooth infinite scroll */
@@ -285,15 +255,20 @@
         }
 
         .menu-item-content {
-            padding: 25px;
-            /* Increased padding */
+            padding: 20px;
         }
 
         .menu-item-title {
             font-size: 22px;
-            /* Increased font size */
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .menu-item h4 {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
         }
 
         .menu-item-price {
@@ -1006,17 +981,25 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none; /* Remove default link styling */
+            display: block; /* Make the entire card clickable */
         }
 
         .category-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #f8f8f8;
         }
 
         .category-icon {
             width: 60px;
             height: 60px;
             margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
         }
 
         .category-name {
@@ -1049,7 +1032,7 @@
             <div class="hero-content">
                 <h1 class="hero-title">Selamat datang di catering <span>kita</span></h1>
                 <p class="hero-subtitle">Kami senang memenuhi acara spesial anda</p>
-                <a href="#" class="cta-button">Pesan Sekarang</a>
+                <a href="#categories" class="cta-button" onclick="scrollToCategories(event)">Pesan Sekarang</a>
             </div>
         </div>
 
@@ -1104,20 +1087,20 @@
             
             <div class="category-container">
                 <!-- Prasmanan Category -->
-                <div class="category-card">
+                <a href="{{ route('menuprasmanan.index') }}" class="category-card">
                     <img src="{{ asset('assets/kategoriassets1.png') }}" alt="Prasmanan" class="category-icon">
                     <h3 class="category-name">Prasmanan</h3>
                     <p class="category-desc">Hidangan lengkap dengan konsep prasmanan untuk berbagai acara</p>
                     <span class="category-menu-count">11 Menu</span>
-                </div>
+                </a>
 
                 <!-- Nasi Box Category -->
-                <div class="category-card">
+                <a href="{{ route('menunasibox.index') }}" class="category-card">
                     <img src="{{ asset('assets/kategoriassets2.png') }}" alt="Nasi Box" class="category-icon">
                     <h3 class="category-name">Nasi Box</h3>
                     <p class="category-desc">Paket nasi lengkap dengan lauk dalam kemasan praktis</p>
                     <span class="category-menu-count">17 Box</span>
-                </div>
+                </a>
             </div>
         </section>
 
@@ -1128,17 +1111,8 @@
                 <div class="menu-item-p">
                     <img src="{{ asset('assets/paketassets1.png') }}" alt="Paket Nasi Box A">
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Kotak Premium A</h3>
+                        <h3 class="menu-item-title">Paket Nasi Box Premium A</h3>
                         <h4>Nasi Liwet, Ayam Bakar, Tumis Jagung Manis, Telur Ceplok, Sambal</h4>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 25.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
 
@@ -1147,15 +1121,6 @@
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Paket Nasi Box Premium B</h3>
                         <h4>Nasi putih, Ayam Bakar, Tumis Sayur, Tempe Goreng</h4>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 35.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
 
@@ -1165,15 +1130,6 @@
                         <h3 class="menu-item-title">Paket Nasi Box Premium C</h3>
                         <h4>Nasi putih, Ayam Goreng, daging cincang,tempe orak arik,
                             samba, lalapan</h4>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 30.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="/menunasibox" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
 
@@ -1182,15 +1138,6 @@
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Paket Nasi Box Premium D</h4>
                             <h4>Nasi putih, daging sapi,sate,naget,sayur,telur kuning,kacang , sambal saus </h4>
-                            <div class="menu-item-details">
-                                <p class="menu-item-price">Rp 40.000</p>
-                                <div class="counter">
-                                    <button class="minus">-</button>
-                                    <span class="count">0</span>
-                                    <button class="plus">+</button>
-                                </div>
-                            </div>
-                            <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
                 <div class="menu-item-p">
@@ -1198,15 +1145,6 @@
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Paket Nasi Box Premium E</h3>
                         <h4>Nasi putih, telur, mie, capcay, ayam suir, sambal, kentang</h4>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 40.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
 
@@ -1215,15 +1153,6 @@
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Paket Nasi Campur Thailand</h3>
                         <h4>Nasi kecap, udang, chicken, sayur</h4>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp 40.000</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <span class="count">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-                        <a href="/keranjang" class="menu-item-button">Pesan</a>
                     </div>
                 </div>
             </div>
@@ -1238,124 +1167,57 @@
                     <h3 class="menu-item-title">Ayam Kecap</h3>
                     <div class="menu-item-details">
                         <p class="menu-item-price">Rp 9.000</p>
-                        <div class="counter">
-                            <button class="minus">-</button>
-                            <span class="count">0</span>
-                            <button class="plus">+</button>
-                        </div>
                     </div>
-                    <form class="add-to-cart-form">
-                        <input type="hidden" name="item_id" value="1">
-                        <input type="hidden" name="item_name" value="Ayam Kecap">
-                        <input type="hidden" name="item_price" value="9000">
-                        <input type="hidden" name="quantity" class="quantity-input" value="0">
-                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                    </form>
                 </div>
             </div>
+
             <div class="menu-item">
                 <img src="{{ asset('assets/homeassets5.jpg') }}" alt="Paket Prasmanan Gold">
                 <div class="menu-item-content">
                     <h3 class="menu-item-title">Ikan Goreng</h3>
                     <div class="menu-item-details">
                         <p class="menu-item-price">Rp 10.000</p>
-                        <div class="counter">
-                            <button class="minus">-</button>
-                            <span class="count">0</span>
-                            <button class="plus">+</button>
-                        </div>
                     </div>
-                    <form class="add-to-cart-form">
-                        <input type="hidden" name="item_id" value="2">
-                        <input type="hidden" name="item_name" value="Ikan Goreng">
-                        <input type="hidden" name="item_price" value="10000">
-                        <input type="hidden" name="quantity" class="quantity-input" value="0">
-                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                    </form>
                 </div>
             </div>
+
             <div class="menu-item">
                 <img src="{{ asset('assets/capcay.png') }}" alt="Paket Prasmanan Gold">
                 <div class="menu-item-content">
                     <h3 class="menu-item-title">Capcay</h3>
                     <div class="menu-item-details">
                         <p class="menu-item-price">Rp 10.000</p>
-                        <div class="counter">
-                            <button class="minus">-</button>
-                            <span class="count">0</span>
-                            <button class="plus">+</button>
-                        </div>
                     </div>
-                    <form class="add-to-cart-form">
-                        <input type="hidden" name="item_id" value="3">
-                        <input type="hidden" name="item_name" value="Capcay">
-                        <input type="hidden" name="item_price" value="10000">
-                        <input type="hidden" name="quantity" class="quantity-input" value="0">
-                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                    </form>
                 </div>
             </div>
+
             <div class="menu-item">
                 <img src="{{ asset('assets/bihungoreng.png') }}" alt="Paket Prasmanan Gold">
                 <div class="menu-item-content">
                     <h3 class="menu-item-title">Bihun Goreng</h3>
                     <div class="menu-item-details">
-                        <p class="menu-item-price">Rp 10.000</p>
-                        <div class="counter">
-                            <button class="minus">-</button>
-                            <span class="count">0</span>
-                            <button class="plus">+</button>
-                        </div>
+                        <p class="menu-item-price">Rp 8.000</p>
                     </div>
-                    <form class="add-to-cart-form">
-                        <input type="hidden" name="item_id" value="4">
-                        <input type="hidden" name="item_name" value="Bihun Goreng">
-                        <input type="hidden" name="item_price" value="10000">
-                        <input type="hidden" name="quantity" class="quantity-input" value="0">
-                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                    </form>
                 </div>
             </div>
+
             <div class="menu-item">
                 <img src="{{ asset('assets/miegoreng.png') }}" alt="Paket Prasmanan Gold">
                 <div class="menu-item-content">
                     <h3 class="menu-item-title">Mie Goreng</h3>
                     <div class="menu-item-details">
                         <p class="menu-item-price">Rp 10.000</p>
-                        <div class="counter">
-                            <button class="minus">-</button>
-                            <span class="count">0</span>
-                            <button class="plus">+</button>
-                        </div>
                     </div>
-                    <form class="add-to-cart-form">
-                        <input type="hidden" name="item_id" value="5">
-                        <input type="hidden" name="item_name" value="Mie Goreng">
-                        <input type="hidden" name="item_price" value="10000">
-                        <input type="hidden" name="quantity" class="quantity-input" value="0">
-                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                    </form>
                 </div>
             </div>
+
             <div class="menu-item">
                 <img src="{{ asset('assets/homeassets4.jpg') }}" alt="Paket Prasmanan Gold">
                 <div class="menu-item-content">
                     <h3 class="menu-item-title">Telur Balado</h3>
                     <div class="menu-item-details">
                         <p class="menu-item-price">Rp 5.000</p>
-                        <div class="counter">
-                            <button class="minus">-</button>
-                            <span class="count">0</span>
-                            <button class="plus">+</button>
-                        </div>
                     </div>
-                    <form class="add-to-cart-form">
-                        <input type="hidden" name="item_id" value="6">
-                        <input type="hidden" name="item_name" value="Telur Balado">
-                        <input type="hidden" name="item_price" value="5000">
-                        <input type="hidden" name="quantity" class="quantity-input" value="0">
-                        <button type="button" class="menu-item-button add-to-cart-btn" disabled>Pesan</button>
-                    </form>
                 </div>
             </div>
         </div>
@@ -1483,252 +1345,107 @@
         </div>
     </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    // Add this at the top of your existing DOMContentLoaded handler
-    const menuGrids = document.querySelectorAll('.menu-grid');
-    
-    menuGrids.forEach(grid => {
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-
-        grid.addEventListener('mousedown', (e) => {
-            isDown = true;
-            grid.style.cursor = 'grabbing';
-            startX = e.pageX - grid.offsetLeft;
-            scrollLeft = grid.scrollLeft;
-            
-            // Temporarily pause auto-animation
-            grid.style.animation = 'none';
-        });
-
-        grid.addEventListener('mouseleave', () => {
-            isDown = false;
-            grid.style.cursor = 'grab';
-            
-            // Resume auto-animation
-            grid.style.animation = 'slideIn 20s linear infinite';
-        });
-
-        grid.addEventListener('mouseup', () => {
-            isDown = false;
-            grid.style.cursor = 'grab';
-            
-            // Resume auto-animation
-            grid.style.animation = 'slideIn 20s linear infinite';
-        });
-
-        grid.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - grid.offsetLeft;
-            const walk = (x - startX) * 2; // Adjust sliding speed
-            grid.scrollLeft = scrollLeft - walk;
-        });
-
-        // Pause animation on hover
-        grid.addEventListener('mouseenter', () => {
-            grid.style.animation = 'none';
-        });
-
-        // Touch events for mobile devices
-        grid.addEventListener('touchstart', (e) => {
-            isDown = true;
-            startX = e.touches[0].pageX - grid.offsetLeft;
-            scrollLeft = grid.scrollLeft;
-            grid.style.animation = 'none';
-        });
-
-        grid.addEventListener('touchend', () => {
-            isDown = false;
-            grid.style.animation = 'slideIn 20s linear infinite';
-        });
-
-        grid.addEventListener('touchmove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.touches[0].pageX - grid.offsetLeft;
-            const walk = (x - startX) * 2;
-            grid.scrollLeft = scrollLeft - walk;
-        });
-    });
-    
-    // Helper functions
-    function getCartItems() {
-        return JSON.parse(localStorage.getItem('cartItems')) || [];
-    }
-
-    function saveCartItems(items) {
-        localStorage.setItem('cartItems', JSON.stringify(items));
-    }
-
-    function updateCartCounter() {
-        const cartItems = getCartItems();
-        const cartIcon = document.querySelector('.cart-icon');
-        const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-
-        if (totalItems > 0) {
-            cartIcon.setAttribute('data-count', totalItems.toString());
-        } else {
-            cartIcon.removeAttribute('data-count');
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation configuration
+    const animationConfig = {
+        threshold: 0.2,
+        rootMargin: '50px',
+        elements: {
+            '.hero-content': { delay: 0, duration: 1 },
+            '.feature-card': { delay: 0.2, duration: 0.8 },
+            '.about-content': { delay: 0.3, duration: 0.8 },
+            '.about-image': { delay: 0.4, duration: 0.8 },
+            '.category-card': { delay: 0.2, duration: 0.6 },
+            '.menu-item, .menu-item-p': { delay: 0.15, duration: 0.8 },
+            '.comment-card': { delay: 0.25, duration: 0.7 },
+            '.promo-banner': { delay: 0.3, duration: 0.9 }
         }
-    }
+    };
 
-    // Convert all count spans to input fields
-    document.querySelectorAll('.counter .count').forEach(countSpan => {
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.className = 'count';
-        input.value = '0';
-        input.min = '0';
-        input.addEventListener('input', function() {
-            let value = parseInt(this.value) || 0;
-            if (value < 0) {
-                value = 0;
-            }
-            this.value = value;
-
-            // Update hidden input if exists
-            const menuItem = this.closest('.menu-item, .menu-item-p');
-            const quantityInput = menuItem.querySelector('.quantity-input');
-            if (quantityInput) {
-                quantityInput.value = value;
-            }
-
-            // Update order button state
-            const orderBtn = menuItem.querySelector('.menu-item-button, .add-to-cart-btn');
-            if (orderBtn) {
-                orderBtn.disabled = value === 0;
-            }
-        });
-        countSpan.parentNode.replaceChild(input, countSpan);
-    });
-
-    // Handle all menu items (both nasi box and prasmanan)
-    document.querySelectorAll('.menu-item, .menu-item-p').forEach(item => {
-        const countInput = item.querySelector('.count');
-        const minusButton = item.querySelector('.minus');
-        const plusButton = item.querySelector('.plus');
-        const orderButton = item.querySelector('.menu-item-button');
-        const form = item.querySelector('.add-to-cart-form');
-
-        // Get menu item details
-        const menuItemName = item.querySelector('.menu-item-title').textContent;
-        const menuItemPrice = parseInt(item.querySelector('.menu-item-price').textContent.replace(
-            'Rp ', '').replace('.', ''));
-        const menuItemImage = item.querySelector('img').getAttribute('src');
-
-        // Handle minus button
-        minusButton.addEventListener('click', () => {
-            let value = parseInt(countInput.value) || 0;
-            if (value > 0) {
-                countInput.value = value - 1;
-                countInput.dispatchEvent(new Event('input'));
-            }
-        });
-
-        // Handle plus button
-        plusButton.addEventListener('click', () => {
-            let value = parseInt(countInput.value) || 0;
-            countInput.value = value + 1;
-            countInput.dispatchEvent(new Event('input'));
-        });
-
-        // Handle add to cart
-        const addToCart = async (quantity) => {
-            try {
-                const response = await fetch('/keranjang/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector(
-                            'meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        nama_produk: menuItemName,
-                        price: menuItemPrice,
-                        quantity: quantity,
-                        image: menuItemImage
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    let cartItems = getCartItems();
-                    const existingItemIndex = cartItems.findIndex(item => item.name ===
-                        menuItemName);
-
-                    if (existingItemIndex !== -1) {
-                        cartItems[existingItemIndex].quantity += quantity;
-                    } else {
-                        cartItems.push({
-                            id: cartItems.length + 1,
-                            name: menuItemName,
-                            price: menuItemPrice,
-                            image: menuItemImage,
-                            quantity: quantity
-                        });
-                    }
-
-                    saveCartItems(cartItems);
-                    updateCartCounter();
-                    countInput.value = 0;
-                    countInput.dispatchEvent(new Event('input'));
-                    alert('Item berhasil ditambahkan ke keranjang!');
-                }
-            } catch (error) {
-                alert('Gagal menambahkan ke keranjang: ' + error.message);
-            }
-        };
-
-        // Handle order button click
-        if (orderButton) {
-            orderButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                const quantity = parseInt(countInput.value) || 0;
-                if (quantity > 0) {
-                    addToCart(quantity);
-                } else {
-                    alert('Silakan pilih jumlah item terlebih dahulu!');
-                }
-            });
-        }
-    });
-
-    // Make cart icon clickable
-    document.querySelector('.cart-icon').addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '/keranjang';
-    });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Smooth scroll untuk tombol CTA
-    document.querySelector('.cta-button').addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.querySelector('#pesan');
-        target.scrollIntoView({ behavior: 'smooth' });
-    });
-
-    // Animasi feature cards saat scroll
-    const featureCards = document.querySelectorAll('.feature-card');
+    // Create intersection observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                const element = entry.target;
+                const config = Object.entries(animationConfig.elements).find(([selector]) => 
+                    element.matches(selector)
+                );
+
+                if (config) {
+                    const [, { delay }] = config;
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, delay * 1000);
+                }
+                observer.unobserve(element);
+            }
+        });
+    }, {
+        threshold: animationConfig.threshold,
+        rootMargin: animationConfig.rootMargin
+    });
+
+    // Initialize elements for animation
+    Object.entries(animationConfig.elements).forEach(([selector, { duration }]) => {
+        document.querySelectorAll(selector).forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(30px)';
+            element.style.transition = `all ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`;
+            observer.observe(element);
+        });
+    });
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
     });
 
-    featureCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'all 0.5s ease-out';
-        observer.observe(card);
+    // Subtle parallax effect for hero section
+    const hero = document.querySelector('.hero');
+    window.addEventListener('scroll', () => {
+        if (hero) {
+            const scrolled = window.pageYOffset;
+            hero.style.backgroundPositionY = `${scrolled * 0.5}px`;
+        }
+    });
+
+    // Add hover animations for interactive elements
+    const interactiveElements = document.querySelectorAll('.cta-button, .btn-shop, .feature-card, .category-card');
+    interactiveElements.forEach(element => {
+        element.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+        
+        element.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+        });
+
+        element.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
     });
 });
+
+function scrollToCategories(e) {
+    e.preventDefault();
+    const categoriesSection = document.querySelector('.category-section');
+    if (categoriesSection) {
+        categoriesSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
     </script>
     <main>
         @yield('content')

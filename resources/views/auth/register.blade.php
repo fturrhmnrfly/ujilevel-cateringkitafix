@@ -4,330 +4,246 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Catering Kita</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 100px
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* Navbar Styles */
-        nav.navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #2c2c77;
-            padding: 15px 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        .navbar .logo {
-            display: flex;
-            align-items: center;
-            color: #fff;
-        }
-
-        .navbar .logo img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-        }
-
-        .navbar .logo .text-navbar p {
-            margin: 0;
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffcc00;
-            text-transform: uppercase;
-        }
-
-        .navbar .logo .text-navbar p:nth-child(2) {
-            color: #fff;
-        }
-
-        .navbar .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
 
-        @media (max-width: 768px) {
-            nav.navbar {
-                padding: 10px 15px;
-            }
-
-            body {
-                padding-top: 60px;
-            }
-
-            .breadcrumb-container {
-                margin-top: 60px;
-            }
+        body {
+            min-height: 100vh;
+            padding-top: 70px; /* Adjust this value based on your navbar height */
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('{{ asset("assets/nasikotakpremium2.png") }}') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .navbar .nav-links li {
-            display: inline-block;
+        .navbar {
+            background-color: #E78B24;
+            width: 100%;
+            padding: 0.5rem;
+            position: fixed; /* Make navbar fixed */
+            top: 0; /* Stick to top */
+            left: 0;
+            z-index: 1000; /* Ensure navbar stays on top of other elements */
         }
 
-        .navbar .nav-links li a {
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: color 0.3s ease-in-out;
-        }
-
-        .navbar .nav-links li a:hover {
-            color: #ffcc00;
-        }
-
-        .navbar .profile {
+        .nav-brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+        }
+
+        .nav-brand img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .nav-brand-text {
             color: white;
-        }
-
-        .navbar .profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .navbar .profile span {
-            font-size: 14px;
+            margin-left: 10px;
+            font-size: 24px;
             font-weight: bold;
         }
 
-        /* Breadcrumb Styles */
-        .breadcrumb-container {
-            background-color: #f3f4f6;
-            padding: 2.5rem 2rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .breadcrumb {
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            min-height: calc(100vh - 90px); /* Mengurangi tinggi navbar */
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
         }
 
-        .breadcrumb-title {
-            font-size: 1.25rem;
-            color: #374151;
-        }
-
-        .breadcrumb-nav {
-            color: #6b7280;
-        }
-
-        .breadcrumb-nav a {
-            color: #6b7280;
-            text-decoration: none;
-        }
-
-        /* Form Container Styles */
-        .form-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .register-title {
+            color: white; 
+            text-align: center;
+            font-size: 64px;
+            margin-bottom: 30px;
+            font-family: "Times New Roman", serif;
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+            color: white;
+            margin-bottom: 8px;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background: white;
         }
 
         .form-group textarea {
             resize: vertical;
+            min-height: 100px;
         }
 
-        .form-group .input-error {
-            color: #e3342f;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1.5rem;
-        }
-
-        .form-actions a {
-            color: #2c2c77;
-            text-decoration: underline;
-        }
-
-        .form-actions button {
-            background-color: #2c2c77;
+        .btn-register {
+            width: 100%;
+            padding: 15px;
+            background-color: #E78B24;
             color: white;
-            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 0.375rem;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
             transition: background-color 0.3s;
         }
 
-        .form-actions button:hover {
-            background-color: #1a1a5e;
+        .btn-register:hover {
+            background-color: #d47a1c;
         }
 
-        .password-strength {
-            margin-top: 0.5rem;
-            font-size: 0.875rem;
+        .divider {
+            text-align: center;
+            color: white;
+            margin: 20px 0;
+        }
+
+        .login-prompt {
+            text-align: center;
+            color: white;
+        }
+
+        .login-prompt a {
+            color: #E78B24;
+            text-decoration: none;
             font-weight: bold;
         }
 
-        .form-group input:invalid {
-            border-color: #ff4d4d;
+        .input-error {
+            color: #ff4444;
+            font-size: 14px;
+            margin-top: 5px;
         }
 
-        .form-group input:valid {
-            border-color: #4dff4d;
+        /* Tambahkan media queries untuk responsivitas */
+        @media screen and (max-width: 768px) {
+            .container {
+                max-width: 100%;
+                padding: 15px;
+                margin: 10px;
+            }
+
+            .register-title {
+                font-size: 48px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 12px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .register-title {
+                font-size: 36px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <!-- Logo -->
-        <div class="logo">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo">
-            <div class="text-navbar">
-                <p>CATERING</p>
-                <p>KITA</p>
-            </div>
+        <div class="nav-brand">
+            <img src="{{ asset('assets/logo.png') }}" alt="Catering Kita">
+            <span class="nav-brand-text">CATERING KITA</span>
         </div>
-        
     </nav>
 
-    <div class="form-container">
+    <div class="container">
+        <h1 class="register-title">Register</h1>
+        
         <form method="POST" action="{{ route('register') }}">
             @csrf
-
-            <!-- First Name -->
+            
             <div class="form-group">
-                <label for="first_name">First Name</label>
-                <input id="first_name" type="text" name="first_name" value="{{ old('first_name') }}" required autofocus autocomplete="first_name">
+                <label>Nama Depan*</label>
+                <input type="text" name="first_name" value="{{ old('first_name') }}">
                 @if ($errors->has('first_name'))
                     <div class="input-error">{{ $errors->first('first_name') }}</div>
                 @endif
             </div>
 
-            <!-- Last Name -->
             <div class="form-group">
-                <label for="last_name">Last Name</label>
-                <input id="last_name" type="text" name="last_name" value="{{ old('last_name') }}" required autocomplete="last_name">
+                <label>Nama Belakang*</label>
+                <input type="text" name="last_name" value="{{ old('last_name') }}" >
                 @if ($errors->has('last_name'))
                     <div class="input-error">{{ $errors->first('last_name') }}</div>
                 @endif
             </div>
 
-            <!-- Email Address -->
             <div class="form-group">
-                <label for="email">Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username">
+                <label>Email*</label>
+                <input type="email" name="email" value="{{ old('email') }}" >
                 @if ($errors->has('email'))
                     <div class="input-error">{{ $errors->first('email') }}</div>
                 @endif
             </div>
 
-            <!-- Phone Number -->
             <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input id="phone" type="text" name="phone" value="{{ old('phone') }}" required autocomplete="phone">
+                <label>No.Telepon*</label>
+                <input type="text" name="phone" value="{{ old('phone') }}" >
                 @if ($errors->has('phone'))
                     <div class="input-error">{{ $errors->first('phone') }}</div>
                 @endif
             </div>
 
-            <!-- Address -->
             <div class="form-group">
-                <label for="address">Address</label>
-                <textarea id="address" name="address" required>{{ old('address') }}</textarea>
+                <label>Alamat*</label>
+                <textarea name="address">{{ old('address') }}</textarea>
                 @if ($errors->has('address'))
                     <div class="input-error">{{ $errors->first('address') }}</div>
                 @endif
             </div>
 
-            <!-- Password -->
             <div class="form-group">
-                <label for="password">Password</label>
-                <input id="password" type="password" name="password" required autocomplete="new-password">
+                <label>Password*</label>
+                <input type="password" name="password" >
                 @if ($errors->has('password'))
                     <div class="input-error">{{ $errors->first('password') }}</div>
                 @endif
             </div>
 
-            <!-- Confirm Password -->
             <div class="form-group">
-                <label for="password_confirmation">Confirm Password</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password">
-                @if ($errors->has('password_confirmation'))
-                    <div class="input-error">{{ $errors->first('password_confirmation') }}</div>
-                @endif
+                <label>Konfirmasi Password*</label>
+                <input type="password" name="password_confirmation" >
             </div>
 
-            <div class="form-actions">
-                <a href="{{ route('login') }}">Already registered?</a>
-                <button type="submit">Register</button>
-            </div>
+            <button type="submit" class="btn-register">Register</button>
         </form>
+
+        <div class="divider">Atau</div>
+
+        <div class="login-prompt">
+            Sudah memiliki akun? <a href="{{ route('login') }}">Login</a> sekarang
+        </div>
     </div>
-
-    @if(session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: "{{ session('success') }}",
-            confirmButtonText: 'Oke',
-            confirmButtonColor: '#2c2c77'
-        });
-    </script>
-    @endif
-
-    @if($errors->any())
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Mohon periksa kembali data yang dimasukkan',
-            confirmButtonText: 'Oke',
-            confirmButtonColor: '#2c2c77'
-        });
-    </script>
-    @endif
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -365,71 +281,170 @@ document.addEventListener('DOMContentLoaded', function() {
         password: (value) => value.length >= 8
     };
 
-    // Validate input and update styling
-    function validateInput(input, validatorFn) {
+    // Validasi input
+    function validateInput(input, validatorFn, key) {
+        // Hapus error message yang ada
+        const errorDiv = input.parentElement.querySelector('.validation-error');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+
+        // Reset border color ke default untuk input kosong
         if (!input.value) {
-            input.style.borderColor = '#e5e7eb'; // Default border
+            input.style.borderColor = '#e5e7eb';
             return;
         }
 
-        if (validatorFn(input.value)) {
-            input.style.borderColor = '#4ade80'; // Success green
+        // Validasi input
+        if (!validatorFn(input.value)) {
+            // Tampilkan border merah untuk input tidak valid
+            input.style.borderColor = '#ef4444';
+            
+            // Tambahkan pesan error
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'validation-error';
+            errorMessage.style.color = '#ef4444';
+            errorMessage.style.fontSize = '0.875rem';
+            errorMessage.style.marginTop = '0.5rem';
+            
+            // Pesan error untuk setiap field
+            const errorMessages = {
+                firstName: 'Nama depan harus minimal 2 karakter',
+                lastName: 'Nama belakang harus minimal 2 karakter',
+                email: 'Email Sudah Ter Daftar',
+                phone: 'Silakan masukkan nomor telepon Indonesia yang valid',
+                address: 'Alamat harus minimal 10 karakter',
+                password: 'Password harus minimal 8 karakter'
+            };
+            
+            errorMessage.textContent = errorMessages[key];
+            input.parentElement.appendChild(errorMessage);
         } else {
-            input.style.borderColor = '#ef4444'; // Error red
+            // Kembalikan ke warna default untuk input valid
+            input.style.borderColor = '#e7e7eb';
         }
     }
 
-    // Add input event listeners
+    // Update event listeners
     Object.entries(inputs).forEach(([key, input]) => {
         if (key !== 'passwordConfirm') {
             input.addEventListener('input', () => {
-                validateInput(input, validators[key]);
+                validateInput(input, validators[key], key);
 
-                // Special handling for password confirmation
                 if (key === 'password') {
                     const confirmInput = inputs.passwordConfirm;
                     if (confirmInput.value) {
-                        confirmInput.style.borderColor = confirmInput.value === input.value ? 
-                            '#4ade80' : '#ef4444';
+                        validatePasswordConfirmation(confirmInput, input.value);
                     }
                 }
             });
         }
     });
 
+    // Add password confirmation validation
+    function validatePasswordConfirmation(input, passwordValue) {
+        const errorDiv = input.parentElement.querySelector('.validation-error');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+
+        if (!input.value) {
+            input.style.borderColor = '#e7e7eb';
+            return;
+        }
+
+        if (input.value !== passwordValue) {
+            input.style.borderColor = '#ef4444';
+            
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'validation-error';
+            errorMessage.style.color = '#ef4444';
+            errorMessage.style.fontSize = '0.875rem';
+            errorMessage.style.marginTop = '0.5rem';
+            errorMessage.textContent = 'Passwords do not match';
+            
+            input.parentElement.appendChild(errorMessage);
+        } else {
+            input.style.borderColor = '#e7e7eb';
+        }
+    }
+
+    // Update password confirmation handler
+    inputs.passwordConfirm.addEventListener('input', function() {
+        validatePasswordConfirmation(this, inputs.password.value);
+    });
+
     // Special handler for password confirmation
     inputs.passwordConfirm.addEventListener('input', function() {
         if (!this.value) {
-            this.style.borderColor = '#e5e7eb';
+            this.style.borderColor = '#e7e7eb';
             return;
         }
         this.style.borderColor = this.value === inputs.password.value ? 
-            '#4ade80' : '#ef4444';
+            '#e7e7eb' : '#ef4444';  // Only show red for mismatch
     });
 
-    // Form submission validation
+    // Form submission handler
     form.addEventListener('submit', function(e) {
-        const errors = [];
+        e.preventDefault();
+        let hasError = false;
 
-        // Validate all inputs
+        // Reset semua error sebelumnya
         Object.entries(inputs).forEach(([key, input]) => {
-            if (key !== 'passwordConfirm') {
-                if (!validators[key](input.value)) {
-                    errors.push(`${key} is invalid`);
+            input.style.borderColor = '#e7e7eb';
+            const existingError = input.parentElement.querySelector('.validation-error');
+            if (existingError) {
+                existingError.remove();
+            }
+        });
+
+        // Validasi format hanya untuk field yang sudah diisi
+        Object.entries(inputs).forEach(([key, input]) => {
+            if (input.value.trim()) { // Hanya validasi jika field diisi
+                if (key !== 'passwordConfirm' && !validators[key](input.value)) {
+                    hasError = true;
+                    const errorMessages = {
+                        firstName: 'Nama depan harus minimal 2 karakter',
+                        lastName: 'Nama belakang harus minimal 2 karakter',
+                        email: 'Format email tidak valid',
+                        phone: 'Format nomor telepon tidak valid (contoh: 08123456789)',
+                        address: 'Alamat harus minimal 10 karakter',
+                        password: 'Password harus minimal 8 karakter'
+                    };
+                    showError(input, errorMessages[key]);
                 }
             }
         });
 
-        // Check password confirmation
-        if (inputs.password.value !== inputs.passwordConfirm.value) {
-            errors.push('Passwords do not match');
+        // Validasi konfirmasi password hanya jika kedua field password diisi
+        if (inputs.password.value && inputs.passwordConfirm.value) {
+            if (inputs.password.value !== inputs.passwordConfirm.value) {
+                hasError = true;
+                showError(inputs.passwordConfirm, 'Password tidak cocok');
+            }
         }
 
-        if (errors.length > 0) {
-            e.preventDefault();
-            alert(errors.join('\n'));
+        // Jika tidak ada error, submit form
+        if (!hasError) {
+            this.submit();
+        } else {
+            // Reset password fields jika ada error
+            inputs.password.value = '';
+            inputs.passwordConfirm.value = '';
         }
     });
+
+    // Update showError function
+    function showError(input, message) {
+        input.style.borderColor = '#ef4444';
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'validation-error';
+        errorMessage.style.color = '#ef4444';
+        errorMessage.style.fontSize = '0.875rem';
+        errorMessage.style.marginTop = '0.5rem';
+        errorMessage.textContent = message;
+        input.parentElement.appendChild(errorMessage);
+    }
 });
     </script>
 </body>

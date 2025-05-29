@@ -13,6 +13,18 @@
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
+        background: url('{{ asset("assets/backgroundmenu.jpeg") }}') center/cover fixed no-repeat;
+        position: relative;
+    }
+
+    /* Add this to create an overlay */
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
     }
 
     a {
@@ -174,170 +186,192 @@
         text-decoration: none;
     }
 
+    /* Updated Menu Section Styles */
     .menu-section {
-        padding: 40px;
-        background: url('{{ asset('assets/backgroundmenu.jpeg') }}') center center/cover no-repeat, #fff;
-        /* Ganti 'assets/bg-prasmanan.jpg' dengan path sesuai lokasi file gambar background Anda */
-        min-height: 500px;
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
         position: relative;
         z-index: 1;
-    }
-
-    .menu-section::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(255,255,255,0.85); /* Supaya konten tetap jelas */
-        z-index: 2;
-        pointer-events: none;
-    }
-
-    .menu-section > * {
-        position: relative;
-        z-index: 3;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.8s ease-out;
     }
 
     .section-title {
         font-size: 32px;
         font-weight: bold;
         color: #333;
-        margin-bottom: 30px;
         text-align: center;
+        position: relative;
+        padding: 0 0 15px;
+        margin-bottom: 30px;
     }
 
-    /* Update style untuk menu-item dan gambar */
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background-color: #e67e22;
+        border-radius: 2px;
+    }
+
+    /* Menu Grid Styles */
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 10px;
+    }
+
     .menu-item {
-        background: white;
-        border-radius: 10px;
+        background: #fff;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        height: 100%; /* Tambahkan height 100% */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: slideUp 0.5s ease-out forwards;
     }
 
     .menu-item img {
         width: 100%;
-        height: 250px; /* Sesuaikan tinggi gambar */
-        object-fit: contain; /* Ubah dari cover ke contain */
-        padding: 10px; /* Tambahkan padding */
-        background: #f8f8f8; /* Tambahkan background color */
-    }
-
-    .menu-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 30px; /* Tambah gap */
-        padding: 20px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 8px;
     }
 
     .menu-item-content {
-        padding: 20px; /* Tambah padding */
-        display: flex;
-        flex-direction: column;
-        gap: 15px; /* Sesuaikan gap */
-        flex: 1;
+        padding: 12px 0;
     }
 
     .menu-item-title {
-        font-size: 16px;
-        font-weight: bold;
-        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
         color: #333;
+        margin-bottom: 4px;
+    }
+
+    .menu-item-description {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
     }
 
     .menu-item-details {
         display: flex;
-        align-items: center;
         justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
     }
 
     .menu-item-price {
         font-size: 14px;
-        font-weight: bold;
-        color: #2c2c77;
+        color: #000;
+        font-weight: 600;
     }
 
     .counter {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 8px;
+    }
+
+    .counter button {
+        width: 24px;
+        height: 24px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+        color: #333;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .counter button:hover {
+        background-color: #f5f5f5;
+        transform: scale(1.1);
     }
 
     .counter input {
         width: 30px;
-        height: 25px;
+        height: 24px;
         text-align: center;
         border: 1px solid #ddd;
         border-radius: 4px;
-    }
-
-    .counter button {
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        border: none;
-        background: #2c2c77;
-        color: white;
         font-size: 14px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     .menu-item-button {
-        width: 100%;
-        padding: 8px 0;
-        background-color: #2c2c77;
+        background: #e67e22;
         color: white;
-        text-align: center;
-        border-radius: 20px;
+        padding: 8px 0;
         font-size: 14px;
-        font-weight: 500;
-        margin-top: 10px;
+        border-radius: 6px;
+        text-align: center;
+        display: block;
+        width: 100%;
         border: none;
-        cursor: pointer;
-        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     .menu-item-button:hover {
-        background-color: #1a1a5c;
+        background: #d35400;
+        transform: scale(1.02);
+    }
+
+    /* Animation keyframes */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Stagger menu item animations */
+    .menu-item {
+        animation-delay: calc(var(--index) * 0.1s);
+    }
+
+    /* Hover animations */
+    .menu-item {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .menu-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 </style>
 
 <body>
     <header>
-        <nav class="navbar">
-            <!-- Logo -->
-            <div class="logo">
-                <img src="{{ asset('assets/logo.png') }}" alt="Logo">
-                <div class="text-navbar">
-                    <p>CATERING</p>
-                    <p>KITA</p>
-                </div>
-            </div>
-
-            <!-- Search Bar -->
-            <form class="search-bar">
-                <input type="text" placeholder="Search products...">
-                <button type="submit"><i class="fas fa-search"></i></button>
-            </form>
-
-            <!-- Navigation Links -->
-            <ul class="nav-links">
-                <li><a href="{{ route('home') }}">Home</a></li>
-                <li><a href="{{ route('about.index') }}">Tentang Kami</a></li>
-                <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
-                <li><a href="{{ route('contact.index') }}">Contact</a></li>
-            </ul>
-
-            <!-- Profile Section -->
-            <div class="cart-icon">
-                <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
-            </div>
-        </nav>
+        <x-navbar></x-navbar>
+        
         <div class="breadcrumb-container">
             <div class="breadcrumb">
                 <div class="breadcrumb-title">Catering</div>

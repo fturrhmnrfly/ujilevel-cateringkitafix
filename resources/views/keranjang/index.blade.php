@@ -15,21 +15,36 @@
         }
 
         body {
-            background: url('{{ asset('assets/backgroundkeranjang.jpeg') }}') center/cover fixed no-repeat;
             min-height: 100vh;
-            padding-top: 120px;
+            padding-top: 80px;
             display: flex;
             flex-direction: column;
+            background: url('{{ asset("assets/backgroundkeranjang.jpeg") }}') center/cover fixed no-repeat;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* background: rgba(255, 255, 255, 0.5); */
+            z-index: -1;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px 40px 40px;
-            background: url('{{ asset('assets/note-bg.png') }}') center/contain no-repeat;
-            border-radius: 15px;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             position: relative;
+            z-index: 1;
             flex: 1;
+            overflow-y: auto;
         }
 
         nav.navbar {
@@ -137,107 +152,146 @@
 
         .page-title {
             font-size: 48px;
+            font-family: 'Playfair Display', serif;
             color: #4B3E2F;
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
-            font-weight: bold;
             margin-bottom: 20px;
-            position: relative;
+            text-align: center;
+            font-style: italic;
         }
 
         .cart-table {
-            margin-top: 20px;
             width: 100%;
-            background: transparent;
+            background-color: rgba(255, 255, 255, 0.95);
             border-spacing: 0 15px;
         }
 
         .cart-header th {
             color: #4B3E2F;
             font-size: 18px;
-            padding: 15px;
+            padding: 10px;
             border-bottom: 2px solid #C17F3B;
             text-align: left;
         }
 
         .cart-item {
-            background: rgba(255, 255, 255, 0.9);
-            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .cart-item td {
             background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
+            padding: 10px;
             vertical-align: middle;
         }
 
         .product-info {
             display: flex;
+            gap: 15px;
             align-items: center;
-            gap: 20px;
+            padding: 10px;
         }
 
         .product-image {
             width: 100px;
-            height: 80px;
+            height: 100px;
             object-fit: cover;
             border-radius: 8px;
         }
 
         .product-name {
-            font-size: 16px;
+            font-size: 18px;
             color: #4B3E2F;
-            font-weight: 500;
+            font-weight: 600;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
         }
 
         .quantity-control {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            gap: 10px;
+            background: #f8f8f8;
+            padding: 5px;
+            border-radius: 8px;
+            width: fit-content;
         }
 
         .quantity-btn {
-            background: #C17F3B;
+            background: none;
+            border: none;
+            color: #4B3E2F;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+
+        .quantity {
+            font-size: 16px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .price {
+            font-size: 18px;
+            color: #4B3E2F;
+            font-weight: 600;
+        }
+
+        .delete-btn {
+            background: #ff4444;
             color: white;
             border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
+            padding: 8px 12px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
         }
 
         .checkout-btn {
             display: block;
-            width: 200px;
-            margin: 30px auto 0;
-            padding: 15px 0;
-            background-color: #C17F3B;
+            width: 250px;
+            margin: 40px auto 0;
+            padding: 15px 30px;
+            background-color: #D38524;
             color: white;
             text-align: center;
-            border-radius: 8px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 18px;
+            text-transform: none;
+            letter-spacing: 0;
             transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
         }
 
-        .delete-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
+        .checkout-btn:hover {
+            background-color: #bf7420;
+            transform: translateY(-2px);
         }
 
         .footer {
             background-color: #B19370;
-            padding: 40px 0;
+            padding: 20px 0;
             margin-top: auto;
             position: relative;
             z-index: 10;
+            width: 100%;
         }
 
         .footer-container {
@@ -338,6 +392,36 @@
                 padding: 0;
             }
         }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .page-title {
+                font-size: 36px;
+            }
+
+            .product-image {
+                width: 80px;
+                height: 80px;
+            }
+
+            .product-name {
+                font-size: 16px;
+            }
+
+            .quantity-control {
+                padding: 5px;
+            }
+
+            .checkout-btn {
+                width: 200px;
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+        }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -367,35 +451,45 @@
         <h1 class="page-title">Keranjang</h1>
 
         <table class="cart-table">
-            <thead class="cart-header">
+            <thead>
                 <tr>
-                    <th style="width: 45%">Produk</th>
-                    <th style="width: 20%">Harga</th>
-                    <th style="width: 20%">Jumlah</th>
-                    <th style="width: 15%">Total</th>
+                    <th style="width: 50%; text-align: left;">Produk</th>
+                    <th style="width: 15%;">Harga</th>
+                    <th style="width: 20%;">Jumlah</th>
+                    <th style="width: 15%;">Total</th>
                     <th></th>
                 </tr>
             </thead>
-            <tbody id="cart-items">
+            <tbody>
                 @foreach($cartItems as $item)
                 <tr class="cart-item" data-id="{{ $item->id }}">
                     <td>
                         <div class="product-info">
                             <img src="{{ $item->image }}" alt="{{ $item->nama_produk }}" class="product-image">
-                            <span class="product-name">{{ $item->nama_produk }}</span>
+                            <div>
+                                <div class="product-name">{{ $item->nama_produk }}</div>
+                                <div class="product-description">Nasi putih, ayam bakar, lalapan, sambal, tahu tempe
+                                </div>
+                            </div>
                         </div>
                     </td>
-                    <td class="price">Rp{{ number_format($item->price, 0, ',', '.') }}</td>
+                    <td class="price" style="text-align: center;">
+                        Rp{{ number_format($item->price, 0, ',', '.') }}
+                    </td>
                     <td>
                         <div class="quantity-control">
-                            <button class="quantity-btn" onclick="updateQuantity({{ $item->id }}, -1)">-</button>
+                            <button class="quantity-btn" onclick="updateQuantity({{ $item->id }}, -1)">−</button>
                             <span class="quantity">{{ $item->quantity }}</span>
                             <button class="quantity-btn" onclick="updateQuantity({{ $item->id }}, 1)">+</button>
                         </div>
                     </td>
-                    <td class="price">Rp{{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
-                    <td>
-                        <button class="delete-btn" onclick="removeItem({{ $item->id }})">🗑️</button>
+                    <td class="price" style="text-align: center;">
+                        Rp{{ number_format($item->price * $item->quantity, 0, ',', '.') }}
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="delete-btn" onclick="removeItem({{ $item->id }})">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 @endforeach
@@ -404,69 +498,6 @@
 
         <a href="{{ route('checkout.index') }}" class="checkout-btn">Checkout</a>
     </div>
-
-    <footer class="footer">
-        <div class="footer-container">
-            <!-- Logo and Brand Section -->
-            <div class="footer-logo">
-                <div class="footer-brand">
-                    <img src="{{ asset('assets/logo.png') }}" alt="Catering Kita Logo">
-                    <div class="footer-brand-text">
-                        <span class="brand-catering">CATERING</span>
-                        <span class="brand-kita">KITA</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical Divider -->
-            <div class="footer-divider"></div>
-
-            <!-- Description Section -->
-            <div class="footer-section">
-                <h3 class="footer-title">Deskripsi</h3>
-                <p class="footer-text">
-                    "Catering Kita adalah solusi lengkap untuk kebutuhan belanja makanan Anda. Temukan berbagai
-                    produk segar dan berkualitas hanya di sini!" "Belanja mudah dan cepat untuk semua kebutuhan
-                    katering Anda. Bergabunglah dengan ribuan pelanggan kami!"
-                </p>
-            </div>
-
-            <!-- Product Categories Section -->
-            <div class="footer-section">
-                <h3 class="footer-title">Kategori Produk</h3>
-                <p class="footer-text">
-                    "Temukan berbagai kategori produk terbaik kami."
-                </p>
-            </div>
-
-            <!-- Contact Section -->
-            <div class="footer-section">
-                <h3 class="footer-title">Contact</h3>
-                <div class="footer-contact">
-                    <div class="contact-item">
-                        <svg class="contact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                            </path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <span>Jln E.sumawijaya GG.amin RT 02/02 Desa pasireurih Kec tamansari</span>
-                    </div>
-                    <div class="contact-item">
-                        <svg class="contact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                            </path>
-                        </svg>
-                        <span>+62 831-1582-6505</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
     <script>
         async function removeItem(itemId) {
     // Show SweetAlert2 confirmation dialog
