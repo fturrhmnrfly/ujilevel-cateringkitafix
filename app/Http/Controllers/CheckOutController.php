@@ -10,6 +10,7 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CheckOutController extends Controller
@@ -135,8 +136,7 @@ class CheckOutController extends Controller
             'order_id' => $daftarPesanan->order_id,
             'is_read' => false
         ]);
-
-        \Log::info('Creating notification', [
+        Log::info('Creating notification', [
             'user_id' => Auth::id(),
             'order_id' => $daftarPesanan->order_id,
             'total' => $validated['total']
@@ -152,6 +152,69 @@ class CheckOutController extends Controller
     } catch (\Exception $e) {
         DB::rollback();
         throw $e;
+    }
+}
+
+public function store(Request $request)
+{
+    try {
+        // Validasi request
+        $validated = $request->validate([
+            'order_id' => 'required|string',
+            'nama_pelanggan' => 'required|string',
+            'kategori_pesanan' => 'required|string',
+            'tanggal_pesanan' => 'required|date',
+            'jumlah_pesanan' => 'required|integer',
+            'tanggal_pengiriman' => 'required|date',
+            'waktu_pengiriman' => 'required',
+            'lokasi_pengiriman' => 'required|string',
+            'nomor_telepon' => 'required|string',
+            'total_harga' => 'required|numeric',
+            'items' => 'required|array'
+        ]);
+
+        DB::beginTransaction();
+
+        // Simpan pesanan
+        $daftarPesanan = DaftarPesanan::create([
+            'order_id' => $validated['order_id'],
+            'nama_pelanggan' => $validated['nama_pelanggan'],
+            'kategori_pesanan' => $validated['kategori_pesanan'],
+            'tanggal_pesanan' => $validated['tanggal_pesanan'],
+            'jumlah_pesanan' => $validated['jumlah_pesanan'],
+            'tanggal_pengiriman' => $validated['tanggal_pengiriman'],
+            'waktu_pengiriman' => $validated['waktu_pengiriman'],
+            'lokasi_pengiriman' => $validated['lokasi_pengiriman'],
+            'nomor_telepon' => $validated['nomor_telepon'],
+            'total_harga' => $validated['total_harga'],
+            'status_pengiriman' => 'diproses',
+            'status_pembayaran' => 'pending'
+        ]);
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Checkout berhasil',
+            'order_id' => $daftarPesanan->order_id
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        DB::rollback();
+        return response()->json([
+            'success' => false,
+            'message' => 'Validasi gagal',
+            'errors' => $e->errors()
+        ], 422);
+        
+    } catch (\Exception $e) {
+        DB::rollback();
+        Log::error('Checkout Error: ' . $e->getMessage());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan internal server'
+        ], 500);
     }
 }
 }

@@ -268,4 +268,9 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/checkout', [CheckOutController::class, 'store'])->name('checkout.store');
 });
 
+// Tambahkan route untuk checkout
+Route::post('/admin/daftarpesanan/store', [AdminDaftarPesananController::class, 'store'])
+    ->name('admin.daftarpesanan.store')
+    ->middleware('auth');
+
 require __DIR__.'/auth.php';

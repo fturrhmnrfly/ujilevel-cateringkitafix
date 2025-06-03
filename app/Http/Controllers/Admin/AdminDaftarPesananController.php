@@ -7,6 +7,8 @@ use App\Models\DaftarPesanan;
 use App\Models\Order;
 use App\Models\StatusPengiriman;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class AdminDaftarPesananController extends Controller
 {
@@ -36,6 +38,9 @@ class AdminDaftarPesananController extends Controller
     public function store(Request $request)
     {
         try {
+            // Log untuk debugging
+            Log::info('Checkout request received:', $request->all());
+            
             // Validate incoming request
             $validated = $request->validate([
                 'order_id' => 'required|string',
@@ -47,26 +52,61 @@ class AdminDaftarPesananController extends Controller
                 'waktu_pengiriman' => 'required',
                 'lokasi_pengiriman' => 'required|string',
                 'nomor_telepon' => 'required|string',
-                'pesan' => 'nullable|string',
-                'opsi_pengiriman' => 'required|string',
+                'opsi_pengiriman' => 'required|string', // Pastikan validasi ini ada
+                'pesan' => 'nullable|string', // Tambahkan validasi untuk pesan
                 'total_harga' => 'required|numeric',
-                'status_pengiriman' => 'required|string',
-                'status_pembayaran' => 'required|string'
+                'items' => 'required|array'
             ]);
 
-            // Create new order
-            $daftarPesanan = DaftarPesanan::create($validated);
+            DB::beginTransaction();
+
+            // Create new order - TAMBAHKAN field yang hilang
+            $daftarPesanan = DaftarPesanan::create([
+                'order_id' => $validated['order_id'],
+                'nama_pelanggan' => $validated['nama_pelanggan'],
+                'kategori_pesanan' => $validated['kategori_pesanan'],
+                'tanggal_pesanan' => $validated['tanggal_pesanan'],
+                'jumlah_pesanan' => $validated['jumlah_pesanan'],
+                'tanggal_pengiriman' => $validated['tanggal_pengiriman'],
+                'waktu_pengiriman' => $validated['waktu_pengiriman'],
+                'lokasi_pengiriman' => $validated['lokasi_pengiriman'],
+                'nomor_telepon' => $validated['nomor_telepon'],
+                'opsi_pengiriman' => $validated['opsi_pengiriman'], // TAMBAHKAN INI
+                'pesan' => $validated['pesan'] ?? null, // TAMBAHKAN INI
+                'total_harga' => $validated['total_harga'],
+                'status_pengiriman' => 'diproses',
+                'status_pembayaran' => 'pending'
+            ]);
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Pesanan berhasil dibuat',
-                'data' => $daftarPesanan
+                'order_id' => $daftarPesanan->order_id
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollback();
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal membuat pesanan: ' . $e->getMessage()
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            // Log error untuk debugging
+            Log::error('Checkout Error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan internal server: ' . $e->getMessage()
             ], 500);
         }
     }

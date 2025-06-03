@@ -8,7 +8,7 @@ class DaftarPesanan extends Model
 {
     protected $fillable = [
         'order_id',
-        'nama_pelanggan',
+        'nama_pelanggan', 
         'kategori_pesanan',
         'tanggal_pesanan',
         'jumlah_pesanan',
@@ -16,16 +16,15 @@ class DaftarPesanan extends Model
         'waktu_pengiriman',
         'lokasi_pengiriman',
         'nomor_telepon',
-        'pesan',
-        'opsi_pengiriman',
+        'opsi_pengiriman', // Pastikan ini ada
+        'pesan', // Pastikan ini ada
         'total_harga',
         'status_pengiriman',
-        'status_pembayaran',
-        'catatan_status'
+        'status_pembayaran'
     ];
 
     protected $casts = [
         'tanggal_pesanan' => 'datetime',
-        'total_harga' => 'decimal:2'
+        'tanggal_pengiriman' => 'date',
     ];
 }

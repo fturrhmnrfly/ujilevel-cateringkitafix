@@ -859,7 +859,7 @@
 
             /* Add green leaves decoration */
             .breadcrumb-container {
-                background: url('{{ asset("assets/leaves-decoration.png") }}') right top no-repeat;
+                /* background: url('{{ asset("assets/leaves-decoration.png") }}') right top no-repeat; */
                 padding: 1rem 2rem;
                 border-bottom: 1px solid #e5e7eb;
             }
@@ -2013,48 +2013,63 @@
 
     // Kirim pesanan ke server
     fetch('{{ route('admin.daftarpesanan.store') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify(orderData)
-    })
-    .then(async response => {
-        if (!response.ok) {
-            throw new Error('Gagal membuat pesanan');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (!data.success) {
-            throw new Error(data.message || 'Gagal membuat pesanan');
-        }
-
-        // Success handling
-        localStorage.removeItem('cartItems');
-        sessionStorage.removeItem('tempCart');
-
-        const selectedPayment = localStorage.getItem('selectedPaymentMethod');
-        if (!selectedPayment) {
-            throw new Error('Metode pembayaran belum dipilih');
-        }
-
-        window.location.href = `/metodepembayaran/${selectedPayment}`;
-    })
-    .catch(error => {
-        console.error('Error:', error);
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify(orderData)
+})
+.then(async response => {
+    // Log response untuk debugging
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+    
+    const contentType = response.headers.get('content-type');
+    console.log('Content-Type:', contentType);
+    
+    if (!contentType || !contentType.includes('application/json')) {
+        // Ambil response text untuk melihat error sebenarnya
+        const text = await response.text();
+        console.error('Response bukan JSON:', text);
         
-        // Restore cart if failed
-        const tempCart = sessionStorage.getItem('tempCart');
-        if (tempCart) {
-            localStorage.setItem('cartItems', tempCart);
-            sessionStorage.removeItem('tempCart');
+        // Tampilkan error yang lebih informatif
+        if (response.status === 404) {
+            throw new Error('Route tidak ditemukan (404)');
+        } else if (response.status >= 500) {
+            throw new Error('Server error (500). Cek log server.');
+        } else {
+            throw new Error('Server tidak mengembalikan JSON response');
         }
-        
-        alert('Terjadi kesalahan: ' + error.message);
-    });
+    }
+    
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+})
+.then(data => {
+    console.log('Success response:', data);
+    
+    if (!data.success) {
+        throw new Error(data.message || 'Gagal membuat pesanan');
+    }
+    
+    // Success handling
+    localStorage.removeItem('cartItems');
+    const selectedPayment = localStorage.getItem('selectedPaymentMethod');
+    if (!selectedPayment) {
+        throw new Error('Metode pembayaran belum dipilih');
+    }
+    
+    window.location.href = `/metodepembayaran/${selectedPayment}`;
+})
+.catch(error => {
+    console.error('Detailed error:', error);
+    alert('Terjadi kesalahan: ' + error.message);
+});
 }
 
             function determineOrderCategory(cartItems) {
@@ -2188,14 +2203,6 @@
 
                 const submitButton = document.getElementById('submit-order');
                 submitButton.disabled = !(allFieldsFilled && shippingSelected && paymentSelected);
-
-                // Tambahkan log untuk debug
-                console.log({
-                    allFieldsFilled,
-                    shippingSelected: !!shippingSelected,
-                    paymentSelected,
-                    buttonDisabled: submitButton.disabled
-                });
             }
 
             // Add listeners to all form fields
