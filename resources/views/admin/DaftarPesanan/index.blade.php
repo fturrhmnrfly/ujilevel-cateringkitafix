@@ -530,12 +530,14 @@
                                     <button class="btn-action btn-disabled" disabled>
                                         Selesai
                                     </button>
+                                @elseif($pesanan->status_pengiriman === 'dikirim')
+                                    <button class="btn-action btn-disabled" disabled>
+                                        Menunggu Konfirmasi Pelanggan
+                                    </button>
                                 @else
                                     <button class="btn-action btn-next-status" onclick="showUpdateModal('{{ $pesanan->id }}', '{{ $pesanan->status_pengiriman }}', '{{ $pesanan->order_id }}')">
                                         @if($pesanan->status_pengiriman === 'diproses')
                                             Kirim Pesanan
-                                        @elseif($pesanan->status_pengiriman === 'dikirim')
-                                            Pesanan Diterima
                                         @endif
                                     </button>
                                 @endif

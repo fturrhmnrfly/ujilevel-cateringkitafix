@@ -416,7 +416,12 @@
                 </div>
                 <div class="stat-info">
                     <h3>Total Pendapatan</h3>
-                    <div class="value" id="total-income">Rp. {{ number_format($pendapatan, 0, ',', '.') }}</div>
+                    <div class="value" id="total-income">
+                        @php
+                            $totalRevenue = \App\Models\DaftarPesanan::sum('total_harga');
+                        @endphp
+                        Rp. {{ number_format($totalRevenue, 0, ',', '.') }}
+                    </div>
                     <span class="real-time-indicator">
                         <div class="pulse-dot"></div>
                         Real-time
@@ -429,7 +434,16 @@
                 </div>
                 <div class="stat-info">
                     <h3>Pesanan Hari Ini</h3>
-                    <div class="value" id="total-expense">{{ $todayOrders->count() }} Pesanan</div>
+                    <div class="value" id="today-orders">
+                        @php
+                            $todayOrdersCount = \App\Models\DaftarPesanan::whereDate('created_at', today())->count();
+                        @endphp
+                        {{ $todayOrdersCount }} Pesanan
+                    </div>
+                    <span class="real-time-indicator">
+                        <div class="pulse-dot"></div>
+                        Real-time
+                    </span>
                 </div>
             </div>
             <div class="stat-card">
@@ -939,33 +953,66 @@
             document.getElementById('custom-stats').style.display = 'none';
         }
 
-        // Real-time update function
+        // Function to update today's orders count in real-time
+        function updateTodayOrders() {
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            
+            // Count orders created today
+            let todayOrdersCount = 0;
+            allOrdersData.forEach(order => {
+                const orderDate = new Date(order.created_at);
+                const orderDateString = orderDate.toISOString().split('T')[0];
+                
+                if (orderDateString === todayString) {
+                    todayOrdersCount++;
+                }
+            });
+            
+            // Update the display
+            const todayOrdersElement = document.getElementById('today-orders');
+            if (todayOrdersElement) {
+                todayOrdersElement.textContent = `${todayOrdersCount} Pesanan`;
+            }
+            
+            console.log('Today Orders Count:', todayOrdersCount);
+        }
+
+        // Real-time update function - UPDATED
         function updateRealTimeData() {
             if (currentPeriod !== 'custom') {
                 updateSummary();
             } else if (selectedMonth !== null && selectedYear !== null) {
                 updateCustomSummary();
             }
-
+            
+            // Update total income real-time
+            updateTotalIncome();
+            
+            // Update today's orders real-time
+            updateTodayOrders();
+            
             console.log('Data updated at:', new Date().toLocaleTimeString());
         }
 
-        // Initialize everything
+        // Initialize everything - UPDATED
         document.addEventListener('DOMContentLoaded', function() {
             initYearSelector();
             initChart();
             updateSummary();
-
+            updateTotalIncome(); // Update total income on page load
+            updateTodayOrders(); // Update today's orders on page load
+            
             // Add event listeners for filter buttons
             document.querySelectorAll('.filter-btn[data-period]').forEach(btn => {
                 btn.addEventListener('click', function() {
                     switchPeriod(this.dataset.period);
                 });
             });
-
+            
             // Add event listener for analyze button
             document.getElementById('analyze-btn').addEventListener('click', applyCustomFilter);
-
+            
             // Update setiap 30 detik untuk simulasi real-time
             setInterval(updateRealTimeData, 30000);
         });
