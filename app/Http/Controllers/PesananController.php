@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\DaftarPesanan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class PesananController extends Controller
 {
@@ -181,5 +182,83 @@ class PesananController extends Controller
         ]);
         
         return response()->json(['debug' => 'Check laravel.log for details']);
+    }
+
+    /**
+     * Accept delivered order - change status from 'dikirim' to 'diterima'
+     */
+    public function acceptOrder(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Find the order dengan validasi user
+            $order = DaftarPesanan::where('id', $id)
+                ->where('nama_pelanggan', Auth::user()->name)
+                ->first();
+
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pesanan tidak ditemukan atau Anda tidak memiliki akses'
+                ], 404);
+            }
+
+            // Validate current status
+            if ($order->status_pengiriman !== 'dikirim') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pesanan tidak dapat diterima. Status saat ini: ' . $order->status_pengiriman
+                ], 422);
+            }
+
+            // Update order status
+            $updated = $order->update([
+                'status_pengiriman' => 'diterima',
+                'delivered_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            if (!$updated) {
+                throw new \Exception('Gagal memperbarui status pesanan');
+            }
+
+            DB::commit();
+
+            Log::info('Order accepted by customer', [
+                'order_id' => $order->order_id,
+                'user_id' => Auth::id(),
+                'user_name' => Auth::user()->name,
+                'accepted_at' => now()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan berhasil diterima',
+                'data' => [
+                    'order_id' => $order->order_id,
+                    'new_status' => 'diterima',
+                    'updated_at' => $order->updated_at->toISOString()
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            Log::error('Error accepting order', [
+                'order_id' => $id,
+                'user_id' => Auth::id(),
+                'user_name' => Auth::user()->name ?? 'unknown',
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan internal server: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
