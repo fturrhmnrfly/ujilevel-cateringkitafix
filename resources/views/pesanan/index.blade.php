@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- Add Font Awesome CDN in the head section -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,8 +10,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding-top: 80px;
-            background: url('{{ asset('assets/backgroundpesanan.jpeg') }}') center center/cover no-repeat;
-            /* Ganti 'assets/bg-pesanan.jpg' dengan nama file dan lokasi gambar background yang baru saja Anda upload */
+            background-color: #f5f5f5;
         }
 
         a {
@@ -20,7 +18,7 @@
             color: inherit;
         }
 
-        /* Navbar Styles - Unchanged */
+        /* Navbar Styles - Dari belumdibayar.blade.php */
         nav.navbar {
             display: flex;
             justify-content: space-between;
@@ -122,7 +120,7 @@
             border-radius: 50%;
         }
 
-        /* Fixed Tab Navigation - Modified with spacing */
+        /* Tab Navigation - Dari belumdibayar.blade.php */
         .container {
             max-width: 100%;
             margin: 0;
@@ -135,7 +133,7 @@
             background-color: #27276e;
             padding: 10px 20px;
             width: 100%;
-            margin-top: 30px; /* Increased margin-top */
+            margin-top: 30px;
         }
 
         .tab-btn {
@@ -172,242 +170,249 @@
             color: white;
         }
 
-        /* Add this for the content container */
-        .content-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 15px;
-        }
-
-        /* Add these styles to your existing CSS */
-        .page-content {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
+        /* Order Card Styles - Dari belumdibayar.blade.php */
         .order-card {
+            max-width: 650px;
+            margin: 20px auto;
             background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            padding: 25px;
+            overflow: hidden;
         }
 
         .order-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            align-items: flex-start;
+            margin-bottom: 25px;
         }
 
-        .order-number {
-            color: #27276e;
-            font-weight: 600;
+        .order-header-left h3 {
+            margin: 0;
             font-size: 16px;
+            font-weight: normal;
+            color: #333;
         }
 
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
+        .order-header-left p {
+            margin: 5px 0 0 0;
             font-size: 14px;
+        }
+
+        .order-id {
+            color: #333;
             font-weight: 500;
         }
 
+        .order-date {
+            color: #666;
+        }
+
+        /* Status Badge Colors - Sesuai requirements */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Status pembayaran pending */
         .status-badge.pending {
-            background-color: #FFF3CD;
+            background: #FFE7E7;
+            color: #FF4C4C;
+        }
+
+        /* Status pengiriman */
+        .status-badge.diproses {
+            background: #FFF3CD;
             color: #856404;
         }
 
-        .order-info {
-            margin-bottom: 15px;
+        .status-badge.dikirim {
+            background: #E7F5FF;
+            color: #0077CC;
         }
 
-        .order-info p {
-            margin: 5px 0;
+        .status-badge.diterima {
+            background: #d1e7dd;
+            color: #198754;
+        }
+
+        .status-badge.dibatalkan {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Order Items - Dari belumdibayar.blade.php */
+        .order-item {
+            background: #FFFFFF;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+        }
+
+        .item-image {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .item-quantity {
+            color: #666;
+            margin: 3px 0;
+            font-size: 12px;
+        }
+
+        .item-price {
+            text-align: right;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .order-divider {
+            height: 1px;
+            background: #eee;
+            margin: 20px 0;
+        }
+
+        /* Order Summary - Dari belumdibayar.blade.php */
+        .order-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-label {
             color: #666;
             font-size: 14px;
         }
 
-        .order-summary {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .summary-row.total {
-            border-top: 1px solid #ddd;
-            padding-top: 8px;
-            margin-top: 8px;
-            font-weight: 600;
-        }
-
-        .action-button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #27276e;
-            color: white;
-            text-align: center;
-            border-radius: 8px;
-            margin-top: 15px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .action-button:hover {
-            background-color: #1a1a5c;
-            transform: translateY(-1px);
-        }
-
-        /* New styles for the updated order card */
-        .order-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .order-number {
-            font-size: 18px;
-            font-weight: 700;
+        .summary-value {
             color: #333;
-        }
-
-        .status-badge {
-            padding: 8px 20px;
-            border-radius: 25px;
             font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
         }
 
-        .status-badge.pending {
-            background-color: #e2e3f3;
-            color: #6c757d;
+        .summary-row-total {
+            font-weight: 500;
         }
 
-        .status-badge.process {
-            background-color: #cfe2ff;
-            color: #1e90ff;
-        }
-
-        .status-badge.shipped {
-            background-color: #d1e7dd;
-            color: #198754;
-        }
-
-        .status-badge.completed {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
+        /* Order Info Styles */
         .order-info {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .order-info p {
+            margin: 8px 0;
             font-size: 14px;
             color: #555;
         }
 
-        .order-info p {
-            margin: 5px 0;
-        }
-
-        .order-summary {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
+        .order-info p strong {
             color: #333;
+            margin-right: 8px;
         }
 
-        .summary-row.total {
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-            margin-top: 10px;
-            font-weight: 700;
-            color: #000;
+        /* Action Buttons - Dari belumdibayar.blade.php */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
 
-        .action-button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
+        .btn-detail {
+            flex: 1;
             text-align: center;
-            border-radius: 5px;
-            margin-top: 15px;
+            padding: 12px;
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             text-decoration: none;
-            transition: background-color 0.3s, transform 0.3s;
         }
 
-        .action-button:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
+        .btn-pay {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: #FF4C4C;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
         }
 
-        /* Empty state styles */
+        .btn-single {
+            width: 100%;
+            text-align: center;
+            padding: 12px;
+            background: #27276e;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-single:hover {
+            background: #1f1f5c;
+        }
+
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 50px 0;
+            padding: 50px 20px;
+            color: #666;
         }
 
         .empty-state img {
             max-width: 150px;
             margin-bottom: 20px;
+            opacity: 0.7;
         }
 
         .empty-state h3 {
             font-size: 18px;
-            font-weight: 600;
-            color: #333;
             margin-bottom: 10px;
+            color: #333;
         }
 
         .empty-state p {
-            color: #666;
-            font-size: 14px;
             margin-bottom: 20px;
+            font-size: 14px;
         }
 
-        .empty-state .action-button {
+        .empty-state .btn-single {
             display: inline-block;
             padding: 12px 30px;
-            background: #2c2c77;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background-color 0.3s, transform 0.3s;
+            width: auto;
         }
 
-        .empty-state .action-button:hover {
-            background-color: #1a1a5c;
-            transform: translateY(-2px);
+        /* Status Payment Colors */
+        .status-payment.pending {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .status-payment.paid {
+            color: #198754;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -415,7 +420,24 @@
 <x-navbar></x-navbar>
 
 <div class="container">
-    
+    <!-- Debug info - hapus setelah selesai -->
+    @if(config('app.debug'))
+        <div style="background: #f0f0f0; padding: 10px; margin: 20px auto; max-width: 650px; border-radius: 5px; font-size: 12px;">
+            <strong>🐛 Debug Info:</strong><br>
+            User: {{ Auth::user()->name }}<br>
+            Route: {{ Route::currentRouteName() }}<br>
+            Total Orders: {{ isset($orders) ? count($orders) : 0 }}<br>
+            @if(isset($orders) && count($orders) > 0)
+                Orders Status: 
+                @foreach($orders as $order)
+                    [{{ $order->order_id }}: {{ $order->status_pembayaran }}/{{ $order->status_pengiriman }}]
+                @endforeach
+            @endif
+            <br>
+            <a href="{{ route('pesanan.debug') }}" style="color: blue;">View Full Debug</a>
+        </div>
+    @endif
+
     <div class="tab-navigation">
         <a href="{{ route('pesanan.index') }}" class="tab-btn {{ request()->routeIs('pesanan.index') ? 'active' : '' }}">Semua Pesanan</a>
         <a href="{{ route('pesanan.unpaid') }}" class="tab-btn {{ request()->routeIs('pesanan.unpaid') ? 'active' : '' }}">Belum Bayar</a>
@@ -424,62 +446,79 @@
         <a href="{{ route('pesanan.completed') }}" class="tab-btn {{ request()->routeIs('pesanan.completed') ? 'active' : '' }}">Selesai</a>
         <a href="{{ route('pesanan.penilaian') }}" class="tab-btn {{ request()->routeIs('pesanan.penilaian') ? 'active' : '' }}">Penilaian</a>
     </div>
+
+    @if(isset($orders) && count($orders) > 0)
+        @foreach($orders as $order)
+        <div class="order-card">
+            <!-- Header dengan Order ID dan Status -->
+            <div class="order-header">
+                <div class="order-header-left">
+                    <h3>Order ID</h3>
+                    <p class="order-id">{{ $order->order_id }}</p>
+                    <p class="order-date">Tanggal Pemesanan: {{ $order->created_at->format('d F Y') }}</p>
+                </div>
+                <span class="status-badge {{ $order->status_pembayaran == 'pending' ? 'pending' : strtolower($order->status_pengiriman) }}">
+                    @if($order->status_pembayaran == 'pending')
+                        Belum Bayar
+                    @else
+                        {{ ucfirst($order->status_pengiriman) }}
+                    @endif
+                </span>
+            </div>
+
+            <!-- Order Info -->
+            <div class="order-info">
+                <p><strong>Kategori:</strong> {{ $order->kategori_pesanan }}</p>
+                <p><strong>Jumlah:</strong> {{ $order->jumlah_pesanan }} porsi</p>
+                <p><strong>Pengiriman:</strong> {{ $order->tanggal_pengiriman->format('d F Y') }}</p>
+                <p><strong>Waktu:</strong> {{ $order->waktu_pengiriman }}</p>
+                <p><strong>Alamat:</strong> {{ $order->lokasi_pengiriman }}</p>
+                <p><strong>No. Telepon:</strong> {{ $order->nomor_telepon }}</p>
+                @if($order->pesan)
+                    <p><strong>Pesan:</strong> {{ $order->pesan }}</p>
+                @endif
+            </div>
+
+            <div class="order-divider"></div>
+
+            <!-- Order Summary -->
+            <div class="order-summary-row">
+                <span class="summary-label">Opsi Pengiriman</span>
+                <span class="summary-value">{{ ucfirst($order->opsi_pengiriman) }}</span>
+            </div>
+            <div class="order-summary-row summary-row-total">
+                <span class="summary-label">Total Harga</span>
+                <span class="summary-value">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
+            </div>
+            <div class="order-summary-row">
+                <span class="summary-label">Status Pembayaran</span>
+                <span class="summary-value status-payment {{ $order->status_pembayaran }}">
+                    {{ $order->status_pembayaran == 'pending' ? 'Belum Bayar' : 'Sudah Bayar' }}
+                </span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                @if($order->status_pembayaran == 'pending')
+                    <a href="#" class="btn-detail">Lihat Detail</a>
+                    <a href="#" class="btn-pay">Bayar Sekarang</a>
+                @else
+                    <a href="#" class="btn-single">Lihat Detail</a>
+                @endif
+            </div>
+        </div>
+        @endforeach
+    @else
+        <div class="empty-state">
+            <img src="{{ asset('assets/empty-order.png') }}" alt="Tidak ada pesanan">
+            <h3>Belum Ada Pesanan</h3>
+            <p>Anda belum memiliki pesanan. Silahkan pesan makanan terlebih dahulu.</p>
+            <a href="{{ route('dashboard') }}" class="btn-single">
+                Pesan Sekarang
+            </a>
+        </div>
+    @endif
 </div>
 
-<div class="container">
-    <div class="page-content">
-        @if(isset($orders) && count($orders) > 0)
-            @foreach($orders as $order)
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <div class="order-number">Order #{{ $order->order_number }}</div>
-                        <div style="color: #666; font-size: 14px;">{{ $order->created_at->format('d F Y') }}</div>
-                    </div>
-                    <span class="status-badge {{ strtolower($order->status) }}">
-                        {{ ucfirst($order->status) }}
-                    </span>
-                </div>
-
-                <div class="order-info">
-                    <p>Pengiriman: {{ $order->delivery_date->format('d F Y') }}</p>
-                    <p>Waktu: {{ $order->delivery_time }}</p>
-                    <p>Alamat: {{ $order->address }}</p>
-                </div>
-
-                <div class="order-summary">
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Biaya Pengiriman</span>
-                        <span>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="summary-row total">
-                        <span>Total</span>
-                        <span>Rp {{ number_format($order->total, 0, ',', '.') }}</span>
-                    </div>
-                </div>
-
-                <a href="{{ route('pesanan.show', $order->id) }}" class="action-button">
-                    Lihat Detail
-                </a>
-            </div>
-            @endforeach
-        @else
-            <div class="empty-state">
-                <img src="{{ asset('assets/empty-order.png') }}" alt="Tidak ada pesanan">
-                <h3>Belum Ada Pesanan</h3>
-                <p>Anda belum memiliki pesanan. Silahkan pesan makanan terlebih dahulu.</p>
-                <a href="{{ route('dashboard') }}" class="action-button">
-                    Pesan Sekarang
-                </a>
-            </div>
-        @endif
-    </div>
-</div>
-
-<!-- Rest of your HTML remains the same -->
 </body>
 </html>

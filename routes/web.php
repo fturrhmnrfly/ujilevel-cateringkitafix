@@ -44,217 +44,19 @@ use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\NotificationController;
 
-Route::get('/', [WelcomeController::class, 'index']);
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+// Landing page
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
-    
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/about', [AboutController::class, 'index'])->name('about.index');
-    Route::get('/catering', [CateringController::class, 'index'])->name('catering.index');
-    Route::get('/product', [ProductController::class, 'index'])->name('product.index');
-    Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
-    Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-    Route::post('/pesanan', [PesananController::class, 'store'])->name('pesanan.store');
-    Route::get('/menuprasmanan', [MenuPrasmananController::class, 'index'])->name('menuprasmanan.index');
-    Route::get('/menuprasmanan/{id}', [MenuPrasmananController::class, 'show'])->name('menuprasmanan.show');
-    Route::get('/menunasibox', [MenuNasiBoxController::class, 'index'])->name('menunasibox.index');
-    Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
-    Route::get('/formulirpesanan', [FormulirPesananController::class, 'index'])->name('formulirpesanan.index');
-    Route::get('/detailacara', [DetailAcaraController::class, 'index'])->name('detailacara.index');
-    Route::get('/konfirmasipesanan', [KonfirmasiPesananController::class, 'index'])->name('konfirmasipesanan.index');
-    Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
-    Route::get('/metodepembayaranuser', [MetodePembayaranUserController::class, 'index'])->name('metodepembayaranuser.index');
-    Route::get('/payment/{order_id}', [PaymentController::class, 'show'])->name('payment.show');
-    Route::post('/payment/confirm', [PaymentController::class, 'confirmPayment'])->name('payment.confirm');
-    Route::get('/search', [SearchController::class, 'search'])->name('search');
-    Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
-    Route::get('/metodepembayaran/bca', [PaymentController::class, 'bca'])->name('payment.bca');
-    Route::get('/metodepembayaran/dana', [PaymentController::class, 'dana'])->name('payment.dana');
-    Route::get('/metodepembayaran/gopay', [PaymentController::class, 'gopay'])->name('payment.gopay');
-    Route::get('/metodepembayaran/cod', [PaymentController::class, 'cod'])->name('payment.cod');
-    Route::post('/buat-pesanan', [OrderController::class, 'createOrder'])->name('order.create');
-    Route::get('/payment/dana/success', function () {
-        return view('payments.dana_success');
-    })->name('payment.dana.success');
-    Route::get('/payment/bca/success', function () {
-        return view('payments.bca_success');
-    })->name('payment.bca.success');
-    Route::get('/payment/gopay/success', function () {
-        return view('payments.gopay_success');
-    })->name('payment.gopay.success');
-    Route::get('/payment/cod/success', function() {
-        return view('payments.cod_success');
-    })->name('payment.cod.success');
-Route::post('/payment/bca/confirm', [PaymentController::class, 'confirmBcaPayment'])
-    ->name('payment.bca.confirm')
-    ->middleware('auth');
-    Route::post('/payment/dana/confirm', [PaymentController::class, 'confirmDanaPayment'])->name('payment.dana.confirm');
-    Route::post('/payment/gopay/confirm', [PaymentController::class, 'confirmGopayPayment'])->name('payment.gopay.confirm');
-Route::post('/payment/cod/confirm', [PaymentController::class, 'confirmCodPayment'])->name('payment.cod.confirm');
-    Route::get('/metodepembayaran/{method}', [PaymentController::class, 'show'])->name('payment.show');
-    Route::prefix('pesanan')->group(function () {
-        Route::get('/', [PesananController::class, 'index'])->name('pesanan.index'); // Semua Pesanan
-        Route::get('/process', [PesananController::class, 'process'])->name('pesanan.process'); // Diproses
-        Route::get('/shipped', [PesananController::class, 'shipped'])->name('pesanan.shipped'); // Dikirim
-        Route::get('/completed', [PesananController::class, 'completed'])->name('pesanan.completed'); // Selesai
-        Route::get('/penilaian', [PesananController::class, 'penilaian'])->name('pesanan.penilaian'); // Penilaian
-         Route::get('/unpaid', [PesananController::class, 'unpaid'])->name('pesanan.unpaid'); // Belum Bayar
-
-        });
-
-        Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-        Route::post('/orders/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
-
-        // Keranjang routes
-        Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
-        Route::post('/keranjang/add', [KeranjangController::class, 'addToCart'])->name('keranjang.add');
-        Route::patch('/keranjang/update/{id}', [KeranjangController::class, 'updateQuantity'])->name('keranjang.update');
-        Route::delete('/keranjang/delete/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.remove');
-        Route::get('/keranjang/count', [KeranjangController::class, 'getCartCount'])->name('keranjang.count');
-        Route::get('/menunasibox/{id}', [MenuNasiBoxController::class, 'show'])->name('menunasibox.show');
-        Route::get('/pembayaran/{method}/{orderId}', [PaymentController::class, 'show'])->name('payment.show');
-    });
-
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/count', [NotificationController::class, 'getUnreadCount'])->name('notifications.count');
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
-    Route::post('/keranjang/add', [KeranjangController::class, 'addToCart'])->name('keranjang.add');
-    Route::patch('/keranjang/{id}', [KeranjangController::class, 'updateQuantity'])->name('keranjang.update');
-    Route::delete('/keranjang/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.remove');
-    Route::post('/keranjang/add', [KeranjangController::class, 'addToCart'])->name('keranjang.add');
-    Route::get('/keranjang/count', [KeranjangController::class, 'getCartCount'])->name('keranjang.count');
-    Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout/store', [CheckOutController::class, 'store'])->name('checkout.store');
-    Route::delete('/keranjang/remove/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.remove');
-    Route::patch('/keranjang/{id}', [KeranjangController::class, 'updateQuantity'])->name('keranjang.update');
-    Route::post('/payment/process', [PaymentController::class, 'process'])->name('payment.process');
-    Route::get('/payment/{orderId}/bca', [PaymentController::class, 'showBca'])->name('payment.bca');
-    Route::get('/payment/bca/{orderId}', [PaymentController::class, 'showBca'])->name('payment.bca.show');
-    Route::get('/payment/{orderId}/dana', [PaymentController::class, 'showDana'])->name('payment.dana');
-    Route::get('/payment/{orderId}/gopay', [PaymentController::class, 'showGopay'])->name('payment.gopay');
-    Route::get('/payment/{orderId}/cod', [PaymentController::class, 'showCod'])->name('payment.cod');
-    Route::get('/payment/confirmation/{orderId}', [PaymentController::class, 'showConfirmation'])->name('payment.confirmation');
-    Route::get('/konfirmasi-pembayaran/{orderId}', [PaymentController::class, 'showConfirmation'])->name('payment.confirmation');
-    Route::get('/konfirmasi-pembayaran/{method}/{orderId}', [PaymentController::class, 'showConfirmation'])->name('payment.confirmation');
-    Route::post('/payment', [PaymentController::class, 'show'])->name('payment.show');
-    Route::post('/payment/{orderId}/confirm', [PaymentController::class, 'confirm'])->name('payment.confirm');
-    Route::post('/payment/create', [PaymentController::class, 'store'])->name('payment.store');
-    Route::get('/payment/success', function () {
-        return view('payments.success');
-    })->name('payment.success');
-    Route::middleware(['auth'])->group(function () {
-        Route::prefix('pesanan')->group(function () {
-            Route::get('/', [OrderController::class, 'index'])->name('pesanan.index');
-            Route::get('/pending', [OrderController::class, 'pending'])->name('pesanan.pending');
-            Route::get('/processing', [OrderController::class, 'processing'])->name('pesanan.processing');
-            Route::get('/shipped', [OrderController::class, 'shipped'])->name('pesanan.shipped');
-            Route::get('/completed', [OrderController::class, 'completed'])->name('pesanan.completed');
-            Route::get('/reviews', [OrderController::class, 'reviews'])->name('pesanan.reviews');
-            Route::get('/{id}', [OrderController::class, 'show'])->name('pesanan.show');
-            Route::post('/{id}/review', [OrderController::class, 'submitReview'])->name('pesanan.submit-review');
-            Route::get('/pesanan/shipped', function () {
-                return view('pesanan.dikirim');
-            })->name('pesanan.shipped');
-        });
-    });
-});
-
-// Admin
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    // Kelola Makanan
-    Route::resource('kelolamakanan', AdminKelolaMakananController::class);
-
-    // Stok Bahan
-    Route::resource('stokbahan', AdminStokBahanController::class);
-    Route::get('stokbahan/search', [AdminStokBahanController::class, 'index'])->name('stokbahan.search');
-
-    // Daftar Pesanan
-    Route::resource('/daftarpesanan', AdminDaftarPesananController::class);
-    Route::post('/daftarpesanan/{id}/status', [AdminDaftarPesananController::class, 'updateStatus'])->name('daftarpesanan.updateStatus');
-
-    // Laporan routes
-    Route::get('laporan/export', [AdminLaporanController::class, 'export'])->name('laporan.export');
-    Route::resource('laporan', AdminLaporanController::class);
-
-    // Transaksi
-    Route::resource('transaksi', AdminTransaksiController::class);
-
-    // Metode Pembayaran
-    Route::resource('metodepembayaran', AdminMetodePembayaran::class);
-    
-    // Metode Pembayaran
-    Route::resource('statuspembayaran', AdminStatusPembayaranController::class);
-
-    // Status Pengiriman
-    Route::resource('statuspengiriman', AdminStatusPengirimanController::class);
-
-    // Penilaian
-    Route::resource('penilaian', AdminPenilaianController::class);
-
-    // Tentang Kami routes
-    Route::resource('tentangkami', TentangKamiController::class);
-
-    // Daftar Karyawan
-    Route::resource('karyawan', KaryawanController::class);
-
-    // Laporan
-     Route::resource('laporan', AdminLaporanController::class);
-
-    // Notification
-    Route::get('/notifications', [NotificationAdminController::class, 'index'])
-        ->name('notifications.index');
-    Route::post('/notifications/{notification}/mark-read', [NotificationAdminController::class, 'markAsRead'])
-        ->name('notifications.markAsRead');
-
-    // Profile Admin
-    Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [AdminProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
-});
-
-// Notifications
-
-Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
-    Route::resource('kategori', KategoriController::class);
-});
-
-
-Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout', [CheckOutController::class, 'store'])->name('checkout.store');
-Route::post('/checkout/process', [CheckOutController::class, 'process'])->name('checkout.process');
-
-// Order routes
-Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-
-Route::middleware(['auth'])->group(function () {
-    // Halaman pembayaran
-    Route::get('/payment/{orderId}', [PaymentController::class, 'show'])->name('payment.show');
-    
-    // Proses pembayaran
-    Route::post('/payment/{orderId}/process', [PaymentController::class, 'process'])->name('payment.process');
-    
-    // Halaman hasil pembayaran
-    Route::get('/payment/{orderId}/result', [PaymentController::class, 'result'])->name('payment.result');
-});
-
+// Public search
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
+// File serving
 Route::get('/uploads/makanan/{filename}', function ($filename) {
     $path = public_path('uploads/makanan/' . $filename);
     if (!file_exists($path)) {
@@ -263,14 +65,269 @@ Route::get('/uploads/makanan/{filename}', function ($filename) {
     return response()->file($path);
 })->where('filename', '.*');
 
-Route::middleware(['auth'])->group(function() {
-    Route::get('/checkout', [CheckOutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckOutController::class, 'store'])->name('checkout.store');
+/*
+|--------------------------------------------------------------------------
+| Authentication Required Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+    
+    // Dashboard
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->middleware('verified')->name('dashboard');
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Profile Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('show');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::put('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Main Navigation Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/about', [AboutController::class, 'index'])->name('about.index');
+    Route::get('/catering', [CateringController::class, 'index'])->name('catering.index');
+    Route::get('/product', [ProductController::class, 'index'])->name('product.index');
+    Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Menu Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('menu')->group(function () {
+        // Prasmanan Menu
+        Route::get('/prasmanan', [MenuPrasmananController::class, 'index'])->name('menuprasmanan.index');
+        Route::get('/prasmanan/{id}', [MenuPrasmananController::class, 'show'])->name('menuprasmanan.show');
+        
+        // Nasi Box Menu
+        Route::get('/nasibox', [MenuNasiBoxController::class, 'index'])->name('menunasibox.index');
+        Route::get('/nasibox/{id}', [MenuNasiBoxController::class, 'show'])->name('menunasibox.show');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Shopping Cart Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('keranjang')->name('keranjang.')->group(function () {
+        Route::get('/', [KeranjangController::class, 'index'])->name('index');
+        Route::post('/add', [KeranjangController::class, 'addToCart'])->name('add');
+        Route::patch('/{id}', [KeranjangController::class, 'updateQuantity'])->name('update');
+        Route::delete('/{id}', [KeranjangController::class, 'removeItem'])->name('remove');
+        Route::get('/count', [KeranjangController::class, 'getCartCount'])->name('count');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Checkout & Order Routes - FIXED
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', [CheckOutController::class, 'index'])->name('index');
+        Route::post('/store', [CheckOutController::class, 'store'])->name('store'); // Pastikan ada
+    });
+
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+        Route::post('/cancel', [OrderController::class, 'cancel'])->name('cancel');
+        Route::post('/buat-pesanan', [OrderController::class, 'createOrder'])->name('create');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Orders (Pesanan) Routes - FIXED & CLEAN
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('pesanan')->name('pesanan.')->group(function () {
+        Route::get('/', [PesananController::class, 'index'])->name('index');           // Semua Pesanan
+        Route::get('/unpaid', [PesananController::class, 'unpaid'])->name('unpaid');   // Belum Bayar
+        Route::get('/process', [PesananController::class, 'process'])->name('process'); // Diproses
+        Route::get('/shipped', [PesananController::class, 'shipped'])->name('shipped'); // Dikirim
+        Route::get('/completed', [PesananController::class, 'completed'])->name('completed'); // Selesai
+        Route::get('/penilaian', [PesananController::class, 'penilaian'])->name('penilaian'); // Penilaian
+        
+        // Debug route - remove after testing
+        Route::get('/debug', [PesananController::class, 'debug'])->name('debug');
+        
+        // Order management
+        Route::post('/', [PesananController::class, 'store'])->name('store');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('payment')->name('payment.')->group(function () {
+        // Payment methods - FIXED
+        Route::get('/metodepembayaran/{method}', [PaymentController::class, 'show'])
+            ->name('show')
+            ->where('method', 'bca|dana|gopay|cod');
+        
+        Route::get('/metodepembayaran/bca', [PaymentController::class, 'bca'])->name('bca');
+        Route::get('/metodepembayaran/dana', [PaymentController::class, 'dana'])->name('dana');
+        Route::get('/metodepembayaran/gopay', [PaymentController::class, 'gopay'])->name('gopay');
+        Route::get('/metodepembayaran/cod', [PaymentController::class, 'cod'])->name('cod');
+        
+        // Payment processing
+        Route::post('/process', [PaymentController::class, 'process'])->name('process');
+        Route::post('/confirm', [PaymentController::class, 'confirmPayment'])->name('confirm');
+        Route::post('/create', [PaymentController::class, 'store'])->name('store');
+        
+        // Payment confirmations
+        Route::post('/bca/confirm', [PaymentController::class, 'confirmBcaPayment'])->name('bca.confirm');
+        Route::post('/dana/confirm', [PaymentController::class, 'confirmDanaPayment'])->name('dana.confirm');
+        Route::post('/gopay/confirm', [PaymentController::class, 'confirmGopayPayment'])->name('gopay.confirm');
+        Route::post('/cod/confirm', [PaymentController::class, 'confirmCodPayment'])->name('cod.confirm');
+        
+        // Success pages
+        Route::get('/bca/success', function () {
+            return view('payments.bca_success');
+        })->name('bca.success');
+        Route::get('/dana/success', function () {
+            return view('payments.dana_success');
+        })->name('dana.success');
+        Route::get('/gopay/success', function () {
+            return view('payments.gopay_success');
+        })->name('gopay.success');
+        Route::get('/cod/success', function() {
+            return view('payments.cod_success');
+        })->name('cod.success');
+        Route::get('/success', function () {
+            return view('payments.success');
+        })->name('success');
+        
+        // Payment details by order
+        Route::get('/{orderId}', [PaymentController::class, 'show'])->name('show.order');
+        Route::get('/{orderId}/bca', [PaymentController::class, 'showBca'])->name('bca.show');
+        Route::get('/{orderId}/dana', [PaymentController::class, 'showDana'])->name('dana.show');
+        Route::get('/{orderId}/gopay', [PaymentController::class, 'showGopay'])->name('gopay.show');
+        Route::get('/{orderId}/cod', [PaymentController::class, 'showCod'])->name('cod.show');
+        Route::get('/{orderId}/process', [PaymentController::class, 'process'])->name('process.order');
+        Route::get('/{orderId}/result', [PaymentController::class, 'result'])->name('result');
+        
+        // Confirmation pages
+        Route::get('/confirmation/{orderId}', [PaymentController::class, 'showConfirmation'])->name('confirmation');
+        Route::get('/konfirmasi-pembayaran/{orderId}', [PaymentController::class, 'showConfirmation'])->name('confirmation.alt');
+        Route::get('/konfirmasi-pembayaran/{method}/{orderId}', [PaymentController::class, 'showConfirmation'])->name('confirmation.method');
+        
+        // Order confirmation
+        Route::post('/{orderId}/confirm', [PaymentController::class, 'confirm'])->name('confirm.order');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notification Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/count', [NotificationController::class, 'getUnreadCount'])->name('count');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('markAsRead');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Form Routes (Legacy - can be cleaned up later)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/formulirpesanan', [FormulirPesananController::class, 'index'])->name('formulirpesanan.index');
+    Route::get('/detailacara', [DetailAcaraController::class, 'index'])->name('detailacara.index');
+    Route::get('/konfirmasipesanan', [KonfirmasiPesananController::class, 'index'])->name('konfirmasipesanan.index');
+    Route::get('/metodepembayaranuser', [MetodePembayaranUserController::class, 'index'])->name('metodepembayaranuser.index');
 });
 
-// Tambahkan route untuk checkout
-Route::post('/admin/daftarpesanan/store', [AdminDaftarPesananController::class, 'store'])
-    ->name('admin.daftarpesanan.store')
-    ->middleware('auth');
+/*
+|--------------------------------------------------------------------------
+| Admin Routes - FIXED ROUTING CONFLICT
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    
+    // Admin Dashboard
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Product Management
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('kelolamakanan', AdminKelolaMakananController::class);
+    Route::resource('stokbahan', AdminStokBahanController::class);
+    Route::get('stokbahan/search', [AdminStokBahanController::class, 'index'])->name('stokbahan.search');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Order Management - FIXED
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('daftarpesanan', AdminDaftarPesananController::class);
+    Route::post('daftarpesanan/store', [AdminDaftarPesananController::class, 'store'])->name('daftarpesanan.store');
+    Route::post('daftarpesanan/{id}/status', [AdminDaftarPesananController::class, 'updateStatus'])->name('daftarpesanan.updateStatus');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Financial Management
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('transaksi', AdminTransaksiController::class);
+    Route::resource('laporan', AdminLaporanController::class);
+    Route::get('laporan/export', [AdminLaporanController::class, 'export'])->name('laporan.export');
+
+    /*
+    |--------------------------------------------------------------------------
+    | System Configuration
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('metodepembayaran', AdminMetodePembayaran::class);
+    Route::resource('statuspembayaran', AdminStatusPembayaranController::class);
+    Route::resource('statuspengiriman', AdminStatusPengirimanController::class);
+    Route::resource('kategori', KategoriController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Content Management
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('penilaian', AdminPenilaianController::class);
+    Route::resource('tentangkami', TentangKamiController::class);
+    Route::resource('karyawan', KaryawanController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Notifications
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationAdminController::class, 'index'])->name('index');
+        Route::post('/{notification}/mark-read', [NotificationAdminController::class, 'markAsRead'])->name('markAsRead');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Profile
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [AdminProfileController::class, 'show'])->name('show');
+        Route::get('/edit', [AdminProfileController::class, 'edit'])->name('edit');
+        Route::put('/', [AdminProfileController::class, 'update'])->name('update');
+    });
+});
 
 require __DIR__.'/auth.php';

@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller 
 {
-    // Remove or comment out the index() method since we're not using it
-    
     public function show($method)
     {
         // Validate payment method
@@ -55,7 +53,8 @@ class PaymentController extends Controller
         $data['method'] = $method;
         $data['transaksi'] = $transaksi;
 
-        return view("metodepembayaran.{$method}", $data);
+        // FIX: Gunakan folder payments/ bukan metodepembayaran/
+        return view("payments.{$method}", $data);
     }
 
     public function process(Request $request)
