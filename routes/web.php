@@ -273,12 +273,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     /*
     |--------------------------------------------------------------------------
-    | Order Management - FIXED
+    | Order Management - FIXED ROUTES
     |--------------------------------------------------------------------------
     */
-    Route::resource('daftarpesanan', AdminDaftarPesananController::class);
-    Route::post('daftarpesanan/store', [AdminDaftarPesananController::class, 'store'])->name('daftarpesanan.store');
-    Route::post('daftarpesanan/{id}/status', [AdminDaftarPesananController::class, 'updateStatus'])->name('daftarpesanan.updateStatus');
+    Route::prefix('daftarpesanan')->name('daftarpesanan.')->group(function () {
+        Route::get('/', [AdminDaftarPesananController::class, 'index'])->name('index');
+        Route::get('/create', [AdminDaftarPesananController::class, 'create'])->name('create');
+        Route::post('/', [AdminDaftarPesananController::class, 'store'])->name('store');
+        Route::get('/{id}', [AdminDaftarPesananController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [AdminDaftarPesananController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [AdminDaftarPesananController::class, 'update'])->name('update');
+        Route::delete('/{id}', [AdminDaftarPesananController::class, 'destroy'])->name('destroy');
+        
+        // Status update route - separate from resource routes to avoid conflicts
+        Route::post('/{id}/update-status', [AdminDaftarPesananController::class, 'updateStatus'])->name('updateStatus');
+    });
 
     /*
     |--------------------------------------------------------------------------

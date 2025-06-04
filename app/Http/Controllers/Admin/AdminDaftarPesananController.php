@@ -9,6 +9,7 @@ use App\Models\StatusPengiriman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AdminDaftarPesananController extends Controller
 {
@@ -150,41 +151,157 @@ class AdminDaftarPesananController extends Controller
             ->with('success', 'Pesanan berhasil dihapus');
     }
 
+    /**
+     * Update order status with improved error handling and validation
+     * 
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function updateStatus(Request $request, $id)
     {
         try {
-            $pesanan = DaftarPesanan::findOrFail($id);
+            // Log the incoming request for debugging
+            Log::info('Update status request received', [
+                'order_id' => $id,
+                'request_data' => $request->all(),
+                'admin_id' => Auth::id()
+            ]);
+
+            // Find the order
+            $pesanan = DaftarPesanan::find($id);
+            if (!$pesanan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pesanan tidak ditemukan'
+                ], 404);
+            }
             
+            // Validate request data
             $validated = $request->validate([
                 'status_pengiriman' => 'required|in:diproses,dikirim,diterima,dibatalkan',
-                'catatan' => 'nullable|string'
+                'catatan' => 'nullable|string|max:1000'
             ]);
 
-            $pesanan->update([
-                'status_pengiriman' => $validated['status_pengiriman'],
-                'catatan_status' => $validated['catatan']
+            // Get current and new status
+            $currentStatus = $pesanan->status_pengiriman;
+            $newStatus = $validated['status_pengiriman'];
+            
+            // Validate status transition
+            if (!$this->isValidStatusTransition($currentStatus, $newStatus)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Tidak dapat mengubah status dari '{$currentStatus}' ke '{$newStatus}'"
+                ], 422);
+            }
+
+            // Prepare update data
+            $updateData = [
+                'status_pengiriman' => $newStatus,
+                'updated_at' => now()
+            ];
+
+            // Add specific data based on status change
+            switch ($newStatus) {
+                case 'dibatalkan':
+                    $updateData['catatan_pembatalan'] = $validated['catatan'] ?? 'Dibatalkan oleh admin';
+                    $updateData['cancelled_at'] = now();
+                    $updateData['cancelled_by'] = Auth::id();
+                    break;
+                    
+                case 'dikirim':
+                    $updateData['shipped_at'] = now();
+                    $updateData['shipped_by'] = Auth::id();
+                    break;
+                    
+                case 'diterima':
+                    $updateData['delivered_at'] = now();
+                    $updateData['confirmed_by'] = Auth::id();
+                    break;
+            }
+
+            // Update the order
+            $updated = $pesanan->update($updateData);
+            
+            if (!$updated) {
+                throw new \Exception('Gagal menyimpan perubahan ke database');
+            }
+
+            // Log the successful update
+            Log::info('Order status updated successfully', [
+                'order_id' => $pesanan->order_id,
+                'old_status' => $currentStatus,
+                'new_status' => $newStatus,
+                'admin_id' => Auth::id(),
+                'catatan' => $validated['catatan'] ?? null
             ]);
 
+            // Return success response
             return response()->json([
                 'success' => true,
-                'message' => 'Status berhasil diperbarui'
+                'message' => 'Status pesanan berhasil diperbarui',
+                'data' => [
+                    'id' => $pesanan->id,
+                    'order_id' => $pesanan->order_id,
+                    'old_status' => $currentStatus,
+                    'new_status' => $newStatus,
+                    'updated_at' => $pesanan->updated_at->toISOString()
+                ]
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed for status update', [
+                'order_id' => $id,
+                'errors' => $e->errors(),
+                'admin_id' => Auth::id()
             ]);
 
-        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengupdate status: ' . $e->getMessage()
+                'message' => 'Data yang dikirim tidak valid',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('Error updating order status', [
+                'order_id' => $id,
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'admin_id' => Auth::id()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan internal server. Silakan coba lagi atau hubungi administrator.'
             ], 500);
         }
     }
 
-    private function mapStatusToOrderStatus($adminStatus)
+    /**
+     * Validate if status transition is allowed
+     * 
+     * @param string $currentStatus
+     * @param string $newStatus
+     * @return bool
+     */
+    private function isValidStatusTransition($currentStatus, $newStatus)
     {
-        return [
-            'diproses' => 'processing',
-            'dikirim' => 'shipped',
-            'diterima' => 'delivered',
-            'dibatalkan' => 'cancelled'
-        ][$adminStatus] ?? $adminStatus;
+        // Define allowed status transitions
+        $allowedTransitions = [
+            'diproses' => ['dikirim', 'dibatalkan'],
+            'dikirim' => ['diterima', 'dibatalkan'], // Allow cancellation even after shipped
+            'diterima' => [], // No further transitions allowed
+            'dibatalkan' => [] // No further transitions allowed
+        ];
+
+        // Check if current status exists in transitions map
+        if (!isset($allowedTransitions[$currentStatus])) {
+            return false;
+        }
+
+        // Check if new status is allowed from current status
+        return in_array($newStatus, $allowedTransitions[$currentStatus]);
     }
 }
