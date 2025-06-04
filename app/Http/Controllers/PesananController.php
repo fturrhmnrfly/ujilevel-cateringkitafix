@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\DaftarPesanan;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PesananController extends Controller
 {
@@ -106,9 +106,9 @@ class PesananController extends Controller
                 return $query->where('status_pembayaran', 'pending');
                 
             case 'pesanan.process':
-                Log::info('Filtering: Diproses (status_pengiriman = diproses AND status_pembayaran != pending)');
-                return $query->where('status_pengiriman', 'diproses')
-                            ->where('status_pembayaran', '!=', 'pending');
+                Log::info('Filtering: Diproses (status_pengiriman = diproses)');
+                // PERBAIKAN: Hapus kondisi status_pembayaran != pending
+                return $query->where('status_pengiriman', 'diproses');
                 
             case 'pesanan.shipped':
                 Log::info('Filtering: Dikirim (status_pengiriman = dikirim)');
@@ -119,14 +119,13 @@ class PesananController extends Controller
                 return $query->where('status_pengiriman', 'diterima');
                 
             case 'pesanan.penilaian':
-                Log::info('Filtering: Penilaian (status_pengiriman = diterima AND status_pembayaran = paid)');
-                return $query->where('status_pengiriman', 'diterima')
-                            ->where('status_pembayaran', 'paid');
+                Log::info('Filtering: Penilaian (status_pengiriman = diterima)');
+                return $query->where('status_pengiriman', 'diterima');
                 
             case 'pesanan.index':
-            default: 
-                Log::info('Filtering: Semua pesanan (no filter)');
-                return $query; // Tidak ada filter, tampilkan semua
+            default:
+                Log::info('No filter applied - showing all orders');
+                return $query;
         }
     }
 
@@ -190,6 +189,12 @@ class PesananController extends Controller
     public function acceptOrder(Request $request, $id)
     {
         try {
+            Log::info('Accept order request received', [
+                'order_id' => $id,
+                'user_id' => Auth::id(),
+                'user_name' => Auth::user()->name
+            ]);
+
             DB::beginTransaction();
 
             // Find the order dengan validasi user
@@ -198,6 +203,11 @@ class PesananController extends Controller
                 ->first();
 
             if (!$order) {
+                Log::warning('Order not found or access denied', [
+                    'order_id' => $id,
+                    'user_name' => Auth::user()->name
+                ]);
+                
                 return response()->json([
                     'success' => false,
                     'message' => 'Pesanan tidak ditemukan atau Anda tidak memiliki akses'
@@ -206,6 +216,11 @@ class PesananController extends Controller
 
             // Validate current status
             if ($order->status_pengiriman !== 'dikirim') {
+                Log::warning('Invalid status for acceptance', [
+                    'order_id' => $order->order_id,
+                    'current_status' => $order->status_pengiriman
+                ]);
+                
                 return response()->json([
                     'success' => false,
                     'message' => 'Pesanan tidak dapat diterima. Status saat ini: ' . $order->status_pengiriman
@@ -225,7 +240,7 @@ class PesananController extends Controller
 
             DB::commit();
 
-            Log::info('Order accepted by customer', [
+            Log::info('Order accepted successfully', [
                 'order_id' => $order->order_id,
                 'user_id' => Auth::id(),
                 'user_name' => Auth::user()->name,

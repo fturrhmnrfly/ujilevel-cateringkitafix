@@ -873,7 +873,7 @@
             })
             .then(data => {
                 if (data.success) {
-                    // Update UI
+                    // Update UI - PASTIKAN INI ADA
                     updateOrderRowUI(orderId, newStatus);
                     updateStatistics();
                     closeModal();
@@ -948,18 +948,26 @@
             // Update status badge
             const statusBadge = row.querySelector('.badge-diproses, .badge-dikirim, .badge-diterima, .badge-dibatalkan');
             if (statusBadge) {
-                statusBadge.className = `badge badge-${newStatus}`;
+                // Remove all possible badge classes
+                statusBadge.classList.remove('badge-diproses', 'badge-dikirim', 'badge-diterima', 'badge-dibatalkan');
+                // Add new badge class
+                statusBadge.classList.add(`badge-${newStatus}`);
                 statusBadge.textContent = ucfirst(newStatus);
             }
             
-            // Update action button
+            // Update action button - PERBAIKAN DISINI
             const actionCell = row.querySelector('td:last-child');
             if (actionCell) {
+                const orderNumber = row.cells[1] ? row.cells[1].textContent : orderId;
+                
+                // Update button based on new status
                 if (newStatus === 'diterima' || newStatus === 'dibatalkan') {
                     actionCell.innerHTML = '<button class="btn-action btn-disabled" disabled>Selesai</button>';
                 } else if (newStatus === 'dikirim') {
-                    const orderNumber = row.cells[1] ? row.cells[1].textContent : '';
-                    actionCell.innerHTML = `<button class="btn-action btn-next-status" onclick="showUpdateModal('${orderId}', '${newStatus}', '${orderNumber}')">Pesanan Diterima</button>`;
+                    // PERBAIKAN: Button berubah langsung ke "Menunggu Konfirmasi Pelanggan"
+                    actionCell.innerHTML = '<button class="btn-action btn-disabled" disabled>Menunggu Konfirmasi Pelanggan</button>';
+                } else if (newStatus === 'diproses') {
+                    actionCell.innerHTML = `<button class="btn-action btn-next-status" onclick="showUpdateModal('${orderId}', '${newStatus}', '${orderNumber}')">Kirim Pesanan</button>`;
                 }
             }
             

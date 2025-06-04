@@ -154,17 +154,18 @@ Route::middleware('auth')->group(function () {
     */
     Route::prefix('pesanan')->name('pesanan.')->group(function () {
         Route::get('/', [PesananController::class, 'index'])->name('index');           // Semua Pesanan
-        Route::get('/unpaid', [PesananController::class, 'unpaid'])->name('unpaid');   // Belum Bayar
-        Route::get('/process', [PesananController::class, 'process'])->name('process'); // Diproses
-        Route::get('/shipped', [PesananController::class, 'shipped'])->name('shipped'); // Dikirim
-        Route::get('/completed', [PesananController::class, 'completed'])->name('completed'); // Selesai
-        Route::get('/penilaian', [PesananController::class, 'penilaian'])->name('penilaian'); // Penilaian
+        Route::get('/unpaid', [PesananController::class, 'index'])->name('unpaid');    // Belum Bayar
+        Route::get('/process', [PesananController::class, 'index'])->name('process');  // Diproses
+        Route::get('/shipped', [PesananController::class, 'index'])->name('shipped'); // Dikirim
+        Route::get('/completed', [PesananController::class, 'index'])->name('completed'); // Selesai
+        Route::get('/penilaian', [PesananController::class, 'index'])->name('penilaian'); // Penilaian
         
-        // Debug route - remove after testing
+        // Debug route
         Route::get('/debug', [PesananController::class, 'debug'])->name('debug');
         
-        // Order management
+        // Order management - PERBAIKI NAMA ROUTE INI
         Route::post('/', [PesananController::class, 'store'])->name('store');
+        Route::post('/accept/{id}', [PesananController::class, 'acceptOrder'])->name('accept'); // UBAH dari pesanan.accept ke accept
     });
 
     /*
