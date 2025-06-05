@@ -95,7 +95,9 @@ function reorderItems(orderId) {
 }
 
 function showReviewModal(orderId) {
-    alert('Fitur ulasan akan segera hadir!');
+    currentOrderId = orderId;
+    resetReviewForm();
+    document.getElementById('reviewModal').classList.add('show');
 }
 
 function updateOrderCardStatus(orderId, newStatus) {
