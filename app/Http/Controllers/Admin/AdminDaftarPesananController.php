@@ -53,17 +53,18 @@ class AdminDaftarPesananController extends Controller
                 'waktu_pengiriman' => 'required',
                 'lokasi_pengiriman' => 'required|string',
                 'nomor_telepon' => 'required|string',
-                'opsi_pengiriman' => 'required|string', // Pastikan validasi ini ada
-                'pesan' => 'nullable|string', // Tambahkan validasi untuk pesan
+                'opsi_pengiriman' => 'required|string',
+                'pesan' => 'nullable|string',
                 'total_harga' => 'required|numeric',
                 'items' => 'required|array'
             ]);
 
             DB::beginTransaction();
 
-            // Create new order - TAMBAHKAN field yang hilang
+            // Create new order - TAMBAHKAN user_id
             $daftarPesanan = DaftarPesanan::create([
                 'order_id' => $validated['order_id'],
+                'user_id' => Auth::id(), // Tambahkan user_id otomatis
                 'nama_pelanggan' => $validated['nama_pelanggan'],
                 'kategori_pesanan' => $validated['kategori_pesanan'],
                 'tanggal_pesanan' => $validated['tanggal_pesanan'],
@@ -72,8 +73,8 @@ class AdminDaftarPesananController extends Controller
                 'waktu_pengiriman' => $validated['waktu_pengiriman'],
                 'lokasi_pengiriman' => $validated['lokasi_pengiriman'],
                 'nomor_telepon' => $validated['nomor_telepon'],
-                'opsi_pengiriman' => $validated['opsi_pengiriman'], // TAMBAHKAN INI
-                'pesan' => $validated['pesan'] ?? null, // TAMBAHKAN INI
+                'opsi_pengiriman' => $validated['opsi_pengiriman'],
+                'pesan' => $validated['pesan'] ?? null,
                 'total_harga' => $validated['total_harga'],
                 'status_pengiriman' => 'diproses',
                 'status_pembayaran' => 'pending'
@@ -84,30 +85,17 @@ class AdminDaftarPesananController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Pesanan berhasil dibuat',
-                'order_id' => $daftarPesanan->order_id
+                'order_id' => $daftarPesanan->order_id,
+                'user_id' => $daftarPesanan->user_id
             ], 200);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            DB::rollback();
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $e->errors()
-            ], 422);
-            
         } catch (\Exception $e) {
             DB::rollback();
-            
-            // Log error untuk debugging
-            Log::error('Checkout Error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'request' => $request->all()
-            ]);
+            Log::error('Checkout Error: ' . $e->getMessage());
             
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan internal server: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
     }

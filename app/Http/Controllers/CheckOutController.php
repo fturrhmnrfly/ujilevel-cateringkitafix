@@ -40,9 +40,10 @@ class CheckOutController extends Controller
 
             DB::beginTransaction();
 
-            // Buat pesanan baru
+            // Buat pesanan baru dengan user_id otomatis
             $daftarPesanan = DaftarPesanan::create([
                 'order_id' => $validated['order_id'],
+                'user_id' => Auth::id(), // Tambahkan user_id otomatis
                 'nama_pelanggan' => $validated['nama_pelanggan'],
                 'kategori_pesanan' => $validated['kategori_pesanan'],
                 'tanggal_pesanan' => $validated['tanggal_pesanan'],
@@ -60,12 +61,16 @@ class CheckOutController extends Controller
 
             DB::commit();
 
-            Log::info('Order created successfully:', ['order_id' => $daftarPesanan->order_id]);
+            Log::info('Order created successfully:', [
+                'order_id' => $daftarPesanan->order_id,
+                'user_id' => $daftarPesanan->user_id
+            ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Pesanan berhasil dibuat',
-                'order_id' => $daftarPesanan->order_id
+                'order_id' => $daftarPesanan->order_id,
+                'user_id' => $daftarPesanan->user_id
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {

@@ -13,8 +13,8 @@ class DaftarPesanan extends Model
     
     protected $fillable = [
         'order_id',
+        'user_id', // Pastikan user_id ada di fillable
         'nama_pelanggan',
-        'user_id',
         'kategori_pesanan',
         'tanggal_pesanan',
         'jumlah_pesanan',

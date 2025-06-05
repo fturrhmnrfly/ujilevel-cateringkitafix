@@ -27,7 +27,12 @@
     </div>
 
     <div class="container">
-        <input type="hidden" id="user-name" value="{{ Auth::user()->name }}">
+        <!-- Update input hidden untuk menyimpan user data -->
+        <input type="hidden" id="user-name" 
+               value="{{ Auth::user()->name }}" 
+               data-user-id="{{ Auth::id() }}"
+               data-user-email="{{ Auth::user()->email }}">
+        
         <a href="/keranjang" class="back-button">← Kembali Ke Menu</a>
         <h1 class="checkout-title">Checkout</h1>
 
@@ -54,17 +59,17 @@
 
                 <div class="form-group">
                     <label>Alamat Lengkap</label>
-                    <textarea id="address" required></textarea>
+                    <textarea id="address" required placeholder="Masukkan alamat lengkap untuk pengiriman..."></textarea>
                 </div>
 
                 <div class="form-group">
                     <label>Nomor Telepon</label>
-                    <input type="tel" id="phone" required>
+                    <input type="tel" id="phone" required placeholder="08xxxxxxxxxx">
                 </div>
 
                 <div class="form-group">
-                    <label>Pesan Untuk Penjual</label>
-                    <textarea id="notes"></textarea>
+                    <label>Pesan Untuk Penjual (Opsional)</label>
+                    <textarea id="notes" placeholder="Tambahkan catatan khusus untuk pesanan Anda..."></textarea>
                 </div>
 
                 <div class="order-section">

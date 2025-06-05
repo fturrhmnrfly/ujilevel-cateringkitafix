@@ -396,8 +396,11 @@ class CheckoutManager {
 
     prepareOrderData() {
         const shippingOptionElement = document.querySelector('input[name="shipping_option"]:checked');
+        const userId = document.getElementById('user-name').getAttribute('data-user-id') || null;
+        
         return {
             order_id: this.currentOrderId || this.generateOrderId(),
+            user_id: userId, // Tambahkan user_id
             nama_pelanggan: document.getElementById('user-name').value,
             kategori_pesanan: this.determineOrderCategory(this.cartItems),
             tanggal_pesanan: new Date().toISOString().split('T')[0],
