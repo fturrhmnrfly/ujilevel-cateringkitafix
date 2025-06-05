@@ -70,6 +70,33 @@ nav.navbar { display: flex; justify-content: space-between; align-items: center;
 .btn-review:hover { background: #e0a800; }
 .btn-single { width: 100%; text-align: center; padding: 12px; background: #27276e; color: white; border-radius: 8px; text-decoration: none; font-weight: 500; border: none; cursor: pointer; font-size: 14px; transition: all 0.3s ease; }
 .btn-single:hover { background: #1f1f5c; }
+.btn-reviewed {
+    background-color: #6c757d !important;
+    color: white !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: none;
+    min-width: 110px;
+    justify-content: center;
+}
+
+.btn-reviewed:hover {
+    background-color: #6c757d !important;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 0.7;
+}
+
+.btn-reviewed i {
+    color: #ffd700;
+}
 
 /* Empty State */
 .empty-state { text-align: center; padding: 50px 20px; color: #666; }
@@ -119,4 +146,9 @@ nav.navbar { display: flex; justify-content: space-between; align-items: center;
     .modal-content { margin: 10px; max-height: 95vh; }
     .action-buttons { flex-direction: column; }
     .btn-detail, .btn-pay, .btn-accept, .btn-reorder, .btn-review { flex: none; }
+    .btn-reviewed {
+        padding: 6px 12px;
+        font-size: 12px;
+        min-width: 100px;
+    }
 }

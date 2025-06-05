@@ -94,10 +94,51 @@ function reorderItems(orderId) {
     }
 }
 
+// Fungsi untuk menandai order sudah direview setelah submit review
+function markOrderAsReviewed(orderId) {
+    const orderCard = document.querySelector(`[data-order-id="${orderId}"]`);
+    if (!orderCard) {
+        console.log('Order card not found for orderId:', orderId);
+        return;
+    }
+    
+    // Update attribute
+    orderCard.setAttribute('data-has-review', 'true');
+    
+    // Update button jika order sudah diterima
+    const actionButtons = orderCard.querySelector('.action-buttons');
+    const reviewButton = actionButtons?.querySelector('.btn-review');
+    
+    if (reviewButton) {
+        reviewButton.outerHTML = '<button class="btn-reviewed" disabled><i class="fas fa-star"></i> Sudah Diulas</button>';
+    }
+}
+
+// Update function showReviewModal dengan error handling
 function showReviewModal(orderId) {
     currentOrderId = orderId;
-    resetReviewForm();
-    document.getElementById('reviewModal').classList.add('show');
+    
+    console.log('Opening review modal for order:', orderId);
+    
+    // Reset form
+    if (typeof resetReviewForm === 'function') {
+        resetReviewForm();
+    }
+    
+    // Show modal
+    const modal = document.getElementById('reviewModal');
+    if (modal) {
+        modal.classList.add('show');
+        
+        // Initialize photo grid
+        setTimeout(() => {
+            if (typeof updatePhotoGrid === 'function') {
+                updatePhotoGrid();
+            }
+        }, 100);
+    } else {
+        console.error('Review modal not found');
+    }
 }
 
 function updateOrderCardStatus(orderId, newStatus) {
@@ -112,21 +153,28 @@ function updateOrderCardStatus(orderId, newStatus) {
 
     const actionButtons = orderCard.querySelector('.action-buttons');
     if (actionButtons && newStatus === 'diterima') {
+        // Check apakah sudah ada review
+        const hasReview = orderCard.getAttribute('data-has-review') === 'true';
+        
+        const reviewButton = hasReview 
+            ? '<button class="btn-reviewed" disabled><i class="fas fa-star"></i> Sudah Diulas</button>'
+            : `<button class="btn-review" onclick="showReviewModal(${orderId})"><i class="fas fa-star"></i> Beri Ulasan</button>`;
+        
         actionButtons.innerHTML = `
             <button class="btn-reorder" onclick="reorderItems(${orderId})">
                 <i class="fas fa-redo"></i> Beli Lagi
             </button>
-            <button class="btn-review" onclick="showReviewModal(${orderId})">
-                <i class="fas fa-star"></i> Beri Ulasan
-            </button>`;
+            ${reviewButton}`;
     }
 
     orderCard.setAttribute('data-order-status', newStatus);
 }
 
 function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('show');
-    currentOrderId = null;
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('show');
+    }
 }
 
 function showMessage(message, type) {
@@ -151,18 +199,9 @@ function capitalizeFirst(str) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    window.addEventListener('click', function(event) {
-        ['orderDetailModal', 'acceptOrderModal'].forEach(modalId => {
-            if (event.target === document.getElementById(modalId)) {
-                closeModal(modalId);
-            }
-        });
-    });
-
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal('orderDetailModal');
-            closeModal('acceptOrderModal');
-        }
-    });
+    console.log('Pesanan.js loaded');
+    
+    // Add debug info
+    console.log('Current page URL:', window.location.href);
+    console.log('CSRF token:', document.querySelector('meta[name="csrf-token"]')?.content);
 });

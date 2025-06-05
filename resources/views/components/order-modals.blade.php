@@ -169,7 +169,7 @@
 
                 <!-- Submit Button -->
                 <div class="review-submit-section">
-                    <button type="button" class="btn-submit-review" onclick="submitReview()">
+                    <button type="button" class="btn-submit-review" onclick="submitReviewModal()">
                         <i class="fas fa-paper-plane"></i>
                         Kirim Penilaian
                     </button>
@@ -682,30 +682,155 @@ document.getElementById('reviewText').addEventListener('input', function() {
     }
 });
 
-// Submit review function (placeholder)
-function submitReview() {
+// Helper function untuk show alert dengan fallback
+function showAlert(config) {
+    if (typeof Swal !== 'undefined') {
+        return Swal.fire(config);
+    } else {
+        // Fallback ke alert browser biasa
+        if (config.icon === 'warning' || config.icon === 'error') {
+            alert(config.text || config.title);
+        } else if (config.icon === 'success') {
+            alert(config.title + '\n' + (config.text || ''));
+        }
+        return Promise.resolve({ isConfirmed: true });
+    }
+}
+
+// Submit review function dengan improved error handling
+async function submitReviewModal() {
     // Validate required ratings
     if (ratings.quality === 0 || ratings.delivery === 0 || ratings.service === 0) {
-        alert('Mohon berikan penilaian untuk semua kategori (Kualitas Produk, Kecepatan Pengiriman, dan Pelayanan)');
+        showAlert({
+            icon: 'warning',
+            title: 'Rating Belum Lengkap',
+            text: 'Mohon berikan penilaian untuk semua kategori (Kualitas Produk, Kecepatan Pengiriman, dan Pelayanan)',
+            confirmButtonColor: '#26276B'
+        });
         return;
     }
-    
+
+    if (!currentOrderId) {
+        showAlert({
+            icon: 'error',
+            title: 'Error',
+            text: 'Data pesanan tidak ditemukan',
+            confirmButtonColor: '#dc3545'
+        });
+        return;
+    }
+
     // Get review text
     const reviewText = document.getElementById('reviewText').value;
-    
-    // Here you would normally send the data to your backend
-    console.log('Review Data:', {
-        ratings: ratings,
-        reviewText: reviewText,
-        photos: uploadedPhotos.map(photo => photo.file)
-    });
-    
-    // For now, just show success message
-    alert('Terima kasih atas penilaian Anda!');
-    closeModal('reviewModal');
-    
-    // Reset form
-    resetReviewForm();
+
+    // Get submit button
+    const submitBtn = document.querySelector('.btn-submit-review');
+    if (!submitBtn) {
+        console.error('Submit button not found');
+        return;
+    }
+
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+    try {
+        // Prepare FormData for file uploads
+        const formData = new FormData();
+        formData.append('order_id', currentOrderId);
+        formData.append('quality_rating', ratings.quality);
+        formData.append('delivery_rating', ratings.delivery);
+        formData.append('service_rating', ratings.service);
+        formData.append('review_text', reviewText);
+
+        // Add photos
+        uploadedPhotos.forEach((photo, index) => {
+            formData.append(`photos[${index}]`, photo.file);
+        });
+
+        // Add CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (csrfToken) {
+            formData.append('_token', csrfToken);
+        }
+
+        console.log('Sending review data:', {
+            order_id: currentOrderId,
+            quality_rating: ratings.quality,
+            delivery_rating: ratings.delivery,
+            service_rating: ratings.service,
+            photos_count: uploadedPhotos.length
+        });
+
+        const response = await fetch('/reviews', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Response error:', errorText);
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('Response data:', data);
+
+        if (data.success) {
+            // Success message
+            showAlert({
+                icon: 'success',
+                title: 'Review Berhasil Dikirim!',
+                html: `
+                    <p>${data.message}</p>
+                    <br>
+                    <p><strong>Rating rata-rata:</strong> ${data.data.average_rating}/5</p>
+                    <p><strong>Foto diupload:</strong> ${data.data.photos_count} foto</p>
+                `,
+                confirmButtonColor: '#26276B',
+                timer: 3000,
+                timerProgressBar: true
+            });
+            
+            // Mark order as reviewed
+            if (typeof markOrderAsReviewed === 'function') {
+                markOrderAsReviewed(currentOrderId);
+            }
+            
+            // Close modal
+            closeModal('reviewModal');
+            
+            // Reset form
+            resetReviewForm();
+            
+            // Reload page untuk update UI
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+            
+        } else {
+            throw new Error(data.message || 'Gagal mengirim review');
+        }
+
+    } catch (error) {
+        console.error('Review submission error:', error);
+        showAlert({
+            icon: 'error',
+            title: 'Gagal Mengirim Review',
+            text: error.message,
+            confirmButtonColor: '#dc3545'
+        });
+    } finally {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
 }
 
 function updatePhotoGrid() {

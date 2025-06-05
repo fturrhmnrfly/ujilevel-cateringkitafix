@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class DaftarPesanan extends Model
 {
@@ -40,5 +41,35 @@ class DaftarPesanan extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Helper method untuk check apakah order sudah direview
+    public function hasReview()
+    {
+        return $this->reviews()->exists();
+    }
+    // Helper method untuk check apakah user tertentu sudah review order ini
+    public function hasReviewByUser($userId = null)
+    {
+        $userId = $userId ?? Auth::user()?->id;
+        return $this->reviews()->where('user_id', $userId)->exists();
+    }
+
+    // Method untuk mendapatkan review dari user tertentu
+    public function getReviewByUser($userId = null)
+    {
+        $userId = $userId ?? Auth::user()?->id;
+        return $this->reviews()->where('user_id', $userId)->first();
+    }
+
+    // Relasi dengan Review
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'order_id');
+    }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'order_id');
     }
 }

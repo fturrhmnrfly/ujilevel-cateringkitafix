@@ -15,9 +15,12 @@
         ];
         [$displayStatus, $badgeClass] = $statusMap[$order->status_pengiriman] ?? [ucfirst($order->status_pengiriman), strtolower($order->status_pengiriman)];
     }
+    
+    // Check apakah order sudah direview
+    $hasReview = $order->hasReviewByUser(auth()->id());
 @endphp
 
-<div class="order-card" data-order-id="{{ $order->id }}" data-order-status="{{ $order->status_pengiriman }}">
+<div class="order-card" data-order-id="{{ $order->id }}" data-order-status="{{ $order->status_pengiriman }}" data-has-review="{{ $hasReview ? 'true' : 'false' }}">
     <div class="order-header">
         <div class="order-header-left">
             <h3>Order ID</h3>
@@ -55,7 +58,11 @@
                 <button class="btn-accept" onclick="acceptOrder({{ $order->id }})"><i class="fas fa-check"></i> Terima Pesanan</button>
             @elseif($order->status_pengiriman == 'diterima')
                 <button class="btn-reorder" onclick="reorderItems({{ $order->id }})"><i class="fas fa-redo"></i> Beli Lagi</button>
-                <button class="btn-review" onclick="showReviewModal({{ $order->id }})"><i class="fas fa-star"></i> Beri Ulasan</button>
+                @if($hasReview)
+                    <button class="btn-reviewed" disabled><i class="fas fa-star"></i> Sudah Diulas</button>
+                @else
+                    <button class="btn-review" onclick="showReviewModal({{ $order->id }})"><i class="fas fa-star"></i> Beri Ulasan</button>
+                @endif
             @else
                 <button class="btn-single" onclick="showOrderDetail({{ $order->id }})"><i class="fas fa-eye"></i> Lihat Detail</button>
             @endif

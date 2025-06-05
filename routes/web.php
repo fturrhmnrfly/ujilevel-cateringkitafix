@@ -342,3 +342,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 });
 
 require __DIR__.'/auth.php';
+
+// Review routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/reviews', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/{orderId}', [App\Http\Controllers\ReviewController::class, 'show'])->name('reviews.show');
+});
