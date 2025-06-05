@@ -55,6 +55,7 @@ Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 // Public search
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 
 // File serving
 Route::get('/uploads/makanan/{filename}', function ($filename) {

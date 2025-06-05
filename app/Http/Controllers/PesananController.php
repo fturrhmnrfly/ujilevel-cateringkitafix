@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DaftarPesanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\DaftarPesanan;
 
 class PesananController extends Controller
 {
@@ -16,171 +15,64 @@ class PesananController extends Controller
     public function index(Request $request)
     {
         try {
-            // Debug: Log current route dan user
-            Log::info('Route accessed:', [
-                'route' => $request->route()->getName(),
-                'user' => Auth::user()->name,
-                'user_id' => Auth::id()
-            ]);
+            $user = Auth::user();
+            if (!$user) {
+                return redirect()->route('login');
+            }
 
-            $query = DaftarPesanan::where('nama_pelanggan', Auth::user()->name);
+            // Get current route name untuk filtering
             $currentRoute = $request->route()->getName();
             
-            // Debug: Log sebelum filter
-            $totalOrders = (clone $query)->count();
-            Log::info('Total orders before filter:', ['count' => $totalOrders]);
-            
-            // Apply filters based on route
-            $orders = $this->applyStatusFilter($query, $currentRoute)
-                         ->orderBy('created_at', 'desc')
-                         ->get();
-
-            // Debug: Log setelah filter
-            Log::info('Orders after filter:', [
+            Log::info('PesananController@index called', [
+                'user_id' => $user->id,
                 'route' => $currentRoute,
-                'count' => $orders->count(),
-                'orders' => $orders->pluck(['order_id', 'status_pembayaran', 'status_pengiriman'])->toArray()
+                'url' => $request->url()
             ]);
 
-            // Handle potential data formatting issues
-            $orders = $this->formatOrderData($orders);
+            // Base query
+            $query = DaftarPesanan::where('user_id', $user->id);
+
+            // Filter berdasarkan route
+            switch ($currentRoute) {
+                case 'pesanan.unpaid':
+                    $query->where('status_pembayaran', 'pending');
+                    break;
+                case 'pesanan.process':
+                    $query->where('status_pengiriman', 'diproses')
+                          ->where('status_pembayaran', '!=', 'pending');
+                    break;
+                case 'pesanan.shipped':
+                    $query->where('status_pengiriman', 'dikirim');
+                    break;
+                case 'pesanan.completed':
+                    $query->where('status_pengiriman', 'diterima');
+                    break;
+                case 'pesanan.penilaian':
+                    $query->where('status_pengiriman', 'diterima');
+                    break;
+                case 'pesanan.index':
+                default:
+                    // Untuk route pesanan.index (root), tampilkan semua pesanan
+                    // Tidak ada filter tambahan
+                    break;
+            }
+
+            $orders = $query->orderBy('created_at', 'desc')->get();
+
+            Log::info('Orders fetched successfully', [
+                'route' => $currentRoute,
+                'count' => $orders->count()
+            ]);
 
             return view('pesanan.index', compact('orders'));
             
         } catch (\Exception $e) {
-            Log::error('Error fetching orders: ' . $e->getMessage());
+            Log::error('Error in PesananController@index: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return view('pesanan.index', ['orders' => collect()]);
         }
-    }
-
-    /**
-     * Show unpaid orders
-     */
-    public function unpaid(Request $request)
-    {
-        return $this->index($request);
-    }
-
-    /**
-     * Show processing orders
-     */
-    public function process(Request $request)
-    {
-        return $this->index($request);
-    }
-
-    /**
-     * Show shipped orders
-     */
-    public function shipped(Request $request)
-    {
-        return $this->index($request);
-    }
-
-    /**
-     * Show completed orders
-     */
-    public function completed(Request $request)
-    {
-        return $this->index($request);
-    }
-
-    /**
-     * Show orders ready for review
-     */
-    public function penilaian(Request $request)
-    {
-        return $this->index($request);
-    }
-
-    /**
-     * Apply status filter based on route - PERBAIKAN LOGIC
-     */
-    private function applyStatusFilter($query, $routeName)
-    {
-        Log::info('Applying filter for route:', ['route' => $routeName]);
-        
-        switch ($routeName) {
-            case 'pesanan.unpaid':
-                Log::info('Filtering: Belum bayar (status_pembayaran = pending)');
-                return $query->where('status_pembayaran', 'pending');
-                
-            case 'pesanan.process':
-                Log::info('Filtering: Diproses (status_pengiriman = diproses)');
-                // PERBAIKAN: Hapus kondisi status_pembayaran != pending
-                return $query->where('status_pengiriman', 'diproses');
-                
-            case 'pesanan.shipped':
-                Log::info('Filtering: Dikirim (status_pengiriman = dikirim)');
-                return $query->where('status_pengiriman', 'dikirim');
-                
-            case 'pesanan.completed':
-                Log::info('Filtering: Selesai (status_pengiriman = diterima)');
-                return $query->where('status_pengiriman', 'diterima');
-                
-            case 'pesanan.penilaian':
-                Log::info('Filtering: Penilaian (status_pengiriman = diterima)');
-                return $query->where('status_pengiriman', 'diterima');
-                
-            case 'pesanan.index':
-            default:
-                Log::info('No filter applied - showing all orders');
-                return $query;
-        }
-    }
-
-    /**
-     * Format order data to handle potential null values
-     */
-    private function formatOrderData($orders)
-    {
-        return $orders->map(function ($order) {
-            // Handle potential null values
-            $order->order_id = $order->order_id ?? 'N/A';
-            $order->kategori_pesanan = $order->kategori_pesanan ?? 'Unknown';
-            $order->jumlah_pesanan = $order->jumlah_pesanan ?? 0;
-            $order->lokasi_pengiriman = $order->lokasi_pengiriman ?? 'Alamat tidak tersedia';
-            $order->nomor_telepon = $order->nomor_telepon ?? 'No telepon tidak tersedia';
-            $order->opsi_pengiriman = $order->opsi_pengiriman ?? 'Tidak diketahui';
-            $order->total_harga = $order->total_harga ?? 0;
-            $order->status_pengiriman = $order->status_pengiriman ?? 'pending';
-            $order->status_pembayaran = $order->status_pembayaran ?? 'pending';
-            
-            // Ensure dates are properly formatted
-            try {
-                if ($order->tanggal_pengiriman && !is_object($order->tanggal_pengiriman)) {
-                    $order->tanggal_pengiriman = \Carbon\Carbon::parse($order->tanggal_pengiriman);
-                }
-            } catch (\Exception $e) {
-                $order->tanggal_pengiriman = \Carbon\Carbon::now();
-            }
-            
-            return $order;
-        });
-    }
-
-    /**
-     * Debug method untuk melihat data raw
-     */
-    public function debug()
-    {
-        $user = Auth::user();
-        $allOrders = DaftarPesanan::where('nama_pelanggan', $user->name)->get();
-        
-        Log::info('DEBUG - All orders for user:', [
-            'user' => $user->name,
-            'total_orders' => $allOrders->count(),
-            'orders' => $allOrders->map(function($order) {
-                return [
-                    'order_id' => $order->order_id,
-                    'status_pembayaran' => $order->status_pembayaran,
-                    'status_pengiriman' => $order->status_pengiriman,
-                    'created_at' => $order->created_at
-                ];
-            })->toArray()
-        ]);
-        
-        return response()->json(['debug' => 'Check laravel.log for details']);
     }
 
     /**
@@ -189,90 +81,29 @@ class PesananController extends Controller
     public function acceptOrder(Request $request, $id)
     {
         try {
-            Log::info('Accept order request received', [
-                'order_id' => $id,
-                'user_id' => Auth::id(),
-                'user_name' => Auth::user()->name
-            ]);
-
-            DB::beginTransaction();
-
-            // Find the order dengan validasi user
             $order = DaftarPesanan::where('id', $id)
-                ->where('nama_pelanggan', Auth::user()->name)
-                ->first();
+                                  ->where('user_id', Auth::id())
+                                  ->first();
 
             if (!$order) {
-                Log::warning('Order not found or access denied', [
-                    'order_id' => $id,
-                    'user_name' => Auth::user()->name
-                ]);
-                
                 return response()->json([
                     'success' => false,
-                    'message' => 'Pesanan tidak ditemukan atau Anda tidak memiliki akses'
+                    'message' => 'Pesanan tidak ditemukan'
                 ], 404);
             }
 
-            // Validate current status
-            if ($order->status_pengiriman !== 'dikirim') {
-                Log::warning('Invalid status for acceptance', [
-                    'order_id' => $order->order_id,
-                    'current_status' => $order->status_pengiriman
-                ]);
-                
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Pesanan tidak dapat diterima. Status saat ini: ' . $order->status_pengiriman
-                ], 422);
-            }
-
-            // Update order status
-            $updated = $order->update([
-                'status_pengiriman' => 'diterima',
-                'delivered_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            if (!$updated) {
-                throw new \Exception('Gagal memperbarui status pesanan');
-            }
-
-            DB::commit();
-
-            Log::info('Order accepted successfully', [
-                'order_id' => $order->order_id,
-                'user_id' => Auth::id(),
-                'user_name' => Auth::user()->name,
-                'accepted_at' => now()
-            ]);
+            $order->update(['status_pengiriman' => 'diterima']);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pesanan berhasil diterima',
-                'data' => [
-                    'order_id' => $order->order_id,
-                    'new_status' => 'diterima',
-                    'updated_at' => $order->updated_at->toISOString()
-                ]
+                'message' => 'Pesanan berhasil diterima'
             ]);
 
         } catch (\Exception $e) {
-            DB::rollback();
-            
-            Log::error('Error accepting order', [
-                'order_id' => $id,
-                'user_id' => Auth::id(),
-                'user_name' => Auth::user()->name ?? 'unknown',
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
+            Log::error('Error accepting order: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan internal server: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan sistem'
             ], 500);
         }
     }

@@ -9,50 +9,152 @@
         color: inherit;
     }
 
+    /* Search suggestion styles */
+    .search-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        width: 40%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1001;
+        display: none;
+    }
+
+    .search-suggestions.show {
+        display: block;
+    }
+
+    .suggestion-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: background-color 0.2s ease;
+    }
+
+    .suggestion-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .suggestion-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    .suggestion-info {
+        flex: 1;
+    }
+
+    .suggestion-name {
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 2px 0;
+        font-size: 14px;
+    }
+
+    .suggestion-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .suggestion-category {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 11px;
+    }
+
+    .suggestion-price {
+        font-weight: 600;
+        color: #2e7d32;
+    }
+
+    .no-suggestions {
+        padding: 15px;
+        text-align: center;
+        color: #666;
+        font-style: italic;
+    }
+
+    .search-loading {
+        padding: 15px;
+        text-align: center;
+        color: #666;
+    }
+
     /* Update these styles in navbar.blade.php */
     .cart-icon {
-    position: relative;
-    display: flex;
-    align-items: center;
-    cursor: pointer; /* Add cursor pointer */
-    text-decoration: none;
-    color: inherit;
-}
+        position: relative;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
 
-.cart-icon:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
-}
+    .cart-icon:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s ease;
+    }
 
-.cart-icon img {
-    width: 40px;   /* Match original size */
-    height: 40px;  /* Match original size */
-    filter: brightness(0); /* Tambahkan filter untuk membuat icon hitam */
-}
+    .cart-icon img {
+        width: 40px;
+        height: 40px;
+        filter: brightness(0);
+    }
 
-.cart-icon::after {
-    content: attr(data-count);
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    color: black;
-    font-size: 12px;
-    font-weight: bold;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    opacity: 0;
-    transform: scale(0);
-    transition: all 0.3s ease;
-}
+    .cart-icon::after {
+        content: attr(data-count);
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        color: black;
+        font-size: 12px;
+        font-weight: bold;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s ease;
+    }
 
-.cart-icon.has-items::after {
-    opacity: 1;
-    transform: scale(1);
-}
+    .cart-icon.has-items::after {
+        opacity: 1;
+        transform: scale(1);
+    }
 
     /* Navbar Styles */
     nav.navbar {
@@ -108,16 +210,6 @@
     }
 
     .navbar .search-bar {
-        display: flex;
-        align-items: center;
-        background-color: #fff;
-        padding: 10px;
-        border-radius: 5px;
-        width: 40%;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .navbar .search-bar input[type="text"] {
         border: none;
         outline: none;
         flex: 1;
@@ -125,7 +217,7 @@
         font-size: 14px;
     }
 
-    .navbar .search-bar button {
+    .navbar .search-container button {
         border: none;
         background: none;
         cursor: pointer;
@@ -165,7 +257,7 @@
             order: 0;
         }
 
-        .navbar .search-bar {
+        .navbar .search-container {
             order: 3;
             width: 100%;
             margin-top: 10px;
@@ -176,7 +268,7 @@
             height: 0;
         }
 
-        .navbar .search-bar.active {
+        .navbar .search-container.active {
             transform: translateY(0);
             opacity: 1;
             pointer-events: all;
@@ -258,14 +350,14 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #000; /* Ubah dari white ke hitam */
+        color: #000;
     }
 
     .navbar .profile img {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        filter: brightness(0); /* Tambahkan filter untuk membuat icon hitam */
+        filter: brightness(0);
     }
 
     /* Add these new styles to your existing navbar CSS */
@@ -290,7 +382,7 @@
             display: block;
         }
 
-        .navbar .search-bar {
+        .navbar .search-container {
             display: none;
         }
 
@@ -351,7 +443,7 @@
     }
 
     .notification-icon:hover {
-        color: #444; /* Darker on hover */
+        color: #444;
     }
 
     .notification-badge {
@@ -391,7 +483,7 @@
     }
 
     .notification-icon:hover {
-        color: #444; /* Darker on hover */
+        color: #444;
     }
 
     /* Update cart icon style */
@@ -404,7 +496,7 @@
     .cart-icon img {
         width: 40px;
         height: 40px;
-        filter: brightness(0); /* Tambahkan filter untuk membuat icon hitam */
+        filter: brightness(0);
     }
 
     .cart-icon:hover img {
@@ -477,11 +569,21 @@
         <span></span>
     </div>
 
-    <!-- Search Bar -->
-    <form class="search-bar" action="{{ route('search') }}" method="GET">
-        <input type="text" name="query" placeholder="Search products..." value="{{ request('query') }}">
-        <button type="submit"><i class="fas fa-search"></i></button>
-    </form>
+    <!-- Search Container with Suggestions -->
+    <div class="search-container" id="search-container">
+        <input type="text" 
+               class="search-bar" 
+               id="search-input" 
+               placeholder="Cari makanan..." 
+               autocomplete="off">
+        <button type="button" id="search-btn">
+            <i class="fas fa-search"></i>
+        </button>
+        
+        <div class="search-suggestions" id="search-suggestions">
+            <!-- Suggestions will be populated here -->
+        </div>
+    </div>
 
     <!-- Navigation Links -->
     <ul class="nav-links">
@@ -491,12 +593,14 @@
         <li><a href="{{ route('contact.index') }}">Contact</a></li>
     </ul>
 
+    <div class="navbar-right">
+        <!-- Notification -->
         <a href="{{ route('notifications.index') }}" class="notification-icon">
-    <i class="fas fa-bell"></i>
-    <span class="notification-badge">0</span>
-</a>
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">0</span>
+        </a>
 
-        <!-- Update cart icon HTML section -->
+        <!-- Cart -->
         <a href="{{ route('keranjang.index') }}" class="cart-icon">
             <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
         </a>
@@ -511,48 +615,311 @@
 </nav>
 
 <script>
-// Updated JavaScript for navbar.blade.php
+// Enhanced JavaScript for navbar search functionality
 document.addEventListener('DOMContentLoaded', function() {
+    // Element references
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
-    const searchBar = document.querySelector('.search-bar');
+    const searchContainer = document.querySelector('.search-container');
+    const searchInput = document.getElementById('search-input');
+    const searchSuggestions = document.getElementById('search-suggestions');
+    let searchTimeout;
+    let currentRequest;
     
-    // Add index to nav items for staggered animation
-    document.querySelectorAll('.nav-links li').forEach((item, index) => {
-        item.style.setProperty('--item-index', index);
-    });
+    // Initialize navbar
+    initializeNavbar();
     
-    hamburger.addEventListener('click', function(e) {
-        e.stopPropagation();
-        // Toggle active classes
-        hamburger.classList.toggle('active');
-        navLinks.classList.toggle('active');
-        searchBar.classList.toggle('active');
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', function(event) {
-        const isClickInside = navLinks.contains(event.target) || 
-                            hamburger.contains(event.target) ||
-                            searchBar.contains(event.target);
+    /**
+     * Initialize navbar functionality
+     */
+    function initializeNavbar() {
+        setupHamburgerMenu();
+        setupSearchFunctionality();
+        setupCartCounter();
+        setupNotificationBadge();
+    }
+    
+    /**
+     * Setup hamburger menu
+     */
+    function setupHamburgerMenu() {
+        // Add index to nav items for staggered animation
+        document.querySelectorAll('.nav-links li').forEach((item, index) => {
+            item.style.setProperty('--item-index', index);
+        });
         
-        if (!isClickInside) {
-            hamburger.classList.remove('active');
-            navLinks.classList.remove('active');
-            searchBar.classList.remove('active');
+        hamburger?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMobileMenu();
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInside = navLinks?.contains(event.target) || 
+                                hamburger?.contains(event.target) ||
+                                searchContainer?.contains(event.target);
+            
+            if (!isClickInside) {
+                closeMobileMenu();
+                hideSuggestions();
+            }
+        });
+
+        // Prevent clicks inside search container from closing menu
+        searchContainer?.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+    
+    /**
+     * Toggle mobile menu
+     */
+    function toggleMobileMenu() {
+        hamburger?.classList.toggle('active');
+        navLinks?.classList.toggle('active');
+        searchContainer?.classList.toggle('active');
+    }
+    
+    /**
+     * Close mobile menu
+     */
+    function closeMobileMenu() {
+        hamburger?.classList.remove('active');
+        navLinks?.classList.remove('active');
+        searchContainer?.classList.remove('active');
+    }
+    
+    /**
+     * Setup search functionality
+     */
+    function setupSearchFunctionality() {
+        if (!searchInput || !searchSuggestions) {
+            console.warn('Search elements not found');
+            return;
         }
-    });
 
-    // Prevent clicks inside search bar from closing menu
-    searchBar.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
+        // Search input events
+        searchInput.addEventListener('input', handleSearchInput);
+        searchInput.addEventListener('blur', handleSearchBlur);
+        searchInput.addEventListener('focus', handleSearchFocus);
+        searchInput.addEventListener('keydown', handleSearchKeydown);
+    }
+    
+    /**
+     * Handle search input
+     */
+    function handleSearchInput() {
+        const query = this.value.trim();
+        
+        // Cancel previous request
+        if (currentRequest) {
+            currentRequest.abort();
+        }
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            hideSuggestions();
+            return;
+        }
 
-    // Function to update cart counter
+        searchTimeout = setTimeout(() => {
+            fetchSuggestions(query);
+        }, 300); // Debounce 300ms
+    }
+    
+    /**
+     * Handle search blur
+     */
+    function handleSearchBlur() {
+        setTimeout(() => {
+            hideSuggestions();
+        }, 150);
+    }
+    
+    /**
+     * Handle search focus
+     */
+    function handleSearchFocus() {
+        const query = this.value.trim();
+        if (query.length >= 2) {
+            fetchSuggestions(query);
+        }
+    }
+    
+    /**
+     * Handle search keyboard navigation
+     */
+    function handleSearchKeydown(e) {
+        // Add keyboard navigation for suggestions here if needed
+        if (e.key === 'Escape') {
+            hideSuggestions();
+            this.blur();
+        }
+    }
+
+    /**
+     * Fetch search suggestions
+     */
+    async function fetchSuggestions(query) {
+        try {
+            showLoading();
+            
+            // Create AbortController for request cancellation
+            const controller = new AbortController();
+            currentRequest = controller;
+            
+            const response = await fetch(`/api/search/suggestions?query=${encodeURIComponent(query)}`, {
+                signal: controller.signal,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const suggestions = await response.json();
+            displaySuggestions(suggestions);
+            
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.log('Search request cancelled');
+                return;
+            }
+            
+            console.error('Error fetching suggestions:', error);
+            showError('Terjadi kesalahan saat mencari');
+        } finally {
+            currentRequest = null;
+        }
+    }
+
+    /**
+     * Show loading state
+     */
+    function showLoading() {
+        searchSuggestions.innerHTML = '<div class="search-loading">Mencari...</div>';
+        searchSuggestions.classList.add('show');
+    }
+    
+    /**
+     * Show error message
+     */
+    function showError(message) {
+        searchSuggestions.innerHTML = `<div class="no-suggestions">${message}</div>`;
+        searchSuggestions.classList.add('show');
+    }
+
+    /**
+     * Display search suggestions
+     */
+    function displaySuggestions(suggestions) {
+        if (!Array.isArray(suggestions)) {
+            console.error('Invalid suggestions format:', suggestions);
+            showError('Format data tidak valid');
+            return;
+        }
+        
+        if (suggestions.length === 0) {
+            searchSuggestions.innerHTML = '<div class="no-suggestions">Tidak ada hasil ditemukan</div>';
+        } else {
+            searchSuggestions.innerHTML = suggestions.map(item => createSuggestionHTML(item)).join('');
+            attachSuggestionListeners();
+        }
+        
+        searchSuggestions.classList.add('show');
+    }
+    
+    /**
+     * Create suggestion HTML
+     */
+    function createSuggestionHTML(item) {
+        return `
+            <div class="suggestion-item" data-url="${escapeHtml(item.url)}">
+                <img src="${escapeHtml(item.image)}" 
+                     alt="${escapeHtml(item.nama_makanan)}" 
+                     class="suggestion-image"
+                     onerror="this.src='{{ asset('assets/default-food.png') }}'">
+                <div class="suggestion-info">
+                    <p class="suggestion-name">${escapeHtml(item.nama_makanan)}</p>
+                    <div class="suggestion-details">
+                        <span class="suggestion-category">${escapeHtml(item.kategori)}</span>
+                        <span class="suggestion-price">Rp ${escapeHtml(item.harga)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    /**
+     * Escape HTML to prevent XSS
+     */
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    /**
+     * Attach click listeners to suggestion items
+     */
+    function attachSuggestionListeners() {
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                if (url && url !== 'null' && url !== '') {
+                    window.location.href = url;
+                } else {
+                    console.warn('Invalid URL for suggestion item');
+                }
+            });
+        });
+    }
+
+    /**
+     * Hide search suggestions
+     */
+    function hideSuggestions() {
+        searchSuggestions?.classList.remove('show');
+    }
+
+    /**
+     * Setup cart counter functionality
+     */
+    function setupCartCounter() {
+        updateCartCounter();
+        syncCartCounter();
+        
+        // Listen for storage changes
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'cartItems') {
+                updateCartCounter();
+            }
+        });
+
+        // Override localStorage.setItem to trigger events
+        const originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+            const event = new Event('storage');
+            event.key = key;
+            originalSetItem.apply(this, arguments);
+            window.dispatchEvent(event);
+        };
+    }
+    
+    /**
+     * Update cart counter display
+     */
     function updateCartCounter() {
         const cartIcon = document.querySelector('.cart-icon');
+        if (!cartIcon) return;
+        
         const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const totalItems = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
         
         if (totalItems > 0) {
             cartIcon.setAttribute('data-count', totalItems);
@@ -563,93 +930,89 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Update counter initially
-    updateCartCounter();
-
-    // Listen for storage changes to update counter
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'cartItems') {
-            updateCartCounter();
+    /**
+     * Sync cart counter with server
+     */
+    async function syncCartCounter() {
+        try {
+            const response = await fetch('/keranjang/count', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                const cartIcon = document.querySelector('.cart-icon');
+                if (cartIcon) {
+                    if (data.count > 0) {
+                        cartIcon.setAttribute('data-count', data.count.toString());
+                        cartIcon.classList.add('has-items');
+                    } else {
+                        cartIcon.removeAttribute('data-count');
+                        cartIcon.classList.remove('has-items');
+                    }
+                }
+                
+                // Sync localStorage
+                localStorage.removeItem('cartItems');
+                if (data.items && data.items.length > 0) {
+                    localStorage.setItem('cartItems', JSON.stringify(data.items));
+                }
+            }
+        } catch (error) {
+            console.error('Error syncing cart:', error);
         }
-    });
+    }
 
-    // Update cart counter when items are added/removed
-    const originalSetItem = localStorage.setItem;
-    localStorage.setItem = function(key, value) {
-        const event = new Event('storage');
-        event.key = key;
-        originalSetItem.apply(this, arguments);
-        window.dispatchEvent(event);
-    };
+    /**
+     * Setup notification badge
+     */
+    function setupNotificationBadge() {
+        updateNotificationBadge();
+        
+        // Update every 30 seconds
+        setInterval(updateNotificationBadge, 30000);
+    }
 
-    // Panggil saat halaman dimuat
-    syncCartCounter();
-});
+    /**
+     * Update notification badge
+     */
+    async function updateNotificationBadge() {
+        try {
+            const response = await fetch('/notifications/count');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            const badge = document.querySelector('.notification-badge');
+            if (badge) {
+                badge.textContent = data.count || '0';
+                badge.style.display = data.count > 0 ? 'block' : 'none';
+            }
+        } catch (error) {
+            console.error('Error updating notification badge:', error);
+        }
+    }
 
-// Tambahkan event listener untuk tombol logout
-document.addEventListener('DOMContentLoaded', function() {
+    /**
+     * Handle logout - clear cart items
+     */
     const logoutForm = document.querySelector('form[action="{{ route('logout') }}"]');
     if (logoutForm) {
         logoutForm.addEventListener('submit', function() {
-            localStorage.removeItem('cartItems'); // Hapus cart items saat logout
-        });
-    }
-});
-
-async function syncCartCounter() {
-    try {
-        const response = await fetch('/keranjang/count', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            const cartIcon = document.querySelector('.cart-icon');
-            // Hanya tampilkan counter jika ada items
-            if (data.count > 0) {
-                cartIcon.setAttribute('data-count', data.count.toString());
-            } else {
-                cartIcon.removeAttribute('data-count');
-            }
-            
-            // Clear localStorage dan set ulang sesuai database
             localStorage.removeItem('cartItems');
-            if (data.items && data.items.length > 0) {
-                localStorage.setItem('cartItems', JSON.stringify(data.items));
-            }
-        }
-    } catch (error) {
-        console.error('Error syncing cart:', error);
+        });
     }
-}
-
-// Tambahkan setelah syncCartCounter()
-
-async function updateNotificationBadge() {
-    try {
-        const response = await fetch('/notifications/count');
-        const data = await response.json();
-        
-        const badge = document.querySelector('.notification-badge');
-        if (badge) {
-            badge.textContent = data.count || '0';
-            badge.style.display = data.count > 0 ? 'block' : 'none';
-        }
-    } catch (error) {
-        console.error('Error updating notification badge:', error);
-    }
-}
-
-// Update badge setiap 30 detik
-setInterval(updateNotificationBadge, 30000);
-
-// Update saat halaman dimuat
-document.addEventListener('DOMContentLoaded', function() {
-    updateNotificationBadge();
 });
 </script>
