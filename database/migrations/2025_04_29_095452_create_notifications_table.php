@@ -10,13 +10,18 @@ class CreateNotificationsTable extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('message');
-            $table->string('icon_type');
-            $table->string('order_id');
+            $table->string('type')->default('info'); // order, delivery, payment, review
+            $table->string('icon_type')->default('bell'); // box, truck, star, etc
+            $table->foreignId('order_id')->nullable()->constrained('daftar_pesanans')->onDelete('cascade');
             $table->boolean('is_read')->default(false);
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
+            
+            $table->index(['user_id', 'is_read']);
+            $table->index(['user_id', 'created_at']);
         });
     }
 

@@ -348,3 +348,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reviews', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
     Route::get('/reviews/{orderId}', [App\Http\Controllers\ReviewController::class, 'show'])->name('reviews.show');
 });
+
+// Tambahkan routes untuk notifications
+Route::middleware(['auth'])->group(function () {
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/api', [NotificationController::class, 'getNotifications'])->name('notifications.api');
+    Route::get('/notifications/count', [NotificationController::class, 'getUnreadCount'])->name('notifications.count');
+    Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'delete'])->name('notifications.delete');
+    Route::post('/notifications/delete-multiple', [NotificationController::class, 'deleteMultiple'])->name('notifications.deleteMultiple');
+});

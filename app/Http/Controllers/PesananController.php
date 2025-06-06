@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\DaftarPesanan;
+use App\Services\NotificationService;
 
 class PesananController extends Controller
 {
@@ -93,6 +94,13 @@ class PesananController extends Controller
             }
 
             $order->update(['status_pengiriman' => 'diterima']);
+
+            NotificationService::createStatusChangeNotification(
+                $order->id,
+                Auth::id(),
+                'dikirim',
+                'diterima'
+            );
 
             return response()->json([
                 'success' => true,

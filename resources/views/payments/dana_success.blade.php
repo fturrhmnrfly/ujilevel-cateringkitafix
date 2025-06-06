@@ -236,7 +236,7 @@
             </div>
         </div>
         
-        <a href="{{ route('dashboard') }}" class="home-button">Kembali ke Home</a>
+        <a href="{{ route('pesanan.index') }}" class="order-button">Lihat Pesanan</a>
     </div>
 
     <script>
@@ -283,11 +283,11 @@
             } catch (error) {
                 console.error('Error displaying order data:', error);
                 // Set default values if there's an error
-                document.getElementById('orderId').textContent = '-';
-                document.getElementById('orderDate').textContent = '-';
-                document.getElementById('totalPayment').textContent = '-';
+                document.getElementById('orderId').textContent = generateOrderId();
+                document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID');
+                document.getElementById('totalPayment').textContent = 'Rp 0';
                 document.getElementById('deliveryDate').textContent = '-';
-                document.getElementById('deliveryTime').textContent = '-'; 
+                document.getElementById('deliveryTime').textContent = '-';
                 document.getElementById('deliveryAddress').textContent = '-';
             }
         });

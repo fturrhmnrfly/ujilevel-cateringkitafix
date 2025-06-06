@@ -7,6 +7,7 @@ use App\Models\DaftarPesanan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 
 class CheckOutController extends Controller
 {
@@ -60,6 +61,8 @@ class CheckOutController extends Controller
             ]);
 
             DB::commit();
+
+            NotificationService::createOrderNotification($daftarPesanan->id, Auth::id());
 
             Log::info('Order created successfully:', [
                 'order_id' => $daftarPesanan->order_id,

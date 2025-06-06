@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 
 class AdminDaftarPesananController extends Controller
 {
@@ -223,6 +224,16 @@ class AdminDaftarPesananController extends Controller
                 'admin_id' => Auth::id(),
                 'catatan' => $validated['catatan'] ?? null
             ]);
+
+            // Send notification if status is 'dikirim' or 'diterima'
+            if ($newStatus === 'dikirim' || $newStatus === 'diterima') {
+                NotificationService::createStatusChangeNotification(
+                    $pesanan->id, 
+                    $pesanan->user_id, 
+                    $currentStatus, 
+                    $newStatus
+                );
+            }
 
             // Return success response
             return response()->json([

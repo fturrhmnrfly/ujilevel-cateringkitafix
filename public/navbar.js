@@ -394,8 +394,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             
             if (notificationBadge) {
-                notificationBadge.textContent = data.count || '0';
-                notificationBadge.style.display = data.count > 0 ? 'block' : 'none';
+                const count = data.count || 0;
+                notificationBadge.textContent = count;
+                
+                if (count > 0) {
+                    notificationBadge.style.display = 'block';
+                } else {
+                    notificationBadge.style.display = 'none';
+                }
             }
         } catch (error) {
             console.error('Error updating notification badge:', error);
@@ -461,8 +467,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (notificationModal) {
             notificationModal.classList.remove('show');
             document.body.style.overflow = '';
+            
+            // Clear selection dan reset controls
             selectedNotifications.clear();
             updateDeleteControls();
+            
+            // Reset modal body untuk memastikan fresh load saat dibuka lagi
+            if (notificationModalBody) {
+                notificationModalBody.innerHTML = '';
+            }
         }
     }
 
@@ -485,11 +498,36 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             displayNotifications(data.notifications || []);
             
+            // Mark all as read when modal is opened
+            await markAllAsRead();
+            
         } catch (error) {
             console.error('Error loading notifications:', error);
             if (notificationModalBody) {
                 notificationModalBody.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">Gagal memuat notifikasi</div>';
             }
+        }
+    }
+
+    /**
+     * Mark all notifications as read
+     */
+    async function markAllAsRead() {
+        try {
+            const response = await fetch('/notifications/mark-all-read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            });
+
+            if (response.ok) {
+                // Update badge to 0
+                updateNotificationBadge();
+            }
+        } catch (error) {
+            console.error('Error marking all as read:', error);
         }
     }
 
@@ -506,47 +544,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>Tidak ada notifikasi</p>
                 </div>
             `;
+            
+            // Pastikan delete controls disembunyikan
+            if (notificationDeleteControls) {
+                notificationDeleteControls.classList.remove('show');
+            }
             return;
         }
 
-        notificationModalBody.innerHTML = notifications.map(notification => `
-            <div class="notification-item" data-id="${notification.id}">
-                <input type="checkbox" class="notification-checkbox" data-id="${notification.id}">
-                <div class="notification-icon-wrapper">
-                    <img src="${getNotificationIcon(notification.type || notification.icon_type)}" 
-                         alt="Notification" 
-                         class="notification-icon-img">
+        notificationModalBody.innerHTML = notifications.map(notification => {
+            const timeAgo = formatNotificationTime(notification.created_at);
+            return `
+                <div class="notification-item" data-id="${notification.id}">
+                    <input type="checkbox" class="notification-checkbox" data-id="${notification.id}">
+                    <div class="notification-icon-wrapper">
+                        <img src="${getNotificationIcon(notification.icon_type)}" 
+                             alt="Notification" 
+                             class="notification-icon-img">
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${escapeHtml(notification.title)}</div>
+                        <div class="notification-message">${escapeHtml(notification.message)}</div>
+                        <div class="notification-time">${timeAgo}</div>
+                    </div>
                 </div>
-                <div class="notification-content">
-                    <div class="notification-title">${escapeHtml(notification.title)}</div>
-                    <div class="notification-message">${escapeHtml(notification.message)}</div>
-                    <div class="notification-time">${formatNotificationTime(notification.created_at)}</div>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         // Attach checkbox listeners
         attachCheckboxListeners();
     }
 
     /**
-     * Get notification icon based on type
-     */
-    function getNotificationIcon(type) {
-        const baseUrl = window.location.origin;
-        const iconMap = {
-            'order': `${baseUrl}/assets/box-icon.png`,
-            'delivery': `${baseUrl}/assets/truck-icon.png`,
-            'payment': `${baseUrl}/assets/payment-icon.png`,
-            'review': `${baseUrl}/assets/star-icon.png`,
-            'default': `${baseUrl}/assets/bell-icon.png`
-        };
-
-        return iconMap[type] || iconMap['default'];
-    }
-
-    /**
-     * Format notification time
+     * Format notification time dalam bahasa Indonesia
      */
     function formatNotificationTime(dateString) {
         const date = new Date(dateString);
@@ -569,12 +599,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric'
+            }) + ', ' + date.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
     }
 
     /**
-     * Attach checkbox listeners
+     * Get notification icon based on type
+     */
+    function getNotificationIcon(type) {
+        const baseUrl = window.location.origin;
+        const iconMap = {
+            'box': `${baseUrl}/assets/icon/box.svg`,
+            'truck': `${baseUrl}/assets/icon/truck.svg`,
+            'star': `${baseUrl}/assets/icon/bintang.svg`,
+            'credit-card': `${baseUrl}/assets/payment-icon.png`,
+            'bell': `${baseUrl}/assets/bell-icon.png`
+        };
+
+        return iconMap[type] || iconMap['bell'];
+    }
+
+    /**
+     * Attach checkbox listeners for notifications
      */
     function attachCheckboxListeners() {
         document.querySelectorAll('.notification-checkbox').forEach(checkbox => {
@@ -655,6 +704,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update badge
                 updateNotificationBadge();
 
+                // Cek apakah masih ada notifikasi tersisa
+                checkAndShowEmptyState();
+
                 // Show success message (optional)
                 console.log(`${data.deleted_count} notifikasi berhasil dihapus`);
             }
@@ -663,6 +715,78 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Gagal menghapus notifikasi');
         }
     }
+
+    /**
+     * Cek dan tampilkan state kosong jika tidak ada notifikasi
+     */
+    function checkAndShowEmptyState() {
+        if (!notificationModalBody) return;
+
+        // Cek apakah masih ada notification-item di dalam modal body
+        const remainingNotifications = notificationModalBody.querySelectorAll('.notification-item');
+        
+        if (remainingNotifications.length === 0) {
+            // Tampilkan pesan "Tidak ada notifikasi"
+            notificationModalBody.innerHTML = `
+                <div class="no-notifications">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>Tidak ada notifikasi</p>
+                </div>
+            `;
+            
+            // Sembunyikan delete controls karena tidak ada notifikasi
+            if (notificationDeleteControls) {
+                notificationDeleteControls.classList.remove('show');
+            }
+        }
+    }
+
+    /**
+     * Delete single notification (untuk future use)
+     */
+    async function deleteSingleNotification(notificationId) {
+        try {
+            const response = await fetch(`/notifications/${notificationId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Remove notification from DOM
+                const item = document.querySelector(`[data-id="${notificationId}"]`);
+                if (item) {
+                    item.remove();
+                }
+
+                // Remove from selected set if it was selected
+                selectedNotifications.delete(notificationId.toString());
+                updateDeleteControls();
+
+                // Update badge
+                updateNotificationBadge();
+
+                // Cek dan tampilkan empty state jika perlu
+                checkAndShowEmptyState();
+
+                console.log('Notifikasi berhasil dihapus');
+            }
+        } catch (error) {
+            console.error('Error deleting notification:', error);
+            alert('Gagal menghapus notifikasi');
+        }
+    }
+
+    // Update interval untuk real-time notifications
+    setInterval(updateNotificationBadge, 30000); // Update setiap 30 detik
 
     /**
      * Handle logout - clear cart items

@@ -41,6 +41,22 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
+        /* Informasi order detail */
+        .payment-info {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .order-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #333;
+        }
+        
         /* Success icon */
         .success-icon {
             width: 60px;
@@ -69,23 +85,7 @@
             margin-bottom: 20px;
         }
         
-        /* Payment info */
-        .payment-info {
-            background-color: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .order-details {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 14px;
-            color: #333;
-        }
-        
-        /* Shipping info */
+        /* Informasi pengiriman */
         .shipping-info-box {
             background-color: white;
             border: 1px solid #e2e8f0;
@@ -118,8 +118,8 @@
         }
         
         /* Button styles */
-        .home-button {
-            background-color: rgb(79, 94, 193);
+        .order-button {
+            background-color: #2c2c77;
             color: white;
             padding: 12px;
             border: none;
@@ -133,8 +133,8 @@
             transition: background-color 0.2s;
         }
         
-        .home-button:hover {
-            background-color: rgb(63, 75, 154);
+        .order-button:hover {
+            background-color: #1f1f5c;
         }
         
         /* Price formatting */
@@ -148,7 +148,7 @@
     <div class="header">
         Catering Kita
     </div>
-    
+
     <div class="container">
         <div class="success-icon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -197,7 +197,7 @@
             </div>
         </div>
         
-        <a href="{{ route('dashboard') }}" class="home-button">Kembali ke Home</a>
+        <a href="{{ route('pesanan.index') }}" class="order-button">Lihat Pesanan</a>
     </div>
 
     <script>
@@ -211,19 +211,11 @@
             try {
                 // Get data from localStorage
                 const orderData = JSON.parse(localStorage.getItem('currentOrder')) || {};
-                const shippingData = JSON.parse(localStorage.getItem('shippingData')) || {};
                 const orderTotal = localStorage.getItem('orderTotal');
                 
                 // Display order info
-                if (orderData.id) {
-                    document.getElementById('orderId').textContent = orderData.id;
-                } else {
-                    // Generate new order ID if not exists
-                    document.getElementById('orderId').textContent = generateOrderId();
-                }
-                
-                // Display current date as order date
-                document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID', {
+                document.getElementById('orderId').textContent = orderData.id || generateOrderId();
+                document.getElementById('orderDate').textContent = new Date(orderData.date || new Date()).toLocaleDateString('id-ID', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'
@@ -234,17 +226,16 @@
                     document.getElementById('totalPayment').textContent = `Rp ${parseInt(orderTotal).toLocaleString('id-ID')}`;
                 }
 
-                // Display shipping info
-                if (shippingData) {
-                    document.getElementById('deliveryDate').textContent = shippingData.deliveryDate || '-';
-                    document.getElementById('deliveryTime').textContent = shippingData.deliveryTime || '-';
-                    document.getElementById('deliveryAddress').textContent = shippingData.address || '-';
+                // Display shipping info langsung dari orderData
+                if (orderData) {
+                    document.getElementById('deliveryDate').textContent = orderData.deliveryDate || '-';
+                    document.getElementById('deliveryTime').textContent = orderData.deliveryTime || '-';
+                    document.getElementById('deliveryAddress').textContent = orderData.address || '-';
                 }
 
-                // Clear localStorage after displaying
+                // Clear localStorage after successful display
                 setTimeout(() => {
                     localStorage.removeItem('currentOrder');
-                    localStorage.removeItem('shippingData');
                     localStorage.removeItem('orderTotal');
                     localStorage.removeItem('cartItems');
                     localStorage.removeItem('selectedPaymentMethod');
@@ -253,6 +244,9 @@
             } catch (error) {
                 console.error('Error displaying order data:', error);
                 // Set default values if there's an error
+                document.getElementById('orderId').textContent = generateOrderId();
+                document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID');
+                document.getElementById('totalPayment').textContent = 'Rp 0';
                 document.getElementById('deliveryDate').textContent = '-';
                 document.getElementById('deliveryTime').textContent = '-';
                 document.getElementById('deliveryAddress').textContent = '-';
