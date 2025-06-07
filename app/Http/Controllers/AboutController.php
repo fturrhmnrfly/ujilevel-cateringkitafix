@@ -9,7 +9,9 @@ class AboutController extends Controller
 {
     public function index()
     {
+        // Ambil data tentang kami dari database
         $tentangKami = TentangKami::latest()->first();
+           
         return view('About.index', compact('tentangKami'));
     }
 }
