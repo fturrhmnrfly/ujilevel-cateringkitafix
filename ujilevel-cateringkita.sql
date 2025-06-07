@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 06, 2025 at 05:10 PM
+-- Generation Time: Jun 07, 2025 at 05:40 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.12
 
@@ -174,7 +174,8 @@ INSERT INTO `daftar_pesanans` (`id`, `order_id`, `nama_pelanggan`, `user_id`, `k
 (116, 'ORD1749052811367896', 'ban user', 8, 'Lainnya', NULL, '2025-06-03 17:00:00', 2, '2025-06-05', '14:01:00', 'lalalalalalalalalalalalalalalallaal', '089539298232', 'kokoookokokokokokokokokokookokkookkokookookkookkokokokp', 'economy', 26000.00, 'diterima', 'pending', '2025-06-04 09:00:17', '2025-06-04 09:17:23'),
 (117, 'ORD1749053890012128', 'ban user', 8, 'Lainnya', NULL, '2025-06-03 17:00:00', 2, '2025-06-16', '15:17:00', 'Bogor', '089539298232', 'leci', 'instant', 34000.00, 'diterima', 'pending', '2025-06-04 09:18:14', '2025-06-04 09:24:34'),
 (119, 'ORD1749144441258577', 'ban user', 8, 'Lainnya', NULL, '2025-06-04 17:00:00', 2, '2025-06-11', '16:27:00', 'dasdasdasdsa', '0895494994999', 'opsional', 'regular', 29000.00, 'diterima', 'pending', '2025-06-05 10:27:25', '2025-06-05 10:29:19'),
-(120, 'ORD1749155597714981', 'ban user', 8, 'Lainnya', NULL, '2025-06-04 17:00:00', 1, '2025-06-14', '08:33:00', 'jkk', '0895392982328', 'jkghj', 'instant', 22000.00, 'diproses', 'pending', '2025-06-05 13:33:22', '2025-06-05 13:33:22');
+(120, 'ORD1749155597714981', 'ban user', 8, 'Lainnya', NULL, '2025-06-04 17:00:00', 1, '2025-06-14', '08:33:00', 'jkk', '0895392982328', 'jkghj', 'instant', 22000.00, 'diterima', 'pending', '2025-06-05 13:33:22', '2025-06-06 12:48:18'),
+(121, 'ORD1749240164741910', 'ban user', 8, 'Lainnya', NULL, '2025-06-05 17:00:00', 1, '2025-06-25', '11:02:00', 'MDTV', '087652552114', 'TRANS TV', 'instant', 22000.00, 'diterima', 'pending', '2025-06-06 13:02:50', '2025-06-06 13:08:24');
 
 -- --------------------------------------------------------
 
@@ -566,9 +567,11 @@ CREATE TABLE `notifications` (
   `user_id` bigint UNSIGNED NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'box',
-  `order_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'info',
+  `icon_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'bell',
+  `order_id` bigint UNSIGNED DEFAULT NULL,
   `is_read` tinyint(1) NOT NULL DEFAULT '0',
+  `read_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -722,7 +725,7 @@ INSERT INTO `profiles` (`id`, `user_id`, `first_name`, `last_name`, `phone`, `ad
 (5, 5, 'anton', 'manatap', '0881011562638', 'ciomas bogor', NULL, '2025-04-29 21:02:39', '2025-04-29 21:02:39'),
 (6, 6, 'admin', 'admina', '0881011562638', 'adakdakdmad', NULL, '2025-05-27 07:02:59', '2025-05-27 07:02:59'),
 (7, 7, 'Gibran', 'Tes', '0895392982328', 'Di daerah bogor raya', NULL, '2025-06-03 09:20:51', '2025-06-03 09:20:51'),
-(8, 8, 'ban', 'user', '0895387455678', 'fsdaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', NULL, '2025-06-03 09:23:20', '2025-06-03 09:23:20');
+(8, 8, 'dan', 'user', '0895387455678', 'fsdaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', NULL, '2025-06-03 09:23:20', '2025-06-03 09:23:20');
 
 -- --------------------------------------------------------
 
@@ -765,8 +768,9 @@ CREATE TABLE `reviews` (
 --
 
 INSERT INTO `reviews` (`id`, `user_id`, `order_id`, `order_number`, `quality_rating`, `delivery_rating`, `service_rating`, `average_rating`, `review_text`, `photos`, `status`, `is_verified`, `reviewed_at`, `created_at`, `updated_at`) VALUES
-(2, 8, 119, 'ORD1749144441258577', 5, 5, 5, 5.0, NULL, '[]', 'active', 0, '2025-06-05 12:56:23', '2025-06-05 12:56:23', '2025-06-05 12:56:23'),
-(3, 8, 117, 'ORD1749053890012128', 5, 5, 5, 5.0, 'Woi Jala', '[\"reviews/rf4sLqKNDOdhEd4X8SgihhL7FU33GDrxII1tgsgy.png\", \"reviews/x6zZGwAHYcEcxFC8tLeQtC2oS4FFIIw4IdHo6v1b.png\"]', 'active', 0, '2025-06-05 12:59:55', '2025-06-05 12:59:55', '2025-06-05 12:59:55');
+(2, 8, 119, 'ORD1749144441258577', 5, 5, 5, 5.0, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id elit tellus. Donec rutrum a quam pulvinar dignissim. Nam ultricies nibh ut arcu dignissim aliquam. Aliquam consequat condimentum odio sed auctor. Maecenas eu sagittis risus, ac consequat arcu. Maecenas vehicula dignissim lectus, et luctus ipsum blandit quis. Maecenas vestibulum non mauris a congue. Nulla ut imperdiet ante, et facilisis sapien. Sed sed egestas diam, sit amet molestie nunc. Aenean ornare auctor est, vel faucibus elit molestie et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec venenatis lectus dui, nec imperdiet purus luctus quis.', '[]', 'active', 0, '2025-06-05 12:56:23', '2025-06-05 12:56:23', '2025-06-05 12:56:23'),
+(3, 8, 117, 'ORD1749053890012128', 5, 5, 5, 5.0, 'Woi Jala Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id elit tellus. Donec rutrum a quam pulvinar dignissim. Nam ultricies nibh ut arcu dignissim aliquam. Aliquam consequat condimentum odio sed auctor. Maecenas eu sagittis risus, ac consequat arcu. Maecenas vehicula dignissim lectus, et luctus ipsum blandit quis. Maecenas vestibulum non mauris a congue. Nulla ut imperdiet ante, et facilisis sapien. Sed sed egestas diam, sit amet molestie nunc. Aenean ornare auctor est, vel faucibus elit molestie et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec venenatis lectus dui, nec imperdiet purus luctus quis.', '[\"reviews/rf4sLqKNDOdhEd4X8SgihhL7FU33GDrxII1tgsgy.png\", \"reviews/x6zZGwAHYcEcxFC8tLeQtC2oS4FFIIw4IdHo6v1b.png\"]', 'active', 0, '2025-06-05 12:59:55', '2025-06-05 12:59:55', '2025-06-05 12:59:55'),
+(4, 8, 116, 'ORD1749052811367896', 5, 5, 5, 5.0, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id elit tellus. Donec rutrum a quam pulvinar dignissim. Nam ultricies nibh ut arcu dignissim aliquam. Aliquam consequat condimentum odio sed auctor. Maecenas eu sagittis risus, ac consequat arcu. Maecenas vehicula dignissim lectus, et luctus ipsum blandit quis. Maecenas vestibulum non mauris a congue. Nulla ut imperdiet ante, et facilisis sapien. Sed sed egestas diam, sit amet molestie nunc. Aenean ornare auctor est, vel faucibus', '[\"reviews/tkP6Gn3T4r1y8vwJFFj17ix4pGVJYJdukdIRzF1g.png\"]', 'active', 0, '2025-06-06 10:28:21', '2025-06-06 10:28:21', '2025-06-06 10:28:21');
 
 -- --------------------------------------------------------
 
@@ -788,7 +792,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('v09zTVW2Gi9QgjP2Pjwf61ziGJ4XfvenwNjV5jxO', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRHRqQVB1T0ZtY3ZNQ1ZRdENoUzZEaXdpdDNPSzFnRVl3elVLM3NlaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ub3RpZmljYXRpb25zL2NvdW50Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyOToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL3Blc2FuYW4iO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo4O30=', 1749229835);
+('HnntK2FXqFILR6lGLzshvLjVT1q4Dly4QSx9XZqN', 7, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiemQ5aE14Zlp1THZzRWZYanJCUmdhZEUyV1NZMjFlWEcyYXFUTEVxbSI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NztzOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo0MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL2RhZnRhcnBlc2FuYW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1749240493),
+('v09zTVW2Gi9QgjP2Pjwf61ziGJ4XfvenwNjV5jxO', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRHRqQVB1T0ZtY3ZNQ1ZRdENoUzZEaXdpdDNPSzFnRVl3elVLM3NlaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ub3RpZmljYXRpb25zL2NvdW50Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyOToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL3Blc2FuYW4iO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo4O30=', 1749240802);
 
 -- --------------------------------------------------------
 
@@ -907,7 +912,8 @@ INSERT INTO `transaksis` (`id`, `nama_admin`, `nama_pelanggan`, `tanggal_transak
 (132, 'System', 'ban user', '2025-06-04 16:18:25', 'BCA-1749053905', 'Pembayaran BCA', 'Pembayaran via BCA', 24000.00, 'Menunggu Konfirmasi', 'payment_proofs/vES3U06ONAJEFJy30oSkEkqajlcPLsRSyaPoxOUT.png', '2025-06-04 09:18:25', '2025-06-04 09:18:25'),
 (133, 'System', 'ban user', '2025-06-05 16:42:05', 'DANA-1749141725', 'Pembayaran DANA', 'Pembayaran via DANA', 24000.00, 'Menunggu Konfirmasi', 'payment_proofs/tq9CCHWWGwzGOwr0YGAHJQFtSHDJPcxIDIvqTx6d.png', '2025-06-05 09:42:05', '2025-06-05 09:42:05'),
 (134, 'System', 'ban user', '2025-06-05 17:27:34', 'DANA-1749144454', 'Pembayaran DANA', 'Pembayaran via DANA', 29000.00, 'Menunggu Konfirmasi', 'payment_proofs/DLKiLD4w8WBHQ0Q9BPlmAi2RTtqG1i6WsNZnVAnz.png', '2025-06-05 10:27:34', '2025-06-05 10:27:34'),
-(135, 'System', 'ban user', '2025-06-05 20:33:35', 'GOPAY-1749155615', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 22000.00, 'Menunggu Konfirmasi', 'payment_proofs/CuNnbw53bxyaa0PicDQNMoGLBosdt6DAJcC6imdL.jpg', '2025-06-05 13:33:35', '2025-06-05 13:33:35');
+(135, 'System', 'ban user', '2025-06-05 20:33:35', 'GOPAY-1749155615', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 22000.00, 'Menunggu Konfirmasi', 'payment_proofs/CuNnbw53bxyaa0PicDQNMoGLBosdt6DAJcC6imdL.jpg', '2025-06-05 13:33:35', '2025-06-05 13:33:35'),
+(136, 'System', 'ban user', '2025-06-06 20:03:04', 'BCA-1749240184', 'Pembayaran BCA', 'Pembayaran via BCA', 22000.00, 'Menunggu Konfirmasi', 'payment_proofs/7jg6TD2ra5CH0C5rLNxqU3jcoeqB3hrGZxRrDh2r.png', '2025-06-06 13:03:04', '2025-06-06 13:03:04');
 
 -- --------------------------------------------------------
 
@@ -1114,7 +1120,10 @@ ALTER TABLE `migrations`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `notifications_user_id_foreign` (`user_id`);
+  ADD KEY `notifications_user_id_foreign` (`user_id`),
+  ADD KEY `notifications_order_id_foreign` (`order_id`),
+  ADD KEY `notifications_user_id_is_read_index` (`user_id`,`is_read`),
+  ADD KEY `notifications_user_id_created_at_index` (`user_id`,`created_at`);
 
 --
 -- Indexes for table `notification_admins`
@@ -1269,7 +1278,7 @@ ALTER TABLE `contacts`
 -- AUTO_INCREMENT for table `daftar_pesanans`
 --
 ALTER TABLE `daftar_pesanans`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=122;
 
 --
 -- AUTO_INCREMENT for table `detail_acaras`
@@ -1371,7 +1380,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `notification_admins`
@@ -1425,7 +1434,7 @@ ALTER TABLE `registers`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `status_pembayarans`
@@ -1455,7 +1464,7 @@ ALTER TABLE `tentang_kami`
 -- AUTO_INCREMENT for table `transaksis`
 --
 ALTER TABLE `transaksis`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1501,7 +1510,8 @@ ALTER TABLE `keranjang_items`
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD CONSTRAINT `notifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `notifications_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `daftar_pesanans` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notification_admins`

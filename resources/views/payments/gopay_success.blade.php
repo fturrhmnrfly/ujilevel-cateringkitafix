@@ -137,6 +137,25 @@
             background-color: rgb(63, 75, 154);
         }
         
+        .order-button {
+            background-color: rgb(79, 94, 193);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        
+        .order-button:hover {
+            background-color: rgb(63, 75, 154);
+        }
+        
         /* Price formatting */
         .price {
             font-weight: 600;

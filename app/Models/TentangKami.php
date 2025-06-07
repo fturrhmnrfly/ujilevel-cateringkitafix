@@ -5,6 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TentangKami extends Model
 {
-    protected $table = 'tentang_kami';
+    protected $table = 'tentang_kamis';
     protected $fillable = ['foto', 'deskripsi'];
 }

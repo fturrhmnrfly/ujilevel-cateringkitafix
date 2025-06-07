@@ -119,7 +119,7 @@
         
         /* Button styles */
         .order-button {
-            background-color: #2c2c77;
+            background-color: rgb(79, 94, 193);
             color: white;
             padding: 12px;
             border: none;
@@ -134,7 +134,7 @@
         }
         
         .order-button:hover {
-            background-color: #1f1f5c;
+            background-color: rgb(63, 75, 154);
         }
         
         /* Price formatting */
