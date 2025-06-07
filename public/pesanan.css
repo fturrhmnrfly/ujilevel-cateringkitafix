@@ -134,6 +134,56 @@ nav.navbar { display: flex; justify-content: space-between; align-items: center;
 .btn-success { background: #28a745; color: white; }
 .btn-success:hover { background: #218838; }
 
+/* GRID LAYOUT UNTUK ORDER CARDS - TAMBAHAN BARU */
+.orders-grid-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 25px !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+}
+
+/* UPDATE ORDER CARD UNTUK GRID - TANPA MENGUBAH STYLE YANG ADA */
+.orders-grid-container .order-card,
+.orders-grid-container .order-card-new {
+    max-width: 100% !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* RESPONSIVE UNTUK GRID */
+@media (max-width: 768px) {
+    .orders-grid-container {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+        padding: 10px !important;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .orders-grid-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+        padding: 15px !important;
+    }
+}
+
+@media (min-width: 1400px) {
+    .orders-grid-container {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 30px !important;
+    }
+}
+
+/* EMPTY STATE UNTUK GRID */
+.orders-grid-container + .empty-state {
+    grid-column: 1 / -1 !important;
+    margin: 20px auto !important;
+    max-width: 600px !important;
+}
+
 /* Animations */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideIn { from { opacity: 0; transform: translateY(-20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }

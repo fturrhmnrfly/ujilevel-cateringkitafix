@@ -30,9 +30,11 @@
     </div>
 
     @if(isset($orders) && count($orders) > 0)
-        @foreach($orders as $order)
-            <x-order-card :order="$order" />
-        @endforeach
+        <div class="orders-grid-container">
+            @foreach($orders as $order)
+                <x-order-card :order="$order" />
+            @endforeach
+        </div>
     @else
         <div class="empty-state">
             <img src="{{ asset('assets/empty-order.png') }}" alt="Tidak ada pesanan">

@@ -18,6 +18,16 @@
     
     // Check apakah order sudah direview
     $hasReview = $order->hasReviewByUser(auth()->id());
+    
+    // PERBAIKI PERHITUNGAN SUBTOTAL
+    $biayaPengiriman = 3000; // Biaya pengiriman tetap
+    $subtotal = $order->total_harga - $biayaPengiriman; // Subtotal = Total - Biaya pengiriman
+    
+    // Pastikan subtotal tidak negatif
+    if ($subtotal < 0) {
+        $subtotal = $order->total_harga; // Jika total lebih kecil dari biaya pengiriman, subtotal = total
+        $biayaPengiriman = 0; // Set biaya pengiriman ke 0
+    }
 @endphp
 
 <div class="order-card-new" data-order-id="{{ $order->id }}" data-order-status="{{ $order->status_pengiriman }}" data-has-review="{{ $hasReview ? 'true' : 'false' }}">
@@ -69,7 +79,8 @@
                     <p class="item-quantity-new">x {{ $order->jumlah_pesanan }}</p>
                 </div>
                 <div class="item-price-new">
-                    Rp {{ number_format($order->kelolaMakanan->harga, 0, ',', '.') }}
+                    {{-- TAMPILKAN HARGA PER ITEM DIKALIKAN JUMLAH --}}
+                    Rp {{ number_format($order->kelolaMakanan->harga * $order->jumlah_pesanan, 0, ',', '.') }}
                 </div>
             </div>
         @else
@@ -84,21 +95,21 @@
                     <p class="item-quantity-new">x {{ $order->jumlah_pesanan }}</p>
                 </div>
                 <div class="item-price-new">
-                    Rp {{ number_format($order->total_harga, 0, ',', '.') }}
+                    Rp {{ number_format($subtotal, 0, ',', '.') }}
                 </div>
             </div>
         @endif
     </div>
 
-    <!-- Summary Section -->
+    <!-- Summary Section - PERBAIKI PERHITUNGAN -->
     <div class="order-summary-new">
         <div class="summary-row-new">
             <span>Subtotal</span>
-            <span>Rp {{ number_format($order->total_harga - 3000, 0, ',', '.') }}</span>
+            <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
         </div>
         <div class="summary-row-new">
             <span>Biaya Pengiriman</span>
-            <span>Rp 3.000</span>
+            <span>Rp {{ number_format($biayaPengiriman, 0, ',', '.') }}</span>
         </div>
         <div class="summary-row-new">
             <span>Metode Pembayaran</span>
