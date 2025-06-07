@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="{{ asset('navbar.css') }}">
+<!-- Pastikan Font Awesome juga di-load -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <nav class="navbar">
     <!-- Logo -->
@@ -81,4 +83,5 @@
     </div>
 </div>
 
+<!-- Pastikan script di-load setelah HTML -->
 <script src="{{ asset('navbar.js') }}"></script>

@@ -155,7 +155,7 @@
 </head>
 <body>
     <!-- Navbar Component -->
-    <x-navbar />
+    <x-navbar></x-navbar>
 
     <!-- About Section -->
     <div class="about">
