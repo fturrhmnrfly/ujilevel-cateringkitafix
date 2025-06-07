@@ -80,7 +80,7 @@
                     <img src="{{ asset('assets/kategoriassets1.png') }}" alt="Prasmanan" class="category-icon">
                     <h3 class="category-name">Prasmanan</h3>
                     <p class="category-desc">Hidangan lengkap dengan konsep prasmanan untuk berbagai acara</p>
-                    <span class="category-menu-count">11 Menu</span>
+                    <span class="category-menu-count">{{ $prasmanan_count }} Menu</span>
                 </a>
 
                 <!-- Nasi Box Category -->
@@ -88,7 +88,7 @@
                     <img src="{{ asset('assets/kategoriassets2.png') }}" alt="Nasi Box" class="category-icon">
                     <h3 class="category-name">Nasi Box</h3>
                     <p class="category-desc">Paket nasi lengkap dengan lauk dalam kemasan praktis</p>
-                    <span class="category-menu-count">17 Box</span>
+                    <span class="category-menu-count">{{ $nasibox_count }} Menu</span>
                 </a>
             </div>
         </section>
