@@ -30,8 +30,9 @@ class PesananController extends Controller
                 'url' => $request->url()
             ]);
 
-            // Base query
-            $query = DaftarPesanan::where('user_id', $user->id);
+            // Base query dengan relasi
+            $query = DaftarPesanan::with(['kelolaMakanan', 'items.product'])
+                                  ->where('user_id', $user->id);
 
             // Filter berdasarkan route
             switch ($currentRoute) {
@@ -68,11 +69,8 @@ class PesananController extends Controller
             return view('pesanan.index', compact('orders'));
             
         } catch (\Exception $e) {
-            Log::error('Error in PesananController@index: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            return view('pesanan.index', ['orders' => collect()]);
+            Log::error('Error in PesananController@index: ' . $e->getMessage());
+            return redirect()->route('dashboard')->with('error', 'Terjadi kesalahan saat memuat pesanan');
         }
     }
 

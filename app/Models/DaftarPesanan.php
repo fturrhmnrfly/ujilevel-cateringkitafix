@@ -17,6 +17,7 @@ class DaftarPesanan extends Model
         'user_id', // Pastikan user_id ada di fillable
         'nama_pelanggan',
         'kategori_pesanan',
+        'kelola_makanan_id', // Tambahkan ini
         'tanggal_pesanan',
         'jumlah_pesanan',
         'tanggal_pengiriman',
@@ -41,6 +42,18 @@ class DaftarPesanan extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Tambahkan relasi dengan KelolaMakanan
+    public function kelolaMakanan()
+    {
+        return $this->belongsTo(KelolaMakanan::class, 'kelola_makanan_id');
+    }
+
+    // Relasi dengan OrderItems (jika ada)
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class, 'order_id', 'id');
     }
 
     // Helper method untuk check apakah order sudah direview
