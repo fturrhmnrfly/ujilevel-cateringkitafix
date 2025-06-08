@@ -260,7 +260,7 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     
     // Admin Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -339,6 +339,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/', [AdminProfileController::class, 'show'])->name('show');
         Route::get('/edit', [AdminProfileController::class, 'edit'])->name('edit');
         Route::put('/', [AdminProfileController::class, 'update'])->name('update');
+    });
+
+    // Penilaian routes
+    Route::prefix('penilaian')->name('penilaian.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'index'])->name('index');
+        Route::get('/{id}', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'show'])->name('show');
+        Route::delete('/{id}', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/update-status', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'updateStatus'])->name('update-status');
+        Route::post('/{id}/toggle-status', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/{id}/verify', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'verify'])->name('verify');
     });
 });
 

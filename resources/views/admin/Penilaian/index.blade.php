@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Penilaian</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -598,7 +599,9 @@
                     </thead>
                     <tbody id="reviewTable">
                         @forelse ($penilaians as $index => $penilaian)
-                            <tr data-rating="{{ $penilaian->rating }}" data-photos="{{ $penilaian->photos ? 'yes' : 'no' }}">
+                            <tr data-rating="{{ $penilaian->rating }}" 
+                                data-photos="{{ $penilaian->photos ? 'yes' : 'no' }}"
+                                data-status="{{ $penilaian->status ?? 'active' }}">
                                 <td style="text-align: center; font-weight: 600;">{{ $index + 1 }}</td>
                                 <td>
                                     <span class="order-id">#{{ $penilaian->order_number }}</span>
@@ -658,16 +661,33 @@
                                     <small>{{ $penilaian->created_at->format('H:i') }}</small>
                                 </td>
                                 <td>
-                                    <span class="status-badge status-active">Aktif</span>
+                                    @php
+                                        $status = $penilaian->status ?? 'active';
+                                    @endphp
+                                    @if($status === 'active')
+                                        <span class="status-badge status-active">Aktif</span>
+                                    @elseif($status === 'hidden')
+                                        <span class="status-badge status-hidden">Disembunyikan</span>
+                                    @else
+                                        <span class="status-badge status-reported">{{ ucfirst($status) }}</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="action-buttons">
                                         <button class="btn-view" onclick="viewReview({{ $penilaian->id }})" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn-hide" onclick="hideReview({{ $penilaian->id }})" title="Sembunyikan">
-                                            <i class="fas fa-eye-slash"></i>
-                                        </button>
+                                        
+                                        @if(($penilaian->status ?? 'active') === 'active')
+                                            <button class="btn-hide" onclick="hideReview({{ $penilaian->id }})" title="Sembunyikan">
+                                                <i class="fas fa-eye-slash"></i>
+                                            </button>
+                                        @else
+                                            <button class="btn-verify" onclick="showReview({{ $penilaian->id }})" title="Tampilkan">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        @endif
+                                        
                                         <button type="button" class="btn-danger" onclick="confirmDelete({{ $penilaian->id }})" title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -774,7 +794,25 @@
             window.location.href = `/admin/penilaian/${reviewId}`;
         }
 
-        // Hide review
+        // TAMBAHKAN FUNGSI showReview untuk menampilkan kembali review yang tersembunyi
+        function showReview(reviewId) {
+            Swal.fire({
+                title: 'Tampilkan Review?',
+                text: "Review ini akan ditampilkan kembali ke publik",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, tampilkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateReviewStatus(reviewId, 'active', 'Review berhasil ditampilkan');
+                }
+            });
+        }
+
+        // PERBAIKAN FUNGSI hideReview
         function hideReview(reviewId) {
             Swal.fire({
                 title: 'Sembunyikan Review?',
@@ -787,35 +825,132 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Add loading state
-                    const btn = event.target.closest('button');
-                    btn.classList.add('btn-loading');
-                    
-                    // AJAX request to hide review
-                    fetch(`/admin/penilaian/${reviewId}/update-status`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify({ status: 'hidden' })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire('Berhasil!', 'Review telah disembunyikan', 'success');
-                            location.reload();
-                        }
-                    })
-                    .catch(error => {
-                        btn.classList.remove('btn-loading');
-                        Swal.fire('Error!', 'Terjadi kesalahan saat menyembunyikan review', 'error');
-                    });
+                    updateReviewStatus(reviewId, 'hidden', 'Review berhasil disembunyikan');
                 }
             });
         }
 
-        // Delete review
+        // FUNGSI BARU untuk update status (reusable)
+        function updateReviewStatus(reviewId, newStatus, successMessage) {
+            const btn = event.target.closest('button');
+            if (btn) {
+                btn.classList.add('btn-loading');
+            }
+            
+            // Get CSRF token
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '{{ csrf_token() }}';
+            
+            if (!csrfToken) {
+                Swal.fire('Error!', 'CSRF token tidak ditemukan', 'error');
+                if (btn) btn.classList.remove('btn-loading');
+                return;
+            }
+            
+            // AJAX request to update status
+            fetch(`/admin/penilaian/${reviewId}/update-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Berhasil!', successMessage, 'success');
+                    
+                    // Update UI tanpa reload
+                    updateReviewRowUI(reviewId, newStatus);
+                } else {
+                    throw new Error(data.message || 'Gagal mengupdate status review');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating review status:', error);
+                if (btn) btn.classList.remove('btn-loading');
+                Swal.fire('Error!', 'Terjadi kesalahan: ' + error.message, 'error');
+            })
+            .finally(() => {
+                if (btn) btn.classList.remove('btn-loading');
+            });
+        }
+
+        // FUNGSI BARU untuk update UI row tanpa reload
+        function updateReviewRowUI(reviewId, newStatus) {
+            const row = document.querySelector(`tr[data-rating]`);
+            if (!row) return;
+            
+            // Cari row yang tepat berdasarkan review ID dari action button
+            const rows = document.querySelectorAll('#reviewTable tr');
+            let targetRow = null;
+            
+            rows.forEach(row => {
+                const buttons = row.querySelectorAll('button[onclick*="' + reviewId + '"]');
+                if (buttons.length > 0) {
+                    targetRow = row;
+                }
+            });
+            
+            if (!targetRow) return;
+            
+            // Update status badge
+            const statusCell = targetRow.cells[8]; // Status column
+            if (statusCell) {
+                if (newStatus === 'active') {
+                    statusCell.innerHTML = '<span class="status-badge status-active">Aktif</span>';
+                } else if (newStatus === 'hidden') {
+                    statusCell.innerHTML = '<span class="status-badge status-hidden">Disembunyikan</span>';
+                }
+            }
+            
+            // Update action buttons
+            const actionCell = targetRow.cells[9]; // Action column
+            if (actionCell) {
+                const actionButtons = actionCell.querySelector('.action-buttons');
+                if (actionButtons) {
+                    if (newStatus === 'active') {
+                        // Show hide button
+                        actionButtons.innerHTML = `
+                            <button class="btn-view" onclick="viewReview(${reviewId})" title="Lihat Detail">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-hide" onclick="hideReview(${reviewId})" title="Sembunyikan">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                            <button type="button" class="btn-danger" onclick="confirmDelete(${reviewId})" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                    } else if (newStatus === 'hidden') {
+                        // Show show button
+                        actionButtons.innerHTML = `
+                            <button class="btn-view" onclick="viewReview(${reviewId})" title="Lihat Detail">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-verify" onclick="showReview(${reviewId})" title="Tampilkan">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="btn-danger" onclick="confirmDelete(${reviewId})" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                    }
+                }
+            }
+            
+            // Update row data attribute
+            targetRow.setAttribute('data-status', newStatus);
+        }
+
+        // confirmDelete function remains the same
         function confirmDelete(reviewId) {
             Swal.fire({
                 title: 'Apakah kamu yakin?',
@@ -830,15 +965,27 @@
                 if (result.isConfirmed) {
                     // Add loading state
                     const btn = event.target.closest('button');
-                    btn.classList.add('btn-loading');
+                    if (btn) {
+                        btn.classList.add('btn-loading');
+                    }
                     
-                    // Create and submit form
+                    // Get CSRF token dengan error handling
+                    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+                    const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '{{ csrf_token() }}';
+                    
+                    if (!csrfToken) {
+                        Swal.fire('Error!', 'CSRF token tidak ditemukan', 'error');
+                        if (btn) btn.classList.remove('btn-loading');
+                        return;
+                    }
+                    
+                    // Create and submit form dengan CSRF token
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = `/admin/penilaian/${reviewId}`;
                     form.innerHTML = `
-                        @csrf
-                        @method('DELETE')
+                        <input type="hidden" name="_token" value="${csrfToken}">
+                        <input type="hidden" name="_method" value="DELETE">
                     `;
                     document.body.appendChild(form);
                     form.submit();
@@ -873,9 +1020,12 @@
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
 
@@ -884,7 +1034,10 @@
             // Ctrl/Cmd + K for search focus
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
-                document.getElementById('searchInput').focus();
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.focus();
+                }
             }
         });
 
@@ -905,9 +1058,6 @@
                 clearInterval(autoRefreshInterval);
             }
         }
-
-        // Start auto-refresh on page load
-        // startAutoRefresh();
 
         // Stop auto-refresh when page is not visible
         document.addEventListener('visibilitychange', function() {

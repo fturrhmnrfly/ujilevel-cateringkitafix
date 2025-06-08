@@ -144,10 +144,10 @@
             <span>Biaya Pengiriman</span>
             <span>Rp {{ number_format($biayaPengiriman, 0, ',', '.') }}</span>
         </div>
-        <div class="summary-row-new">
+        {{-- <div class="summary-row-new">
             <span>Metode Pembayaran</span>
             <span>{{ $order->payment_method ?? 'COD' }}</span>
-        </div>
+        </div> --}}
         <div class="summary-row-new total-row">
             <span>Total</span>
             <span>Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>

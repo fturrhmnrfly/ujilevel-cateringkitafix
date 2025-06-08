@@ -8,14 +8,15 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AdminPenilaianController extends Controller
 {
     public function index()
     {
-        // Menggunakan model Review dan menggabungkan dengan data order dan user
+        // PERBAIKAN: Tampilkan SEMUA review (active dan hidden) untuk admin
         $penilaians = Review::with(['user', 'order'])
-                           ->where('status', 'active')
+                           // ->where('status', 'active') // HAPUS FILTER INI
                            ->orderBy('created_at', 'desc')
                            ->get()
                            ->map(function($review) {
@@ -31,7 +32,8 @@ class AdminPenilaianController extends Controller
                                    'photos' => $review->photos,
                                    'created_at' => $review->created_at,
                                    'order_id' => $review->order_id,
-                                   'order_number' => $review->order_number
+                                   'order_number' => $review->order_number,
+                                   'status' => $review->status ?? 'active' // TAMBAH STATUS
                                ];
                            });
 
@@ -89,6 +91,12 @@ class AdminPenilaianController extends Controller
     public function updateStatus(Request $request, $id)
     {
         try {
+            Log::info('UpdateStatus called', [
+                'review_id' => $id,
+                'request_data' => $request->all(),
+                'headers' => $request->headers->all()
+            ]);
+
             $review = Review::findOrFail($id);
             
             $validated = $request->validate([
@@ -97,12 +105,46 @@ class AdminPenilaianController extends Controller
             
             $review->update(['status' => $validated['status']]);
             
-            return response()->json([
-                'success' => true,
-                'message' => 'Status review berhasil diperbarui'
+            Log::info('Review status updated successfully', [
+                'review_id' => $id,
+                'old_status' => $review->getOriginal('status'),
+                'new_status' => $validated['status']
             ]);
             
+            return response()->json([
+                'success' => true,
+                'message' => 'Status review berhasil diperbarui',
+                'new_status' => $validated['status']
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed for status update', [
+                'review_id' => $id,
+                'errors' => $e->errors()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Review not found', ['review_id' => $id]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Review tidak ditemukan'
+            ], 404);
+
         } catch (\Exception $e) {
+            Log::error('Error updating review status', [
+                'review_id' => $id,
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine()
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal memperbarui status: ' . $e->getMessage()
@@ -125,6 +167,27 @@ class AdminPenilaianController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('admin.penilaian.index')
                 ->with('error', 'Gagal memverifikasi review: ' . $e->getMessage());
+        }
+    }
+
+    // Method untuk show status active/hidden
+    public function toggleStatus(Request $request, $id)
+    {
+        try {
+            $review = Review::findOrFail($id);
+            
+            // Toggle status antara active dan hidden
+            $newStatus = $review->status === 'active' ? 'hidden' : 'active';
+            $review->update(['status' => $newStatus]);
+            
+            $statusText = $newStatus === 'active' ? 'ditampilkan' : 'disembunyikan';
+            
+            return redirect()->route('admin.penilaian.index')
+                ->with('success', "Review berhasil {$statusText}");
+                
+        } catch (\Exception $e) {
+            return redirect()->route('admin.penilaian.index')
+                ->with('error', 'Gagal mengubah status review: ' . $e->getMessage());
         }
     }
 }

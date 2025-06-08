@@ -625,6 +625,23 @@
             }
         }
 
+        // TAMBAHKAN FUNGSI YANG HILANG INI
+        function updateTotalIncome() {
+            // Calculate total income dari semua pesanan
+            let totalIncome = 0;
+            allOrdersData.forEach(order => {
+                totalIncome += parseFloat(order.total_harga || 0);
+            });
+            
+            // Update total income display
+            const totalIncomeElement = document.getElementById('total-income');
+            if (totalIncomeElement) {
+                totalIncomeElement.textContent = 'Rp. ' + totalIncome.toLocaleString('id-ID');
+            }
+            
+            console.log('Total Income Updated:', totalIncome);
+        }
+
         // Process data untuk chart berdasarkan created_at dan total_harga
         function processIncomeData(period = 'monthly', customMonth = null, customYear = null) {
             const currentYear = new Date().getFullYear();

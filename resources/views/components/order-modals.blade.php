@@ -1,4 +1,3 @@
-
 {{-- Modal Detail Pesanan --}}
 <div id="orderDetailModal" class="modal">
     <div class="modal-content">
@@ -88,88 +87,87 @@
     </div>
 </div>
 
-{{-- Modal Review Pesanan --}}
+{{-- Modal Review Pesanan - Desain Baru Sesuai Gambar --}}
 <div id="reviewModal" class="modal">
-    <div class="modal-content review-modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">Beri Ulasan Pesanan</h3>
-            <button class="modal-close" onclick="closeModal('reviewModal')">&times;</button>
+    <div class="review-modal-container">
+        <div class="review-modal-header">
+            <h2 class="review-title">Penilaian Produk</h2>
+            <button class="review-close-btn" onclick="closeModal('reviewModal')">&times;</button>
         </div>
-        <div class="modal-body">
+        
+        <div class="review-modal-content">
             <form id="reviewForm" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" id="reviewOrderId" name="order_id">
                 
-                <!-- Rating Sections -->
-                <div class="rating-section">
-                    <label class="rating-label">Kualitas Makanan</label>
-                    <div class="star-rating" data-category="quality">
-                        <span class="star" data-value="1">★</span>
-                        <span class="star" data-value="2">★</span>
-                        <span class="star" data-value="3">★</span>
-                        <span class="star" data-value="4">★</span>
-                        <span class="star" data-value="5">★</span>
-                    </div>
-                    <input type="hidden" name="quality_rating" id="qualityRating">
-                </div>
-
-                <div class="rating-section">
-                    <label class="rating-label">Ketepatan Pengiriman</label>
-                    <div class="star-rating" data-category="delivery">
-                        <span class="star" data-value="1">★</span>
-                        <span class="star" data-value="2">★</span>
-                        <span class="star" data-value="3">★</span>
-                        <span class="star" data-value="4">★</span>
-                        <span class="star" data-value="5">★</span>
-                    </div>
-                    <input type="hidden" name="delivery_rating" id="deliveryRating">
-                </div>
-
-                <div class="rating-section">
-                    <label class="rating-label">Pelayanan</label>
-                    <div class="star-rating" data-category="service">
-                        <span class="star" data-value="1">★</span>
-                        <span class="star" data-value="2">★</span>
-                        <span class="star" data-value="3">★</span>
-                        <span class="star" data-value="4">★</span>
-                        <span class="star" data-value="5">★</span>
-                    </div>
-                    <input type="hidden" name="service_rating" id="serviceRating">
-                </div>
-
-                <!-- Review Text -->
-                <div class="form-group">
-                    <label for="reviewText" class="form-label">Ulasan (Opsional)</label>
-                    <textarea id="reviewText" name="review_text" class="form-control" rows="4" 
-                              placeholder="Bagikan pengalaman Anda dengan pesanan ini..." maxlength="500"></textarea>
-                    <div class="char-count">0/500</div>
-                </div>
-
-                <!-- Photo Upload -->
-                <div class="form-group">
-                    <label class="form-label">Foto Pesanan (Opsional)</label>
-                    <div class="photo-upload-container">
-                        <input type="file" id="reviewPhotos" name="photos[]" multiple accept="image/*" style="display: none;">
-                        <div class="photo-grid" id="photoGrid">
-                            <div class="photo-upload-item add-photo" onclick="document.getElementById('reviewPhotos').click()">
-                                <i class="fas fa-plus"></i>
-                                <span>Tambah Foto</span>
-                            </div>
+                <!-- Photo Upload Section -->
+                <div class="photo-upload-section">
+                    <div class="photo-grid-container" id="photoGridContainer">
+                        <div class="photo-upload-box add-photo-btn" onclick="document.getElementById('reviewPhotos').click()">
+                            <div class="plus-icon">+</div>
                         </div>
-                        <div class="photo-info">Maksimal 4 foto, ukuran maksimal 5MB per foto</div>
+                    </div>
+                    <input type="file" id="reviewPhotos" name="photos[]" multiple accept="image/*" style="display: none;">
+                </div>
+
+                <!-- Rating Sections -->
+                <div class="rating-group">
+                    <div class="rating-section-new">
+                        <label class="rating-label-new">Kualitas Produk</label>
+                        <div class="star-rating-new" data-category="quality">
+                            <span class="star-new" data-value="1">★</span>
+                            <span class="star-new" data-value="2">★</span>
+                            <span class="star-new" data-value="3">★</span>
+                            <span class="star-new" data-value="4">★</span>
+                            <span class="star-new" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="quality_rating" id="qualityRating">
+                    </div>
+
+                    <div class="rating-section-new">
+                        <label class="rating-label-new">Kecepatan Pengiriman</label>
+                        <div class="star-rating-new" data-category="delivery">
+                            <span class="star-new" data-value="1">★</span>
+                            <span class="star-new" data-value="2">★</span>
+                            <span class="star-new" data-value="3">★</span>
+                            <span class="star-new" data-value="4">★</span>
+                            <span class="star-new" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="delivery_rating" id="deliveryRating">
+                    </div>
+
+                    <div class="rating-section-new">
+                        <label class="rating-label-new">Pelayanan</label>
+                        <div class="star-rating-new" data-category="service">
+                            <span class="star-new" data-value="1">★</span>
+                            <span class="star-new" data-value="2">★</span>
+                            <span class="star-new" data-value="3">★</span>
+                            <span class="star-new" data-value="4">★</span>
+                            <span class="star-new" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" name="service_rating" id="serviceRating">
                     </div>
                 </div>
+
+                <!-- Review Text Section -->
+                <div class="review-text-section">
+                    <label class="text-label">Tuliskan Ulasan Anda</label>
+                    <textarea id="reviewText" name="review_text" class="review-textarea" 
+                              placeholder="Bagikan Pengalaman Anda dengan produk ini..." maxlength="500"></textarea>
+                    <div class="char-count-new">0/500</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="button" class="submit-review-btn" id="submitReviewBtn" onclick="submitReview()">
+                    Kirim Penilaian
+                </button>
             </form>
-        </div>
-        <div class="modal-actions">
-            <button class="btn-modal btn-secondary" onclick="closeModal('reviewModal')">Batal</button>
-            <button class="btn-modal btn-success" id="submitReviewBtn" onclick="submitReview()">Kirim Ulasan</button>
         </div>
     </div>
 </div>
 
 <style>
-/* Modal Styles */
+/* Modal Styles - Existing modals remain unchanged */
 .modal {
     display: none;
     position: fixed;
@@ -194,11 +192,6 @@
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-}
-
-.review-modal-content {
-    max-width: 600px;
-    max-height: 90vh;
 }
 
 .modal-header {
@@ -237,6 +230,7 @@
 .detail-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 12px 0;
     border-bottom: 1px solid #f5f5f5;
 }
@@ -249,44 +243,65 @@
     font-weight: 500;
     color: #666;
     min-width: 140px;
+    flex-shrink: 0;
 }
 
 .detail-value {
     color: #333;
     text-align: right;
     flex: 1;
+    word-wrap: break-word;
+    max-width: calc(100% - 150px);
+}
+
+/* Status Indicator - PERBAIKAN UNTUK COMPACT BADGE */
+.status-indicator {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    min-width: auto;
+    width: auto;
+    max-width: fit-content;
+    line-height: 1.2;
 }
 
 .status-indicator.pending {
     color: #856404;
     background: #fff3cd;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
+}
+
+.status-indicator.paid {
+    color: #155724;
+    background: #d4edda;
+}
+
+.status-indicator.failed {
+    color: #721c24;
+    background: #f8d7da;
 }
 
 .status-indicator.diproses {
     color: #856404;
     background: #fff3cd;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
 }
 
 .status-indicator.dikirim {
     color: #0066cc;
     background: #cce5ff;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
 }
 
 .status-indicator.diterima {
     color: #155724;
     background: #d4edda;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
+}
+
+.status-indicator.dibatalkan {
+    color: #721c24;
+    background: #f8d7da;
 }
 
 .modal-actions {
@@ -322,143 +337,300 @@
     background: #218838;
 }
 
-/* Review Modal Specific Styles */
-.rating-section {
-    margin-bottom: 20px;
+/* NEW REVIEW MODAL STYLES - Sesuai dengan gambar */
+.review-modal-container {
+    background: white;
+    border-radius: 20px;
+    max-width: 600px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
-.rating-label {
-    display: block;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-.star-rating {
+.review-modal-header {
+    background: #26276B;
+    color: white;
+    padding: 20px 25px;
+    border-radius: 20px 20px 0 0;
     display: flex;
-    gap: 5px;
-    margin-bottom: 10px;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.star {
-    font-size: 24px;
-    color: #ddd;
+.review-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+}
+
+.review-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
     cursor: pointer;
-    transition: color 0.2s;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
 }
 
-.star:hover,
-.star.selected {
-    color: #ffd700;
+.review-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-.form-group {
-    margin-bottom: 20px;
+.review-modal-content {
+    padding: 30px 25px;
 }
 
-.form-label {
-    display: block;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 8px;
+/* Photo Upload Section */
+.photo-upload-section {
+    margin-bottom: 30px;
 }
 
-.form-control {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    resize: vertical;
-}
-
-.char-count {
-    text-align: right;
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
-}
-
-.photo-upload-container {
-    margin-top: 10px;
-}
-
-.photo-grid {
+.photo-grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
     margin-bottom: 10px;
 }
 
-.photo-upload-item {
+.photo-upload-box {
     aspect-ratio: 1;
-    border: 2px dashed #ddd;
-    border-radius: 8px;
+    border: 2px dashed #ccc;
+    border-radius: 15px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s;
-    background: #f9f9f9;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
 }
 
-.photo-upload-item:hover {
-    border-color: #2c2c77;
-    background: #f0f7ff;
+.photo-upload-box:hover {
+    border-color: #26276B;
+    background: #f0f2ff;
 }
 
-.photo-upload-item.add-photo i {
-    font-size: 24px;
-    color: #666;
-    margin-bottom: 5px;
+.photo-upload-box.add-photo-btn {
+    border-color: #ddd;
 }
 
-.photo-upload-item.add-photo span {
-    font-size: 12px;
-    color: #666;
-    text-align: center;
+.plus-icon {
+    font-size: 40px;
+    color: #ccc;
+    font-weight: 300;
 }
 
-.photo-preview {
+.photo-preview-box {
     position: relative;
     border: 2px solid #ddd;
-    border-radius: 8px;
+    border-radius: 15px;
     overflow: hidden;
 }
 
-.photo-preview img {
+.photo-preview-box img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.photo-remove {
+.photo-remove-btn {
     position: absolute;
     top: 5px;
     right: 5px;
-    background: rgba(220, 53, 69, 0.8);
+    background: rgba(220, 53, 69, 0.9);
     color: white;
     border: none;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s ease;
 }
 
-.photo-info {
+.photo-remove-btn:hover {
+    background: rgba(220, 53, 69, 1);
+}
+
+/* Rating Group */
+.rating-group {
+    margin-bottom: 30px;
+}
+
+.rating-section-new {
+    margin-bottom: 25px;
+}
+
+.rating-label-new {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.star-rating-new {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.star-new {
+    font-size: 32px;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.star-new:hover,
+.star-new.selected {
+    color: #FFD700;
+    transform: scale(1.1);
+}
+
+.star-new.selected {
+    color: #FFD700;
+}
+
+/* Review Text Section */
+.review-text-section {
+    margin-bottom: 30px;
+}
+
+.text-label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.review-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 15px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+    background: #f8f9fa;
+}
+
+.review-textarea:focus {
+    outline: none;
+    border-color: #26276B;
+    background: white;
+}
+
+.char-count-new {
+    text-align: right;
     font-size: 12px;
     color: #666;
-    text-align: center;
+    margin-top: 8px;
+}
+
+/* Submit Button */
+.submit-review-btn {
+    width: 100%;
+    background: #26276B;
+    color: white;
+    border: none;
+    padding: 18px 20px;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+}
+
+.submit-review-btn:hover {
+    background: #1e1f57;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(38, 39, 107, 0.3);
+}
+
+.submit-review-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .btn-loading {
     opacity: 0.7;
     pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .review-modal-container {
+        max-width: 95%;
+        margin: 10px;
+    }
+    
+    .photo-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .star-new {
+        font-size: 28px;
+    }
+    
+    .review-modal-content {
+        padding: 20px 15px;
+    }
+    
+    /* Responsive untuk modal detail */
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .detail-label {
+        min-width: auto;
+    }
+    
+    .detail-value {
+        text-align: left;
+        max-width: 100%;
+    }
+    
+    .status-indicator {
+        align-self: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .photo-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .star-new {
+        font-size: 24px;
+        gap: 4px;
+    }
+    
+    .review-title {
+        font-size: 18px;
+    }
 }
 </style>
 
@@ -509,6 +681,26 @@ function showOrderDetail(orderId) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     };
 
+    // Status mapping functions untuk clarity
+    const getOrderStatusDisplay = (status_pengiriman) => {
+        const statusMap = {
+            'diproses': 'Diproses',
+            'dikirim': 'Dikirim',
+            'diterima': 'Diterima',
+            'dibatalkan': 'Dibatalkan'
+        };
+        return statusMap[status_pengiriman] || capitalizeFirst(status_pengiriman);
+    };
+
+    const getPaymentStatusDisplay = (status_pembayaran) => {
+        const statusMap = {
+            'pending': 'Belum Bayar',
+            'paid': 'Sudah Bayar',
+            'failed': 'Pembayaran Gagal'
+        };
+        return statusMap[status_pembayaran] || capitalizeFirst(status_pembayaran);
+    };
+
     // Populate modal fields
     try {
         document.getElementById('modal-order-id').textContent = order.order_id || '-';
@@ -523,25 +715,29 @@ function showOrderDetail(orderId) {
         document.getElementById('modal-total').textContent = formatCurrency(order.total_harga);
         document.getElementById('modal-payment-method').textContent = order.payment_method || 'COD';
 
+        // STATUS PESANAN (menggunakan kolom status_pengiriman)
         const statusElement = document.getElementById('modal-order-status');
-        const paymentStatusElement = document.getElementById('modal-payment-status');
-        
         if (statusElement) {
             const currentRoute = window.location.pathname;
             const isUnpaidTab = currentRoute.includes('unpaid');
             
-            if (isUnpaidTab || order.status_pembayaran === 'pending') {
-                statusElement.textContent = 'Belum Bayar';
+            // Jika di tab belum dibayar, status pesanan tetap menunjukkan status pengiriman
+            if (isUnpaidTab && order.status_pembayaran === 'pending') {
+                // Tapi jika memang belum bayar, bisa ditampilkan status khusus
+                statusElement.textContent = 'Menunggu Pembayaran';
                 statusElement.className = 'detail-value status-indicator pending';
             } else {
-                statusElement.textContent = capitalizeFirst(order.status_pengiriman);
+                // Status pesanan SELALU dari kolom status_pengiriman
+                statusElement.textContent = getOrderStatusDisplay(order.status_pengiriman);
                 statusElement.className = `detail-value status-indicator ${order.status_pengiriman}`;
             }
         }
 
+        // STATUS PEMBAYARAN (menggunakan kolom status_pembayaran)
+        const paymentStatusElement = document.getElementById('modal-payment-status');
         if (paymentStatusElement) {
-            const paymentStatus = order.status_pembayaran === 'pending' ? 'Belum Bayar' : 'Sudah Bayar';
-            paymentStatusElement.textContent = paymentStatus;
+            // Status pembayaran SELALU dari kolom status_pembayaran
+            paymentStatusElement.textContent = getPaymentStatusDisplay(order.status_pembayaran);
             paymentStatusElement.className = `detail-value status-indicator ${order.status_pembayaran}`;
         }
 
@@ -570,9 +766,7 @@ function showReviewModal(orderId) {
     currentOrderId = orderId;
     
     // Reset form
-    if (typeof resetReviewForm === 'function') {
-        resetReviewForm();
-    }
+    resetReviewForm();
     
     // Set order ID di form
     const orderIdInput = document.getElementById('reviewOrderId');
@@ -587,9 +781,7 @@ function showReviewModal(orderId) {
         
         // Update photo grid after modal is shown
         setTimeout(() => {
-            if (typeof updatePhotoGrid === 'function') {
-                updatePhotoGrid();
-            }
+            updatePhotoGrid();
         }, 100);
     } else {
         console.error('Review modal not found');
@@ -697,8 +889,8 @@ function capitalizeFirst(str) {
 // Review Modal Functions
 function resetReviewForm() {
     // Reset ratings
-    document.querySelectorAll('.star-rating').forEach(rating => {
-        rating.querySelectorAll('.star').forEach(star => {
+    document.querySelectorAll('.star-rating-new').forEach(rating => {
+        rating.querySelectorAll('.star-new').forEach(star => {
             star.classList.remove('selected');
         });
     });
@@ -710,7 +902,7 @@ function resetReviewForm() {
     
     // Reset text
     document.getElementById('reviewText').value = '';
-    document.querySelector('.char-count').textContent = '0/500';
+    document.querySelector('.char-count-new').textContent = '0/500';
     
     // Reset photos
     selectedPhotos = [];
@@ -718,30 +910,33 @@ function resetReviewForm() {
 }
 
 function updatePhotoGrid() {
-    const photoGrid = document.getElementById('photoGrid');
-    photoGrid.innerHTML = '';
+    const photoGridContainer = document.getElementById('photoGridContainer');
+    photoGridContainer.innerHTML = '';
     
-    // Add existing photos
-    selectedPhotos.forEach((photo, index) => {
+    // Add existing photos (maksimal 4)
+    selectedPhotos.slice(0, 4).forEach((photo, index) => {
         const photoDiv = document.createElement('div');
-        photoDiv.className = 'photo-upload-item photo-preview';
+        photoDiv.className = 'photo-upload-box photo-preview-box';
         photoDiv.innerHTML = `
             <img src="${photo.url}" alt="Preview">
-            <button type="button" class="photo-remove" onclick="removePhoto(${index})">×</button>
+            <button type="button" class="photo-remove-btn" onclick="removePhoto(${index})">×</button>
         `;
-        photoGrid.appendChild(photoDiv);
+        photoGridContainer.appendChild(photoDiv);
     });
     
-    // Add "add photo" button if less than 4 photos
-    if (selectedPhotos.length < 4) {
+    // Add remaining empty slots
+    const remainingSlots = 4 - selectedPhotos.length;
+    for (let i = 0; i < remainingSlots; i++) {
         const addDiv = document.createElement('div');
-        addDiv.className = 'photo-upload-item add-photo';
-        addDiv.onclick = () => document.getElementById('reviewPhotos').click();
-        addDiv.innerHTML = `
-            <i class="fas fa-plus"></i>
-            <span>Tambah Foto</span>
-        `;
-        photoGrid.appendChild(addDiv);
+        if (i === 0) {
+            addDiv.className = 'photo-upload-box add-photo-btn';
+            addDiv.onclick = () => document.getElementById('reviewPhotos').click();
+            addDiv.innerHTML = '<div class="plus-icon">+</div>';
+        } else {
+            addDiv.className = 'photo-upload-box';
+            addDiv.innerHTML = '<div class="plus-icon" style="color: #eee;">+</div>';
+        }
+        photoGridContainer.appendChild(addDiv);
     }
 }
 
@@ -763,6 +958,7 @@ function submitReview() {
     const submitBtn = document.getElementById('submitReviewBtn');
     submitBtn.classList.add('btn-loading');
     submitBtn.textContent = 'Mengirim...';
+    submitBtn.disabled = true;
     
     const formData = new FormData();
     formData.append('order_id', currentOrderId);
@@ -771,20 +967,37 @@ function submitReview() {
     formData.append('service_rating', serviceRating);
     formData.append('review_text', document.getElementById('reviewText').value);
     
-    // Add photos
-    const photoInput = document.getElementById('reviewPhotos');
-    for (let i = 0; i < photoInput.files.length; i++) {
-        formData.append('photos[]', photoInput.files[i]);
-    }
+    // Add photos (maksimal 4)
+    selectedPhotos.slice(0, 4).forEach((photo) => {
+        formData.append('photos[]', photo.file);
+    });
     
-    fetch('/review', {
+    fetch('/reviews', {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
         },
         body: formData
     })
-    .then(response => response.json())
+    .then(async response => {
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+        
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error('Invalid JSON response:', responseText);
+            throw new Error('Server mengembalikan response yang tidak valid. Periksa route /reviews dan controller.');
+        }
+        
+        if (!response.ok) {
+            throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        return data;
+    })
     .then(data => {
         if (data.success) {
             alert('Ulasan berhasil dikirim! Terima kasih atas feedback Anda.');
@@ -800,7 +1013,8 @@ function submitReview() {
     })
     .finally(() => {
         submitBtn.classList.remove('btn-loading');
-        submitBtn.textContent = 'Kirim Ulasan';
+        submitBtn.textContent = 'Kirim Penilaian';
+        submitBtn.disabled = false;
     });
 }
 
@@ -821,9 +1035,9 @@ document.addEventListener('DOMContentLoaded', function() {
         reorderItems: typeof reorderItems
     });
     
-    // Star rating functionality
-    document.querySelectorAll('.star-rating').forEach(rating => {
-        const stars = rating.querySelectorAll('.star');
+    // Star rating functionality untuk modal review baru
+    document.querySelectorAll('.star-rating-new').forEach(rating => {
+        const stars = rating.querySelectorAll('.star-new');
         const category = rating.dataset.category;
         
         stars.forEach(star => {
@@ -847,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const value = this.dataset.value;
                 stars.forEach((s, index) => {
                     if (index < value) {
-                        s.style.color = '#ffd700';
+                        s.style.color = '#FFD700';
                     } else {
                         s.style.color = '#ddd';
                     }
@@ -858,7 +1072,7 @@ document.addEventListener('DOMContentLoaded', function() {
         rating.addEventListener('mouseleave', function() {
             stars.forEach((star, index) => {
                 if (star.classList.contains('selected')) {
-                    star.style.color = '#ffd700';
+                    star.style.color = '#FFD700';
                 } else {
                     star.style.color = '#ddd';
                 }
@@ -868,7 +1082,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Character count for review text
     const reviewText = document.getElementById('reviewText');
-    const charCount = document.querySelector('.char-count');
+    const charCount = document.querySelector('.char-count-new');
     
     if (reviewText && charCount) {
         reviewText.addEventListener('input', function() {
@@ -906,6 +1120,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         file: file,
                         url: e.target.result
                     });
+                    
+                    // Hanya ambil 4 foto pertama
+                    if (selectedPhotos.length > 4) {
+                        selectedPhotos = selectedPhotos.slice(0, 4);
+                        alert('Maksimal 4 foto. Hanya 4 foto pertama yang akan digunakan.');
+                    }
+                    
                     updatePhotoGrid();
                 };
                 reader.readAsDataURL(file);
