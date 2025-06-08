@@ -164,7 +164,7 @@
         }
 
         .btn-hide {
-            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
             color: white;
             padding: 8px 12px;
             border-radius: 6px;
@@ -181,12 +181,12 @@
 
         .btn-hide:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+            box-shadow: 0 4px 8px rgba(253, 126, 20, 0.3);
             color: white;
         }
 
         .btn-verify {
-            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
             padding: 8px 12px;
             border-radius: 6px;
@@ -253,35 +253,31 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: #495057;
+            cursor: pointer;
             font-size: 13px;
-            padding: 8px 12px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border-left: 3px solid #26276B;
+            color: #495057;
+            line-height: 1.4;
         }
 
         .review-photos {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             flex-wrap: wrap;
-            align-items: center;
         }
 
-        .review-photo {
-            width: 45px;
-            height: 45px;
-            border-radius: 8px;
+        .photo-thumbnail {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
             object-fit: cover;
             cursor: pointer;
             border: 2px solid #e9ecef;
             transition: all 0.3s ease;
         }
 
-        .review-photo:hover {
-            transform: scale(1.1);
+        .photo-thumbnail:hover {
             border-color: #26276B;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
         }
 
         .photo-count {
@@ -318,80 +314,6 @@
             background: linear-gradient(135deg, #cce5ff 0%, #b3d9ff 100%);
             color: #0056b3;
             border: 1px solid #b3d9ff;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .admin-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .notification-wrapper {
-            position: relative;
-        }
-
-        .notification-icon {
-            color: #495057;
-            font-size: 20px;
-            text-decoration: none;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .notification-icon:hover {
-            color: #26276B;
-            background: #f8f9fa;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 18px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .admin-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-        }
-
-        .admin-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #e9ecef;
-        }
-
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin: 0;
         }
 
         .main-content {
@@ -454,7 +376,6 @@
         .product-name {
             font-weight: 500;
             color: #495057;
-            line-height: 1.4;
         }
 
         .date-cell {
@@ -523,31 +444,10 @@
     <x-sidebar></x-sidebar>
 
     <div class="main-content">
-        <div class="header">
-            <h1 class="page-title">Manajemen Review & Penilaian</h1>
-            <div class="admin-controls">
-                <div class="notification-wrapper">
-                    <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
-                        <i class="fa-solid fa-bell"></i>
-                        @php
-                            $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())
-                                ->where('is_read', false)
-                                ->count();
-                        @endphp
-                        @if($unreadCount > 0)
-                            <span class="notification-badge">{{ $unreadCount }}</span>
-                        @endif
-                    </a>
-                </div>
-                <div class="admin-profile">
-                    <span>Admin</span>
-                    <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
-                </div>
-            </div>
-        </div>
+        <x-admin-header title="Penilaian" />
 
         <div class="content">
-            <!-- Statistics -->
+            <!-- Statistics Cards -->
             <div class="stats-container">
                 <div class="stat-card">
                     <div class="stat-number">{{ $penilaians->count() }}</div>
@@ -643,13 +543,10 @@
                                     @if($penilaian->photos && count($penilaian->photos) > 0)
                                         <div class="review-photos">
                                             @foreach(array_slice($penilaian->photos, 0, 2) as $photo)
-                                                <img src="{{ asset('storage/' . $photo) }}" 
-                                                     alt="Review Photo" 
-                                                     class="review-photo"
-                                                     onclick="showPhotoModal('{{ asset('storage/' . $photo) }}')">
+                                                <img src="{{ $photo }}" alt="Review Photo" class="photo-thumbnail" onclick="showPhotoModal('{{ $photo }}')">
                                             @endforeach
                                             @if(count($penilaian->photos) > 2)
-                                                <div class="photo-count">+{{ count($penilaian->photos) - 2 }} foto</div>
+                                                <span class="photo-count">+{{ count($penilaian->photos) - 2 }}</span>
                                             @endif
                                         </div>
                                     @else
@@ -657,8 +554,7 @@
                                     @endif
                                 </td>
                                 <td class="date-cell">
-                                    {{ $penilaian->created_at->format('d/m/Y') }}<br>
-                                    <small>{{ $penilaian->created_at->format('H:i') }}</small>
+                                    {{ $penilaian->created_at ? $penilaian->created_at->format('d/m/Y H:i') : '-' }}
                                 </td>
                                 <td>
                                     @php
@@ -718,7 +614,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <img id="modalPhoto" src="" alt="Review Photo" style="max-width: 100%; height: auto; border-radius: 8px;">
+                    <img id="modalPhoto" src="" alt="Review Photo" class="img-fluid">
                 </div>
             </div>
         </div>
@@ -727,42 +623,49 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Filter functionality
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Update active button
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
-                const filter = this.dataset.filter;
-                const rows = document.querySelectorAll('#reviewTable tr');
-                
-                rows.forEach(row => {
-                    const rating = parseFloat(row.dataset.rating);
-                    const hasPhotos = row.dataset.photos === 'yes';
-                    let show = false;
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
                     
-                    switch(filter) {
-                        case 'all':
-                            show = true;
-                            break;
-                        case '5':
-                            show = rating >= 4.5;
-                            break;
-                        case '4':
-                            show = rating >= 3.5 && rating < 4.5;
-                            break;
-                        case '3':
-                            show = rating >= 2.5 && rating < 3.5;
-                            break;
-                        case 'low':
-                            show = rating <= 2.5;
-                            break;
-                        case 'photos':
-                            show = hasPhotos;
-                            break;
-                    }
+                    const filter = this.getAttribute('data-filter');
+                    const rows = document.querySelectorAll('#reviewTable tr');
                     
-                    row.style.display = show ? '' : 'none';
+                    rows.forEach(row => {
+                        if (!row.dataset.rating) return; // Skip header row
+                        
+                        const rating = parseFloat(row.dataset.rating);
+                        const hasPhotos = row.dataset.photos === 'yes';
+                        let show = false;
+                        
+                        switch(filter) {
+                            case 'all':
+                                show = true;
+                                break;
+                            case '5':
+                                show = rating >= 4.5;
+                                break;
+                            case '4':
+                                show = rating >= 3.5 && rating < 4.5;
+                                break;
+                            case '3':
+                                show = rating >= 2.5 && rating < 3.5;
+                                break;
+                            case 'low':
+                                show = rating <= 2.5;
+                                break;
+                            case 'photos':
+                                show = hasPhotos;
+                                break;
+                        }
+                        
+                        row.style.display = show ? '' : 'none';
+                    });
                 });
             });
         });
@@ -780,120 +683,75 @@
 
         // Photo modal
         function showPhotoModal(photoUrl) {
+            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
             document.getElementById('modalPhoto').src = photoUrl;
-            new bootstrap.Modal(document.getElementById('photoModal')).show();
+            modal.show();
         }
 
-        // View review detail
+        // Action functions
         function viewReview(reviewId) {
-            // Add loading state
-            const btn = event.target.closest('button');
-            btn.classList.add('btn-loading');
-            
-            // Implement view review detail functionality
-            window.location.href = `/admin/penilaian/${reviewId}`;
+            console.log('View review:', reviewId);
+            // Implement view functionality
         }
 
-        // TAMBAHKAN FUNGSI showReview untuk menampilkan kembali review yang tersembunyi
+        function hideReview(reviewId) {
+            Swal.fire({
+                title: 'Sembunyikan Review?',
+                text: 'Review ini akan disembunyikan dari tampilan publik.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#fd7e14',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Sembunyikan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateReviewStatus(reviewId, 'hidden');
+                }
+            });
+        }
+
         function showReview(reviewId) {
             Swal.fire({
                 title: 'Tampilkan Review?',
-                text: "Review ini akan ditampilkan kembali ke publik",
+                text: 'Review ini akan ditampilkan kembali untuk publik.',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, tampilkan!',
+                confirmButtonText: 'Ya, Tampilkan',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    updateReviewStatus(reviewId, 'active', 'Review berhasil ditampilkan');
+                    updateReviewStatus(reviewId, 'active');
                 }
             });
         }
 
-        // PERBAIKAN FUNGSI hideReview
-        function hideReview(reviewId) {
+        function confirmDelete(reviewId) {
             Swal.fire({
-                title: 'Sembunyikan Review?',
-                text: "Review ini akan disembunyikan dari tampilan publik",
-                icon: 'warning',
+                title: 'Hapus Review?',
+                text: 'Review ini akan dihapus secara permanen dan tidak dapat dikembalikan.',
+                icon: 'error',
                 showCancelButton: true,
-                confirmButtonColor: '#6c757d',
+                confirmButtonColor: '#dc3545',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, sembunyikan!',
+                confirmButtonText: 'Ya, Hapus',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    updateReviewStatus(reviewId, 'hidden', 'Review berhasil disembunyikan');
+                    deleteReview(reviewId);
                 }
             });
         }
 
-        // FUNGSI BARU untuk update status (reusable)
-        function updateReviewStatus(reviewId, newStatus, successMessage) {
-            const btn = event.target.closest('button');
-            if (btn) {
-                btn.classList.add('btn-loading');
-            }
-            
-            // Get CSRF token
-            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '{{ csrf_token() }}';
-            
-            if (!csrfToken) {
-                Swal.fire('Error!', 'CSRF token tidak ditemukan', 'error');
-                if (btn) btn.classList.remove('btn-loading');
-                return;
-            }
-            
-            // AJAX request to update status
-            fetch(`/admin/penilaian/${reviewId}/update-status`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({ status: newStatus })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    Swal.fire('Berhasil!', successMessage, 'success');
-                    
-                    // Update UI tanpa reload
-                    updateReviewRowUI(reviewId, newStatus);
-                } else {
-                    throw new Error(data.message || 'Gagal mengupdate status review');
-                }
-            })
-            .catch(error => {
-                console.error('Error updating review status:', error);
-                if (btn) btn.classList.remove('btn-loading');
-                Swal.fire('Error!', 'Terjadi kesalahan: ' + error.message, 'error');
-            })
-            .finally(() => {
-                if (btn) btn.classList.remove('btn-loading');
-            });
-        }
-
-        // FUNGSI BARU untuk update UI row tanpa reload
-        function updateReviewRowUI(reviewId, newStatus) {
-            const row = document.querySelector(`tr[data-rating]`);
-            if (!row) return;
-            
-            // Cari row yang tepat berdasarkan review ID dari action button
-            const rows = document.querySelectorAll('#reviewTable tr');
+        function updateReviewStatus(reviewId, newStatus) {
+            // Find the row and update status
+            const rows = document.querySelectorAll('#reviewTable tr[data-rating]');
             let targetRow = null;
             
             rows.forEach(row => {
-                const buttons = row.querySelectorAll('button[onclick*="' + reviewId + '"]');
+                const buttons = row.querySelectorAll('.btn-hide, .btn-verify');
                 if (buttons.length > 0) {
                     targetRow = row;
                 }
@@ -930,7 +788,7 @@
                             </button>
                         `;
                     } else if (newStatus === 'hidden') {
-                        // Show show button
+                        // Show verify button
                         actionButtons.innerHTML = `
                             <button class="btn-view" onclick="viewReview(${reviewId})" title="Lihat Detail">
                                 <i class="fas fa-eye"></i>
@@ -946,127 +804,35 @@
                 }
             }
             
-            // Update row data attribute
-            targetRow.setAttribute('data-status', newStatus);
-        }
-
-        // confirmDelete function remains the same
-        function confirmDelete(reviewId) {
+            // Show success message
             Swal.fire({
-                title: 'Apakah kamu yakin?',
-                text: "Review ini akan dihapus secara permanen!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Add loading state
-                    const btn = event.target.closest('button');
-                    if (btn) {
-                        btn.classList.add('btn-loading');
-                    }
-                    
-                    // Get CSRF token dengan error handling
-                    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-                    const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '{{ csrf_token() }}';
-                    
-                    if (!csrfToken) {
-                        Swal.fire('Error!', 'CSRF token tidak ditemukan', 'error');
-                        if (btn) btn.classList.remove('btn-loading');
-                        return;
-                    }
-                    
-                    // Create and submit form dengan CSRF token
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = `/admin/penilaian/${reviewId}`;
-                    form.innerHTML = `
-                        <input type="hidden" name="_token" value="${csrfToken}">
-                        <input type="hidden" name="_method" value="DELETE">
-                    `;
-                    document.body.appendChild(form);
-                    form.submit();
-                }
+                title: 'Berhasil!',
+                text: `Status review berhasil diubah menjadi ${newStatus === 'active' ? 'aktif' : 'disembunyikan'}.`,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
             });
         }
 
-        // Success messages
-        document.addEventListener('DOMContentLoaded', function() {
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: "{{ session('success') }}",
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            @endif
-
-            @if(session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: "{{ session('error') }}",
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            @endif
-        });
-
-        // Add smooth scrolling for better UX
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+        function deleteReview(reviewId) {
+            // Find and remove the row
+            const rows = document.querySelectorAll('#reviewTable tr[data-rating]');
+            rows.forEach(row => {
+                const deleteBtn = row.querySelector(`[onclick*="${reviewId}"]`);
+                if (deleteBtn && deleteBtn.onclick.toString().includes('confirmDelete')) {
+                    row.remove();
                 }
             });
-        });
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + K for search focus
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                const searchInput = document.getElementById('searchInput');
-                if (searchInput) {
-                    searchInput.focus();
-                }
-            }
-        });
-
-        // Auto-refresh functionality (optional)
-        let autoRefreshInterval;
-        
-        function startAutoRefresh() {
-            autoRefreshInterval = setInterval(() => {
-                // Only refresh if no modals are open
-                if (!document.querySelector('.modal.show')) {
-                    location.reload();
-                }
-            }, 300000); // Refresh every 5 minutes
+            
+            // Show success message
+            Swal.fire({
+                title: 'Terhapus!',
+                text: 'Review berhasil dihapus.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
         }
-
-        function stopAutoRefresh() {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-            }
-        }
-
-        // Stop auto-refresh when page is not visible
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                stopAutoRefresh();
-            } else {
-                // startAutoRefresh();
-            }
-        });
     </script>
 </body>
 </html>

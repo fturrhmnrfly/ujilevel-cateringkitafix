@@ -21,63 +21,6 @@
             padding: 20px;
         }
 
-        .header {
-            background-color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .admin-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .notification-wrapper {
-            position: relative;
-        }
-
-        .notification-icon {
-            color: #333;
-            font-size: 20px;
-            text-decoration: none;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-icon:hover {
-            color: #2c2c77;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: red;
-            color: white;
-            font-size: 12px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 18px;
-            text-align: center;
-        }
-
-        .admin-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-        }
-
         .search-box {
             margin-bottom: 20px;
         }
@@ -175,28 +118,7 @@
     <x-sidebar/>
     
     <div class="main-content">
-        <div class="header">
-            <h1 class="page-title">{{ $title ?? 'Kategori' }}</h1>
-            <div class="admin-controls">
-                <div class="notification-wrapper">
-                    <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
-                        <i class="fa-solid fa-bell"></i>
-                        @php
-                            $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())
-                                ->where('is_read', false)
-                                ->count();
-                        @endphp
-                        @if($unreadCount > 0)
-                            <span class="notification-badge">{{ $unreadCount }}</span>
-                        @endif
-                    </a>
-                </div>
-                <div class="admin-profile">
-                    <span>Admin</span>
-                    <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
-                </div>
-            </div>
-        </div>
+        <x-admin-header title="Kategori" />
 
         <div class="search-box">
             <input type="text" placeholder="Search Karyawan...">
@@ -234,7 +156,7 @@
                                 <form id="delete-form-{{ $menu['id'] }}" action="{{ route('admin.kategori.destroy', $menu['id']) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="delete-btn" onclick="confirmDelete('delete-form-{{ $menu['id'] }}')">
+                                    <button type="button" class="delete-btn" onclick="confirmDelete({{ $menu['id'] }})">
                                         <i class="fas fa-trash"></i> Hapus
                                     </button>
                                 </form>
@@ -242,7 +164,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">Belum ada menu tersedia</td>
+                            <td colspan="5" class="text-center">Tidak ada data kategori</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -251,35 +173,40 @@
     </div>
 
     <script>
-function confirmDelete(formId) {
-    Swal.fire({
-        title: 'Apakah kamu yakin?',
-        text: "Data ini akan dihapus secara permanen!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById(formId).submit();
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data ini akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
         }
-    });
-}
 
-// Success message after delete
-document.addEventListener('DOMContentLoaded', function() {
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: "{{ session('success') }}",
-            timer: 1500,
-            showConfirmButton: false
-        });
-    @endif
-});
-</script>
+        @if(session('success'))
+            Swal.fire({
+                title: 'Berhasil!',
+                text: '{{ session("success") }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                title: 'Error!',
+                text: '{{ session("error") }}',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        @endif
+    </script>
 </body>
 </html>

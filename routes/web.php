@@ -265,6 +265,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Admin Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
+    Route::put('/admin/profile/update', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+
     /*
     |--------------------------------------------------------------------------
     | Product Management
@@ -350,6 +352,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::post('/{id}/toggle-status', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('/{id}/verify', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'verify'])->name('verify');
     });
+});
+
+// Admin Profile Routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/profile', [App\Http\Controllers\Admin\AdminProfileController::class, 'show'])->name('admin.profile.show');
+    Route::post('/profile/update', [App\Http\Controllers\Admin\AdminProfileController::class, 'update'])->name('admin.profile.update');
+    Route::delete('/profile/destroy', [App\Http\Controllers\Admin\AdminProfileController::class, 'destroy'])->name('admin.profile.destroy');
 });
 
 require __DIR__.'/auth.php';

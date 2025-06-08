@@ -14,106 +14,58 @@
         }
 
         body {
-            display: flex;
             background-color: #f3f4f6;
         }
 
         .main-content {
             margin-left: 250px;
             padding: 20px;
-            width: 100%;
+            width: calc(100% - 250px);
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .content {
             background: white;
-            padding: 20px;
-            margin-bottom: 20px;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .admin-controls {
+        .filters {
             display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .notification-wrapper {
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-icon {
-            color: #333;
-            font-size: 20px;
-            text-decoration: none;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-icon:hover {
-            color: #2c2c77;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: red;
-            color: white;
-            font-size: 12px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 18px;
-            text-align: center;
-        }
-
-        .page-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .top-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 15px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
-        .search-input {
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-group select,
+        .filter-group input {
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            width: 300px;
+            font-size: 14px;
         }
 
-        .btn-buat-laporan {
-            background-color: white;
-            color: black;
-            padding: 8px 20px;
-            border-radius: 25px;
-            text-decoration: none;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-right: 10px;
-        }
-
-        .btn-export {
-            background-color: #e2e2e2;
-            color: black;
-            padding: 8px 20px;
+        .btn-filter {
+            background: #4F46E5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
             border-radius: 4px;
-            text-decoration: none;
-        }
-
-        .table-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
             margin-top: 20px;
         }
 
@@ -165,147 +117,84 @@
             padding: 4px 12px;
             border-radius: 4px;
             text-decoration: none;
+            margin-left: 5px;
             font-size: 12px;
-        }
-
-        .btn-delete {
-            background-color: #dc3545;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .admin-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-function confirmDelete(formId) {
-    Swal.fire({
-        title: 'Apakah kamu yakin?',
-        text: "Data ini akan dihapus secara permanen!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById(formId).submit();
-        }
-    });
-}
-
-// Success message after delete
-document.addEventListener('DOMContentLoaded', function() {
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: "{{ session('success') }}",
-            timer: 1500,
-            showConfirmButton: false
-        });
-    @endif
-});
-</script>
 </head>
 <body>
     <x-sidebar></x-sidebar>
 
     <div class="main-content">
-        <div class="header">
-            <h1 class="page-title">Laporan Keuangan</h1>
-            <div class="admin-controls">
-                <div class="notification-wrapper">
-                    <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
-                        <i class="fa-solid fa-bell"></i>
-                        @php
-                            $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())
-                                ->where('is_read', false)
-                                ->count();
-                        @endphp
-                        @if($unreadCount > 0)
-                            <span class="notification-badge">{{ $unreadCount }}</span>
-                        @endif
-                    </a>
+        <x-admin-header title="Laporan Keuangan" />
+
+        <div class="content">
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Periode</label>
+                    <select id="periode-filter">
+                        <option value="harian">Harian</option>
+                        <option value="mingguan">Mingguan</option>
+                        <option value="bulanan" selected>Bulanan</option>
+                        <option value="tahunan">Tahunan</option>
+                    </select>
                 </div>
-                <div class="admin-profile">
-                    <span>Admin</span>
-                    <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
+                <div class="filter-group">
+                    <label>Bulan</label>
+                    <select id="bulan-filter">
+                        <option value="">Semua Bulan</option>
+                        <option value="1">Januari</option>
+                        <option value="2">Februari</option>
+                        <option value="3">Maret</option>
+                        <option value="4">April</option>
+                        <option value="5">Mei</option>
+                        <option value="6">Juni</option>
+                        <option value="7">Juli</option>
+                        <option value="8">Agustus</option>
+                        <option value="9">September</option>
+                        <option value="10">Oktober</option>
+                        <option value="11">November</option>
+                        <option value="12">Desember</option>
+                    </select>
                 </div>
+                <div class="filter-group">
+                    <label>Tahun</label>
+                    <input type="number" id="tahun-filter" value="{{ date('Y') }}" min="2020" max="2030">
+                </div>
+                <div class="filter-group">
+                    <label>Jenis</label>
+                    <select id="jenis-filter">
+                        <option value="">Semua</option>
+                        <option value="pemasukan">Pemasukan</option>
+                        <option value="pengeluaran">Pengeluaran</option>
+                    </select>
+                </div>
+                <button class="btn-filter" onclick="applyFilter()">Filter</button>
             </div>
-        </div>
 
-        <div class="top-controls">
-            <a href="{{ route('admin.laporan.create') }}" class="btn-buat-laporan">Buat Laporan</a>
-            <input type="text" class="search-input" placeholder="Search Laporan...">
-            <a href="{{ route('admin.laporan.export') }}" class="btn-export">Export Excel</a>
-        </div>
-
-        <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Laporan</th>
-                        <th>Jenis Laporan</th>
                         <th>Tanggal</th>
-                        <th>Admin</th>
-                        <th>Kategori</th>
+                        <th>Jenis</th>
                         <th>Deskripsi</th>
-                        <th>File Excel</th>
-                        <th>Action</th>
+                        <th>Jumlah</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($laporans as $index => $laporan)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $laporan->laporan }}</td>
-                            <td>{{ $laporan->jenis_laporan }}</td>
-                            <td>{{ $laporan->tanggal }}</td>
-                            <td>{{ $laporan->admin }}</td>
-                            <td>
-                                <span class="badge {{ $laporan->kategori == 'Pemasukan' ? 'badge-pemasukan' : 'badge-pengeluaran' }}">
-                                    {{ $laporan->kategori }}
-                                </span>
-                            </td>
-                            <td>{{ $laporan->deskripsi }}</td>
-                            <td><a href="#" class="btn-view">View File</a></td>
-                            <td class="action-buttons">
-                                <a href="{{ route('admin.laporan.edit', $laporan->id) }}" class="btn-edit">edit</a>
-                                <form id="delete-form-{{ $laporan->id }}" action="{{ route('admin.laporan.destroy', $laporan->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn-delete" onclick="confirmDelete('delete-form-{{ $laporan->id }}')">
-                                        Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
+                <tbody id="laporan-table-body">
+                    <!-- Data akan diisi melalui JavaScript -->
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        function applyFilter() {
+            // Implementasi filter laporan
+            console.log('Filter applied');
+        }
+    </script>
 </body>
 </html>

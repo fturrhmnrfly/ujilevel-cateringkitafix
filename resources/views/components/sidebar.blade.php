@@ -46,7 +46,7 @@
 
     .sidebar {
         width: 250px;
-        background-color: #1e1b4b;
+        background-color: #B19370; /* Updated background color */
         min-height: 100vh;
         padding: 20px;
         color: white;
@@ -74,7 +74,7 @@
     }
 
     .menu-item:hover {
-        background-color: #2d2a77;
+        background-color: #A08660; /* Darker shade for hover effect */
     }
 
     .menu-item i {
@@ -112,7 +112,7 @@
     }
 
     .logout-btn:hover {
-        background-color: #2d2a77;
+        background-color: #A08660; /* Matching hover color */
     }
 
     .notification-badge {

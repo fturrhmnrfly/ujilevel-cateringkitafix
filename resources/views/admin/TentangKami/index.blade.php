@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tentang Kami - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -19,63 +20,6 @@
         .main-content {
             margin-left: 250px;
             padding: 20px;
-        }
-
-        .header {
-            background-color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .admin-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .notification-wrapper {
-            position: relative;
-        }
-
-        .notification-icon {
-            color: #333;
-            font-size: 20px;
-            text-decoration: none;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-icon:hover {
-            color: #2c2c77;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: red;
-            color: white;
-            font-size: 12px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 18px;
-            text-align: center;
-        }
-
-        .admin-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
         }
 
         .search-box {
@@ -137,131 +81,99 @@
         }
 
         .edit-btn {
-            background-color: #ffc107;
-            color: #000;
-            border: none;
-            padding: 6px 12px;
+            background: #ffc107;
+            color: black;
+            padding: 4px 12px;
             border-radius: 4px;
-            cursor: pointer;
             text-decoration: none;
+            font-size: 12px;
         }
 
         .delete-btn {
-            background-color: #dc3545;
+            background: #dc3545;
             color: white;
-            border: none;
-            padding: 6px 12px;
+            padding: 4px 12px;
             border-radius: 4px;
+            border: none;
             cursor: pointer;
+            font-size: 12px;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    // Delete confirmation
-    function confirmDelete(id) {
-        Swal.fire({
-            title: 'Apakah kamu yakin?',
-            text: "Data ini akan dihapus secara permanen!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        });
-    }
-
-    // Success messages for Create, Update, Delete
-    document.addEventListener('DOMContentLoaded', function() {
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: "{{ session('success') }}",
-                timer: 1500,
-                showConfirmButton: false
-            });
-        @endif
-    });
-</script>
 </head>
 <body>
-    <x-sidebar/>
-    
+    <x-sidebar></x-sidebar>
+
     <div class="main-content">
-        <div class="header">
-            <h1 class="page-title">{{ $title ?? 'Tentang Kami' }}</h1>
-            <div class="admin-controls">
-                <div class="notification-wrapper">
-                    <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
-                        <i class="fa-solid fa-bell"></i>
-                        @php
-                            $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())
-                                ->where('is_read', false)
-                                ->count();
-                        @endphp
-                        @if($unreadCount > 0)
-                            <span class="notification-badge">{{ $unreadCount }}</span>
-                        @endif
-                    </a>
-                </div>
-                <div class="admin-profile">
-                    <span>Admin</span>
-                    <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
+        <x-admin-header title="Tentang Kami" />
+
+        <div class="content">
+            <div class="content-header">
+                <a href="{{ route('admin.tentangkami.create') }}" class="tambah-btn">
+                    <i class="fas fa-plus"></i> Tambah Tentang Kami
+                </a>
+                <div class="search-box">
+                    <input type="text" placeholder="Cari...">
                 </div>
             </div>
-        </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Search Karyawan...">
-        </div>
-
-        <div class="content-header">
-            <h3>Tentang Kami</h3>
-            <a href="{{ route('admin.tentangkami.create') }}" class="tambah-btn">
-                <span>+</span> Tambah
-            </a>
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Foto</th>
-                        <th>Deskripsi</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($tentangkami as $item)
+            <div class="table-container">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>
-                                <img src="{{ Storage::url($item->foto) }}" alt="Foto" width="100">
-                            </td>
-                            <td>{{ $item->deskripsi }}</td>
-                            <td class="action-buttons">
-                                <a href="{{ route('admin.tentangkami.edit', $item->id) }}" class="edit-btn">edit</a>
-                                <form id="delete-form-{{ $item->id }}" action="{{ route('admin.tentangkami.destroy', $item->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="delete-btn" onclick="confirmDelete({{ $item->id }})">Delete</button>
-                                </form>
-                            </td>
+                            <th>No</th>
+                            <th>Foto</th>
+                            <th>Deskripsi</th>
+                            <th>Aksi</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center">Belum ada data</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($tentangkami as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    <img src="{{ Storage::url($item->foto) }}" alt="Foto" width="100">
+                                </td>
+                                <td>{{ $item->deskripsi }}</td>
+                                <td class="action-buttons">
+                                    <a href="{{ route('admin.tentangkami.edit', $item->id) }}" class="edit-btn">edit</a>
+                                    <form id="delete-form-{{ $item->id }}" action="{{ route('admin.tentangkami.destroy', $item->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="delete-btn" onclick="confirmDelete({{ $item->id }})">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 20px; color: #666;">
+                                    Tidak ada data tersedia
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Yakin ingin menghapus?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            })
+        }
+    </script>
 </body>
 </html>

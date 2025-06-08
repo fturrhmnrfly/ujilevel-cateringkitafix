@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 08, 2025 at 10:39 AM
+-- Generation Time: Jun 08, 2025 at 05:18 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.12
 
@@ -47,6 +47,13 @@ CREATE TABLE `admin_profiles` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `admin_profiles`
+--
+
+INSERT INTO `admin_profiles` (`id`, `user_id`, `phone`, `bio`, `created_at`, `updated_at`) VALUES
+(2, 7, '', 'Hello guys', '2025-06-08 08:36:40', '2025-06-08 08:36:40');
 
 -- --------------------------------------------------------
 
@@ -142,6 +149,10 @@ CREATE TABLE `daftar_pesanans` (
   `total_harga` decimal(10,2) NOT NULL,
   `status_pengiriman` enum('diproses','dikirim','diterima','dibatalkan') COLLATE utf8mb4_unicode_ci NOT NULL,
   `status_pembayaran` enum('pending','paid','failed') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `catatan_pembatalan` text COLLATE utf8mb4_unicode_ci COMMENT 'Alasan pembatalan pesanan (dari admin atau user)',
+  `cancelled_at` timestamp NULL DEFAULT NULL COMMENT 'Tanggal dan waktu pembatalan',
+  `cancelled_by` bigint UNSIGNED DEFAULT NULL COMMENT 'ID user yang membatalkan (admin atau user)',
+  `cancelled_by_type` enum('admin','user') COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Jenis pembatal: admin atau user',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -150,21 +161,13 @@ CREATE TABLE `daftar_pesanans` (
 -- Dumping data for table `daftar_pesanans`
 --
 
-INSERT INTO `daftar_pesanans` (`id`, `order_id`, `nama_pelanggan`, `user_id`, `kategori_pesanan`, `kelola_makanan_id`, `tanggal_pesanan`, `jumlah_pesanan`, `tanggal_pengiriman`, `waktu_pengiriman`, `lokasi_pengiriman`, `nomor_telepon`, `pesan`, `opsi_pengiriman`, `total_harga`, `status_pengiriman`, `status_pembayaran`, `created_at`, `updated_at`) VALUES
-(99, 'ORD1745981486436920', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-04-29 19:51:26', 20, '2025-05-01', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang wjnk', 'regular', 250000.00, 'diproses', 'pending', '2025-04-29 19:51:27', '2025-04-29 19:51:27'),
-(100, 'ORD1745981679193113', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-04-29 19:54:39', 20, '2025-05-01', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang enaka', 'instant', 260000.00, 'diproses', 'pending', '2025-04-29 19:54:39', '2025-04-29 19:54:39'),
-(101, 'ORD1745983154093751', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-04-29 20:19:14', 30, '2025-05-12', '12:00:00', 'ciomas bogor kota', '+62 898 8049 488', 'yang banyak yaa', 'instant', 380000.00, 'diproses', 'pending', '2025-04-29 20:19:15', '2025-04-29 20:19:15'),
-(102, 'ORD1746151342333408', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-05-01 19:02:22', 30, '2025-05-03', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang enak', 'instant', 380000.00, 'diproses', 'pending', '2025-05-01 19:02:23', '2025-05-01 19:02:23'),
-(103, 'ORD1746151520036715', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-05-01 19:05:20', 30, '2025-05-03', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang enak', 'instant', 370000.00, 'diproses', 'pending', '2025-05-01 19:05:20', '2025-05-01 19:05:20'),
-(104, 'ORD1746163623394934', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-05-01 22:27:03', 100, '2025-05-03', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang enak', 'instant', 3510000.00, 'diproses', 'pending', '2025-05-01 22:27:03', '2025-05-01 22:27:03'),
-(110, 'ORD174897122950664', 'ban user', 8, 'Lainnya', NULL, '2025-06-03 10:20:29', 1, '2025-06-05', '11:22:00', 'lsahKskldhfalkdjshfldkasjhflsdfdsfd', '+62 895 4949 94999', 'vgfgagagggggggggggggggggggggggggga', 'instant', 22000.00, 'diterima', 'pending', '2025-06-03 10:20:29', '2025-06-04 04:50:44'),
-(121, 'ORD1749240164741910', 'ban user', 8, 'Lainnya', NULL, '2025-06-05 17:00:00', 1, '2025-06-25', '11:02:00', 'MDTV', '087652552114', 'TRANS TV', 'instant', 22000.00, 'diterima', 'pending', '2025-06-06 13:02:50', '2025-06-06 13:08:24'),
-(122, 'ORD1749318558846508', 'ban user', 8, 'Lainnya', NULL, '2025-06-07 00:00:00', 1, '2025-06-18', '13:48:00', 'sdadasds', '0895392982328', 'termal', 'instant', 25000.00, 'diproses', 'pending', '2025-06-07 10:49:23', '2025-06-07 10:49:23'),
-(123, 'ORD1749349264636344', 'ban user', 8, 'Lainnya', NULL, '2025-06-08 00:00:00', 1, '2025-06-11', '09:20:00', 'bandung', '089539298232', 'dasdasasda', 'regular', 15000.00, 'diproses', 'pending', '2025-06-07 19:21:08', '2025-06-07 19:21:08'),
-(124, 'ORD1749349518621169', 'ban user', 8, 'Lainnya', NULL, '2025-06-08 00:00:00', 1, '2025-06-16', '09:24:00', 'babduds', '0895392982329', 'bohemian rhapsody', 'instant', 20000.00, 'diproses', 'pending', '2025-06-07 19:25:22', '2025-06-07 19:25:22'),
-(125, 'ORD1749350475919673', 'ban user', 8, 'Lainnya', 7, '2025-06-08 00:00:00', 1, '2025-06-19', '09:40:00', 'dkhashdksahkaj', '089539298232', 'adah', 'instant', 15000.00, 'dibatalkan', 'pending', '2025-06-07 19:41:19', '2025-06-08 02:20:04'),
-(126, 'ORD1749365807705777', 'ban user', 8, 'Lainnya', 13, '2025-06-08 00:00:00', 1, '2025-06-10', '13:56:00', 'adlkfasdlkjlk', '0876525521175', 'Weekend', 'instant', 45000.00, 'diterima', 'pending', '2025-06-07 23:56:51', '2025-06-08 00:31:22'),
-(127, 'ORD174937387055449', 'ban user', 8, 'Lainnya', 2, '2025-06-08 00:00:00', 1, '2025-06-16', '16:10:00', 'ju wenjun', '0876525521177', 'lero', 'instant', 19000.00, 'dikirim', 'pending', '2025-06-08 02:11:22', '2025-06-08 02:19:33');
+INSERT INTO `daftar_pesanans` (`id`, `order_id`, `nama_pelanggan`, `user_id`, `kategori_pesanan`, `kelola_makanan_id`, `tanggal_pesanan`, `jumlah_pesanan`, `tanggal_pengiriman`, `waktu_pengiriman`, `lokasi_pengiriman`, `nomor_telepon`, `pesan`, `opsi_pengiriman`, `total_harga`, `status_pengiriman`, `status_pembayaran`, `catatan_pembatalan`, `cancelled_at`, `cancelled_by`, `cancelled_by_type`, `created_at`, `updated_at`) VALUES
+(99, 'ORD1745981486436920', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-04-29 19:51:26', 20, '2025-05-01', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang wjnk', 'regular', 250000.00, 'diproses', 'pending', NULL, NULL, NULL, NULL, '2025-04-29 19:51:27', '2025-04-29 19:51:27'),
+(100, 'ORD1745981679193113', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-04-29 19:54:39', 20, '2025-05-01', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang enaka', 'instant', 260000.00, 'diproses', 'pending', NULL, NULL, NULL, NULL, '2025-04-29 19:54:39', '2025-04-29 19:54:39'),
+(122, 'ORD1749318558846508', 'ban user', 8, 'Lainnya', NULL, '2025-06-07 00:00:00', 1, '2025-06-18', '13:48:00', 'sdadasds', '0895392982328', 'termal', 'instant', 25000.00, 'diterima', 'pending', NULL, NULL, NULL, NULL, '2025-06-07 10:49:23', '2025-06-08 04:52:20'),
+(123, 'ORD1749349264636344', 'ban user', 8, 'Lainnya', NULL, '2025-06-08 00:00:00', 1, '2025-06-11', '09:20:00', 'bandung', '089539298232', 'dasdasasda', 'regular', 15000.00, 'diterima', 'pending', NULL, NULL, NULL, NULL, '2025-06-07 19:21:08', '2025-06-08 04:50:50'),
+(124, 'ORD1749349518621169', 'ban user', 8, 'Lainnya', NULL, '2025-06-08 00:00:00', 1, '2025-06-16', '09:24:00', 'babduds', '0895392982329', 'bohemian rhapsody', 'instant', 20000.00, 'dibatalkan', 'pending', 'Stok Habis', '2025-06-08 04:49:30', 7, 'admin', '2025-06-07 19:25:22', '2025-06-08 04:49:30'),
+(125, 'ORD1749381501537706', 'ban user', 8, 'Lainnya', 13, '2025-06-08 00:00:00', 1, '2025-06-09', '09:18:00', 'lkasdlkjasd', '089539298232', 'dasdaaaaaaaaaaaa', 'regular', 40000.00, 'dibatalkan', 'pending', 'SALAH', '2025-06-08 04:19:19', 8, 'user', '2025-06-08 04:18:26', '2025-06-08 04:19:19');
 
 -- --------------------------------------------------------
 
@@ -354,7 +357,7 @@ INSERT INTO `keranjangs` (`id`, `user_id`, `total`, `status`, `created_at`, `upd
 (2, 2, 25000.00, 'active', '2025-04-27 21:11:21', '2025-04-29 17:35:32'),
 (3, 3, 1296000.00, 'active', '2025-04-29 17:49:47', '2025-04-29 17:50:00'),
 (4, 4, 81000.00, 'active', '2025-04-29 21:06:35', '2025-05-29 23:27:52'),
-(5, 8, 9000.00, 'active', '2025-06-03 09:24:52', '2025-06-08 00:50:08');
+(5, 8, 35000.00, 'active', '2025-06-03 09:24:52', '2025-06-08 04:16:20');
 
 -- --------------------------------------------------------
 
@@ -384,7 +387,7 @@ INSERT INTO `keranjang_items` (`id`, `keranjang_id`, `kelola_makanan_id`, `nama_
 (16, 1, NULL, 'Paket Nasi Ayam Bakar Spesial', 35000.00, 100, '/storage/images/htSf1ctWYeXUkNcD9099YhrttUatFJO0I9knpLWk.png', '2025-05-01 22:26:31', '2025-05-01 22:26:31'),
 (17, 1, NULL, 'Ayam Geprek', 12000.00, 4, '/storage/images/5fSVaTecLpJTXCwjZqPkyRLLm1Sbd2lCuM4n8QzM.png', '2025-05-02 00:22:16', '2025-05-27 01:12:04'),
 (18, 4, NULL, 'Ayam Kecap', 9000.00, 9, '/storage/images/2U1Gn90AgLNdcljVLgqGjq5xfrZSGNLK4BzrTHqU.jpg', '2025-05-26 00:44:23', '2025-05-28 00:34:18'),
-(26, 5, 2, 'Ayam Kecap', 9000.00, 1, '/storage/images/I8NovMGPK8rmTEZpZ0zgkkU1n7j9jSyJ4wM9CyPb.jpg', '2025-06-08 00:50:00', '2025-06-08 00:50:00');
+(27, 5, 13, 'Paket Nasi Ayam Bakar Spesial', 35000.00, 1, '/storage/images/sQDynhwRL8f6ezZBAF6FtlbsnpQCjIjml6FADyMW.png', '2025-06-08 04:16:11', '2025-06-08 04:16:11');
 
 -- --------------------------------------------------------
 
@@ -579,9 +582,10 @@ CREATE TABLE `notifications` (
 
 INSERT INTO `notifications` (`id`, `user_id`, `title`, `message`, `type`, `icon_type`, `order_id`, `is_read`, `read_at`, `created_at`, `updated_at`) VALUES
 (1, 8, 'Pesanan baru', 'Pesanan #ORD1749318558846508 sedang dalam Proses', 'order', 'box', 122, 1, '2025-06-07 21:36:09', '2025-06-07 10:49:23', '2025-06-07 21:36:09'),
-(2, 8, 'Pesanan Telah Dikirim', 'Pesanan #ORD1749365807705777 sedang dalam perjalanan dan akan tiba dalam waktu 30 menit.', 'delivery', 'truck', 126, 1, '2025-06-08 00:22:00', '2025-06-08 00:21:21', '2025-06-08 00:22:00'),
-(3, 8, 'Beri Rating untuk Pesanan Sebelumnya', 'Bagaimana pengalaman Anda dengan pesanan #ORD1749365807705777? Beri rating dan ulasan untuk membantu kami meningkatkan layanan.', 'delivery', 'star', 126, 1, '2025-06-08 00:45:12', '2025-06-08 00:31:22', '2025-06-08 00:45:12'),
-(4, 8, 'Pesanan Telah Dikirim', 'Pesanan #ORD174937387055449 sedang dalam perjalanan dan akan tiba dalam waktu 30 menit.', 'delivery', 'truck', 127, 0, NULL, '2025-06-08 02:19:33', '2025-06-08 02:19:33');
+(2, 8, 'Pesanan Telah Dikirim', 'Pesanan #ORD1749349264636344 sedang dalam perjalanan dan akan tiba dalam waktu 30 menit.', 'delivery', 'truck', 123, 1, '2025-06-08 04:49:44', '2025-06-08 04:49:34', '2025-06-08 04:49:44'),
+(3, 8, 'Beri Rating untuk Pesanan Sebelumnya', 'Bagaimana pengalaman Anda dengan pesanan #ORD1749349264636344? Beri rating dan ulasan untuk membantu kami meningkatkan layanan.', 'delivery', 'star', 123, 0, NULL, '2025-06-08 04:50:50', '2025-06-08 04:50:50'),
+(4, 8, 'Pesanan Telah Dikirim', 'Pesanan #ORD1749318558846508 sedang dalam perjalanan dan akan tiba dalam waktu 30 menit.', 'delivery', 'truck', 122, 0, NULL, '2025-06-08 04:52:12', '2025-06-08 04:52:12'),
+(5, 8, 'Beri Rating untuk Pesanan Sebelumnya', 'Bagaimana pengalaman Anda dengan pesanan #ORD1749318558846508? Beri rating dan ulasan untuk membantu kami meningkatkan layanan.', 'delivery', 'star', 122, 0, NULL, '2025-06-08 04:52:20', '2025-06-08 04:52:20');
 
 -- --------------------------------------------------------
 
@@ -785,6 +789,14 @@ CREATE TABLE `reviews` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `reviews`
+--
+
+INSERT INTO `reviews` (`id`, `user_id`, `order_id`, `order_number`, `quality_rating`, `delivery_rating`, `service_rating`, `average_rating`, `review_text`, `photos`, `status`, `is_verified`, `reviewed_at`, `created_at`, `updated_at`) VALUES
+(2, 8, 123, 'ORD1749349264636344', 5, 5, 5, 5.0, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pharetra sit amet mi eget sodales. Vestibulum elementum nec ligula sed ornare. Duis at tristique dui. Donec eget enim ultricies, pellentesque turpis quis, maximus nisi. Donec tempor, lorem quis lobortis tempor, arcu nulla aliquam dolor, at rutrum augue elit ac massa. Duis maximus enim auctor, volutpat felis a, lacinia risus. Proin ultrices augue ac mi venenatis, vel luctus dolor dictum. Duis efficitur pulvinar enim, quis elementum', '[\"reviews/MktSBFeNek8uQuUZa2o3OAXTofW4cgqaaaNRvEHv.png\"]', 'active', 0, '2025-06-08 04:51:29', '2025-06-08 04:51:29', '2025-06-08 04:51:29'),
+(4, 8, 122, 'ORD1749318558846508', 5, 5, 5, 5.0, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pharetra sit amet mi eget sodales. Vestibulum elementum nec ligula sed ornare. Duis at tristique dui. Donec eget enim ultricies, pellentesque turpis quis, maximus nisi. Donec tempor, lorem quis lobortis tempor, arcu nulla aliquam dolor, at rutrum augue elit ac massa. Duis maximus enim auctor, volutpat felis a, lacinia risus. Proin ultrices augue ac mi venenatis, vel luctus dolor dictum. Duis efficitur pulvinar enim, quis elementum', '[]', 'active', 0, '2025-06-08 04:52:33', '2025-06-08 04:52:33', '2025-06-08 04:52:33');
+
 -- --------------------------------------------------------
 
 --
@@ -805,8 +817,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('KJ1fpwc47P2hs7yFJxUPchBPrl0RyzytL5gMqHSA', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiQk1XeHB1aUQxTDJ4azNqSkFBT3pvbFplWFdaeEpZUjJMT0lZT3I0YSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyMToiaHR0cDovLzEyNy4wLjAuMTo4MDAwIjt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ub3RpZmljYXRpb25zL2NvdW50Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6ODt9', 1749379165),
-('KOMLVAOQX9GWozx2xeNPmPWsAUj3WIosZOfEDU36', 7, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiTVhOVDZtMWJYYTJ1QVM0UHN2WHhPUVlmR2lVS1VSRURkS0tLNUFwMiI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NztzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo0MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL2RhZnRhcnBlc2FuYW4iO319', 1749374404);
+('97rvZ1Dj3DXvdCWUcsLseoieiKxRlvrr0mqckuH8', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRWVvNnJTRHQ1RkRDbHdRd1JyY3c3T3J3c2tLVnFUN2hWdU1YNmh6SyI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6ODtzOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo0MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMvY291bnQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1749403129),
+('nNHe3E9rERmohtwJHOrnT6BPy4c6dLagLNvItipy', 7, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiUmhhdTVQbEl3eXVUdElJU2hzWmZFNlB5WndOaDNxZGV3Mk4wUWtzMSI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NztzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL3Byb2ZpbGUiO319', 1749402607);
 
 -- --------------------------------------------------------
 
@@ -885,7 +897,7 @@ CREATE TABLE `tentang_kamis` (
 --
 
 INSERT INTO `tentang_kamis` (`id`, `foto`, `deskripsi`, `created_at`, `updated_at`) VALUES
-(4, 'tentangkami/zSl3A9yWQxc00b3nbcyu0F64kLMDGSv1uPU0UxVp.png', 'Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun, arisan, syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek, nasi kebuli, nasi tumpeng, dan banyak lagi, lengkap dengan sayur dan sambal khas. Dengan pengalaman lebih dari 10 tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat, porsi pas, dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!', '2025-05-29 08:02:06', '2025-06-07 10:47:48');
+(4, 'tentangkami/zSl3A9yWQxc00b3nbcyu0F64kLMDGSv1uPU0UxVp.png', 'Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun, arisan, syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek, nasi kebuli, nasi tumpeng, dan banyak lagi, lengkap dengan sayur dan sambal khas. Dengan pengalaman lebih dari 10 tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat, porsi pas, dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!', '2025-05-29 08:02:06', '2025-06-07 10:47:48');
 
 -- --------------------------------------------------------
 
@@ -933,7 +945,8 @@ INSERT INTO `transaksis` (`id`, `nama_admin`, `nama_pelanggan`, `tanggal_transak
 (140, 'System', 'ban user', '2025-06-08 02:25:33', 'GOPAY-1749349533', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 20000.00, 'Menunggu Konfirmasi', 'payment_proofs/TguGdmCsVKuyoGGpLHUQLKR6crk4RfQnRNhiORyo.png', '2025-06-07 19:25:33', '2025-06-07 19:25:33'),
 (141, 'System', 'ban user', '2025-06-08 02:41:27', 'GOPAY-1749350487', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 15000.00, 'Menunggu Konfirmasi', 'payment_proofs/c5vuU3GTMcTVQIcNcB13yyDX8MxO4LqIDg9fer3X.png', '2025-06-07 19:41:27', '2025-06-07 19:41:27'),
 (142, 'System', 'ban user', '2025-06-08 06:57:05', 'GOPAY-1749365825', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 45000.00, 'Menunggu Konfirmasi', 'payment_proofs/OfvWxgyXHqrVuEaAS9HzIWYvFvv5pNIBDmJLB252.jpg', '2025-06-07 23:57:05', '2025-06-07 23:57:05'),
-(143, 'System', 'ban user', '2025-06-08 09:11:36', 'DANA-1749373896', 'Pembayaran DANA', 'Pembayaran via DANA', 19000.00, 'Menunggu Konfirmasi', 'payment_proofs/psGs7JiLNxplETQUAaaKEs7GF4WQwi7Z2fiTExM4.jpg', '2025-06-08 02:11:36', '2025-06-08 02:11:36');
+(143, 'System', 'ban user', '2025-06-08 09:11:36', 'DANA-1749373896', 'Pembayaran DANA', 'Pembayaran via DANA', 19000.00, 'Menunggu Konfirmasi', 'payment_proofs/psGs7JiLNxplETQUAaaKEs7GF4WQwi7Z2fiTExM4.jpg', '2025-06-08 02:11:36', '2025-06-08 02:11:36'),
+(144, 'System', 'ban user', '2025-06-08 11:18:54', 'GOPAY-1749381534', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 40000.00, 'Menunggu Konfirmasi', 'payment_proofs/w3V90Df4UlEWisgEc1o0l9s8h2ujZTpDvkhHDvfi.jpg', '2025-06-08 04:18:54', '2025-06-08 04:18:54');
 
 -- --------------------------------------------------------
 
@@ -1026,7 +1039,9 @@ ALTER TABLE `daftar_pesanans`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `daftar_pesanans_order_id_unique` (`order_id`),
   ADD KEY `daftar_pesanans_user_id_foreign` (`user_id`),
-  ADD KEY `idx_kelola_makanan_id` (`kelola_makanan_id`);
+  ADD KEY `idx_kelola_makanan_id` (`kelola_makanan_id`),
+  ADD KEY `idx_status_cancelled` (`status_pengiriman`,`cancelled_at`),
+  ADD KEY `idx_cancelled_by` (`cancelled_by`);
 
 --
 -- Indexes for table `detail_acaras`
@@ -1282,7 +1297,7 @@ ALTER TABLE `abouts`
 -- AUTO_INCREMENT for table `admin_profiles`
 --
 ALTER TABLE `admin_profiles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `caterings`
@@ -1348,7 +1363,7 @@ ALTER TABLE `kategoris`
 -- AUTO_INCREMENT for table `kelola_makanans`
 --
 ALTER TABLE `kelola_makanans`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `keranjangs`
@@ -1360,7 +1375,7 @@ ALTER TABLE `keranjangs`
 -- AUTO_INCREMENT for table `keranjang_items`
 --
 ALTER TABLE `keranjang_items`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `konfirmasi_pesanans`
@@ -1408,7 +1423,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `notification_admins`
@@ -1468,7 +1483,7 @@ ALTER TABLE `registers`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `status_pembayarans`
@@ -1498,7 +1513,7 @@ ALTER TABLE `tentang_kamis`
 -- AUTO_INCREMENT for table `transaksis`
 --
 ALTER TABLE `transaksis`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1526,6 +1541,8 @@ ALTER TABLE `check_outs`
 -- Constraints for table `daftar_pesanans`
 --
 ALTER TABLE `daftar_pesanans`
+  ADD CONSTRAINT `daftar_pesanans_cancelled_by_foreign` FOREIGN KEY (`cancelled_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `daftar_pesanans_kelola_makanan_id_foreign` FOREIGN KEY (`kelola_makanan_id`) REFERENCES `kelola_makanans` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `daftar_pesanans_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
@@ -1538,7 +1555,7 @@ ALTER TABLE `keranjangs`
 -- Constraints for table `keranjang_items`
 --
 ALTER TABLE `keranjang_items`
-  ADD CONSTRAINT `fk_keranjang_items_kelola_makanan` FOREIGN KEY (`kelola_makanan_id`) REFERENCES `kelola_makanans` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `keranjang_items_kelola_makanan_id_foreign` FOREIGN KEY (`kelola_makanan_id`) REFERENCES `kelola_makanans` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `keranjang_items_keranjang_id_foreign` FOREIGN KEY (`keranjang_id`) REFERENCES `keranjangs` (`id`) ON DELETE CASCADE;
 
 --

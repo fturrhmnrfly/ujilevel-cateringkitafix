@@ -3,11 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaksi</title>
+    <title>Transaksi - Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
         .content {
             padding: 20px;
+        }
+
+        .buat-transaksi {
+            float: right;
+            background: #2c2c77;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: none;
+        }
+
+        .search-box {
+            margin: 20px 0;
+        }
+
+        .search-box input {
+            width: 300px;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
 
         .table-container {
@@ -211,9 +249,13 @@
     <x-sidebar></x-sidebar>
 
     <div class="main-content">
+        <x-admin-header title="Transaksi" />
+
         <div class="content">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Transaksi</h2>
+                <a href="{{ route('admin.transaksi.create') }}" class="buat-transaksi">
+                    <i class="fas fa-plus"></i> Buat Transaksi
+                </a>
                 <input type="text" class="search-input" placeholder="Cari transaksi...">
             </div>
 
@@ -272,12 +314,12 @@
         </div>
     </div>
 
+    <!-- Modal untuk menampilkan bukti pembayaran -->
     <div id="imageModal" class="modal">
         <div class="modal-content">
             <span class="modal-close">&times;</span>
             <h3 id="modalTitle" style="margin-bottom: 10px;"></h3>
             
-            <!-- Informasi tambahan transaksi dalam modal -->
             <div class="modal-transaction-info">
                 <p>Nama Pelanggan: <span id="modalCustomerName"></span></p>
                 <p>Tanggal Transaksi: <span id="modalTransactionDate"></span></p>
@@ -290,23 +332,9 @@
 
     <script>
         function updateStatus(id) {
-            // Implementasi update status
             console.log('Update status untuk transaksi:', id);
-            // Tambahkan logika untuk membuka modal atau form update status
         }
 
-        // Fungsi pencarian
-        document.querySelector('.search-input').addEventListener('input', function(e) {
-            const searchText = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchText) ? '' : 'none';
-            });
-        });
-
-        // Fungsi untuk melihat gambar bukti pembayaran dengan informasi transaksi
         function viewImage(imageUrl, transactionId, customerName, transactionDate, transactionAmount) {
             const modal = document.getElementById('imageModal');
             const modalImage = document.getElementById('modalImage');
@@ -324,22 +352,13 @@
             modal.classList.add('show');
         }
 
-        // Tutup modal ketika mengklik tombol X
         document.querySelector('.modal-close').addEventListener('click', function() {
             document.getElementById('imageModal').classList.remove('show');
         });
 
-        // Tutup modal ketika mengklik di luar modal
         document.getElementById('imageModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 this.classList.remove('show');
-            }
-        });
-
-        // Tutup modal dengan tombol Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('imageModal').classList.contains('show')) {
-                document.getElementById('imageModal').classList.remove('show');
             }
         });
     </script>

@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metode Pembayaran</title>
+    <title>Metode Pembayaran - Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
         .content {
             padding: 20px;
         }
@@ -89,104 +104,19 @@
             color: #28a745;
             font-weight: 500;
         }
-
-        .header {
-            background-color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .admin-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .notification-wrapper {
-            position: relative;
-        }
-
-        .notification-icon {
-            color: #333;
-            font-size: 20px;
-            text-decoration: none;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-icon:hover {
-            color: #2c2c77;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: red;
-            color: white;
-            font-size: 12px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 18px;
-            text-align: center;
-        }
-
-        .admin-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-        }
-
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 <body>
     <x-sidebar></x-sidebar>
 
     <div class="main-content">
-        <div class="header">
-            <h1 class="page-title">{{ $title ?? 'Metode Pembayaran' }}</h1>
-            <div class="admin-controls">
-                <div class="notification-wrapper">
-                    <a href="{{ route('admin.notifications.index') }}" class="notification-icon">
-                        <i class="fa-solid fa-bell"></i>
-                        @php
-                            $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())
-                                ->where('is_read', false)
-                                ->count();
-                        @endphp
-                        @if($unreadCount > 0)
-                            <span class="notification-badge">{{ $unreadCount }}</span>
-                        @endif
-                    </a>
-                </div>
-                <div class="admin-profile">
-                    <span>Admin</span>
-                    <img src="{{ asset('assets/profil.png') }}" alt="Admin" class="admin-avatar">
-                </div>
-            </div>
-        </div>
+        <x-admin-header title="Metode Pembayaran" />
 
         <div class="content">
             <div class="content-header">
-                <a href="{{ route('admin.metodepembayaran.create') }}" class="btn-primary">Buat Metode Pembayaran</a>
-                <input type="text" class="search-input" placeholder="Search metode pembayaran...">
+                <a href="{{ route('admin.metodepembayaran.create') }}" class="btn-primary">Tambah Metode Pembayaran</a>
+                <input type="text" class="search-input" placeholder="Cari metode pembayaran...">
             </div>
 
             <div class="table-container">
@@ -216,13 +146,15 @@
                                 <form id="delete-form-{{ $item->id }}" action="{{ route('admin.metodepembayaran.destroy', $item->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="btn-danger" onclick="confirmDelete('delete-form-{{ $item->id }}')">Delete</button>
+                                    <button type="button" class="btn-danger" onclick="confirmDelete({{ $item->id }})">Delete</button>
                                 </form>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center">Tidak ada data.</td>
+                            <td colspan="7" style="text-align: center; padding: 20px; color: #666;">
+                                Tidak ada data metode pembayaran
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -231,38 +163,23 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-function confirmDelete(formId) {
-    Swal.fire({
-        title: 'Apakah kamu yakin?',
-        text: "Data ini akan dihapus secara permanen!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById(formId).submit();
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Yakin ingin menghapus?',
+                text: "Data metode pembayaran yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            })
         }
-    });
-}
-
-// Success messages for Create, Update, Delete
-document.addEventListener('DOMContentLoaded', function() {
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: "{{ session('success') }}",
-            timer: 1500,
-            showConfirmButton: false
-        });
-    @endif
-});
-</script>
+    </script>
 </body>
-
 </html>
