@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 07, 2025 at 05:40 AM
+-- Generation Time: Jun 07, 2025 at 03:52 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.12
 
@@ -42,18 +42,11 @@ CREATE TABLE `abouts` (
 CREATE TABLE `admin_profiles` (
   `id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
-  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `bio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bio` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `admin_profiles`
---
-
-INSERT INTO `admin_profiles` (`id`, `user_id`, `phone`, `bio`, `created_at`, `updated_at`) VALUES
-(1, 1, '', 'Hello guys', '2025-04-29 00:17:07', '2025-04-29 00:17:07');
 
 -- --------------------------------------------------------
 
@@ -62,8 +55,8 @@ INSERT INTO `admin_profiles` (`id`, `user_id`, `phone`, `bio`, `created_at`, `up
 --
 
 CREATE TABLE `cache` (
-  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -74,8 +67,8 @@ CREATE TABLE `cache` (
 --
 
 CREATE TABLE `cache_locks` (
-  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `owner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `owner` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -102,13 +95,13 @@ CREATE TABLE `check_outs` (
   `user_id` bigint UNSIGNED NOT NULL,
   `delivery_date` date NOT NULL,
   `delivery_time` time NOT NULL,
-  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `address` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `subtotal` decimal(10,2) NOT NULL,
   `shipping_cost` decimal(10,2) NOT NULL,
   `total` decimal(10,2) NOT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -133,22 +126,22 @@ CREATE TABLE `contacts` (
 
 CREATE TABLE `daftar_pesanans` (
   `id` bigint UNSIGNED NOT NULL,
-  `order_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_pelanggan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `order_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_pelanggan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` bigint UNSIGNED DEFAULT NULL,
-  `kategori_pesanan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kategori_pesanan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `kelola_makanan_id` bigint UNSIGNED DEFAULT NULL,
-  `tanggal_pesanan` timestamp NOT NULL,
+  `tanggal_pesanan` datetime NOT NULL,
   `jumlah_pesanan` int NOT NULL,
   `tanggal_pengiriman` date NOT NULL,
   `waktu_pengiriman` time NOT NULL,
-  `lokasi_pengiriman` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nomor_telepon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `pesan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `opsi_pengiriman` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `total_harga` decimal(12,2) NOT NULL,
-  `status_pengiriman` enum('diproses','dikirim','diterima','dibatalkan') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status_pembayaran` enum('pending','paid','failed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lokasi_pengiriman` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nomor_telepon` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pesan` text COLLATE utf8mb4_unicode_ci,
+  `opsi_pengiriman` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_harga` decimal(10,2) NOT NULL,
+  `status_pengiriman` enum('diproses','dikirim','diterima','dibatalkan') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status_pembayaran` enum('pending','paid','failed') COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -175,7 +168,9 @@ INSERT INTO `daftar_pesanans` (`id`, `order_id`, `nama_pelanggan`, `user_id`, `k
 (117, 'ORD1749053890012128', 'ban user', 8, 'Lainnya', NULL, '2025-06-03 17:00:00', 2, '2025-06-16', '15:17:00', 'Bogor', '089539298232', 'leci', 'instant', 34000.00, 'diterima', 'pending', '2025-06-04 09:18:14', '2025-06-04 09:24:34'),
 (119, 'ORD1749144441258577', 'ban user', 8, 'Lainnya', NULL, '2025-06-04 17:00:00', 2, '2025-06-11', '16:27:00', 'dasdasdasdsa', '0895494994999', 'opsional', 'regular', 29000.00, 'diterima', 'pending', '2025-06-05 10:27:25', '2025-06-05 10:29:19'),
 (120, 'ORD1749155597714981', 'ban user', 8, 'Lainnya', NULL, '2025-06-04 17:00:00', 1, '2025-06-14', '08:33:00', 'jkk', '0895392982328', 'jkghj', 'instant', 22000.00, 'diterima', 'pending', '2025-06-05 13:33:22', '2025-06-06 12:48:18'),
-(121, 'ORD1749240164741910', 'ban user', 8, 'Lainnya', NULL, '2025-06-05 17:00:00', 1, '2025-06-25', '11:02:00', 'MDTV', '087652552114', 'TRANS TV', 'instant', 22000.00, 'diterima', 'pending', '2025-06-06 13:02:50', '2025-06-06 13:08:24');
+(121, 'ORD1749240164741910', 'ban user', 8, 'Lainnya', NULL, '2025-06-05 17:00:00', 1, '2025-06-25', '11:02:00', 'MDTV', '087652552114', 'TRANS TV', 'instant', 22000.00, 'diterima', 'pending', '2025-06-06 13:02:50', '2025-06-06 13:08:24'),
+(122, 'ORD1749279186406275', 'ban user', 8, 'Lainnya', 17, '2025-06-07 00:00:00', 2, '2025-06-18', '13:52:00', 'ljhjkhlh', '0895494994999', 'Bohemian Rhapsody', 'regular', 26000.00, 'diproses', 'pending', '2025-06-06 23:53:09', '2025-06-06 23:53:09'),
+(123, 'ORD1749309431582231', 'ban user', 8, 'Lainnya', NULL, '2025-06-07 00:00:00', 2, '2025-06-18', '09:20:00', 'pasar rebo', '0895392982328', 'malam minggu', 'regular', 26000.00, 'diproses', 'pending', '2025-06-07 08:17:16', '2025-06-07 08:17:16');
 
 -- --------------------------------------------------------
 
@@ -197,11 +192,11 @@ CREATE TABLE `detail_acaras` (
 
 CREATE TABLE `failed_jobs` (
   `id` bigint UNSIGNED NOT NULL,
-  `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -225,8 +220,8 @@ CREATE TABLE `formulir_pesanans` (
 
 CREATE TABLE `jobs` (
   `id` bigint UNSIGNED NOT NULL,
-  `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `attempts` tinyint UNSIGNED NOT NULL,
   `reserved_at` int UNSIGNED DEFAULT NULL,
   `available_at` int UNSIGNED NOT NULL,
@@ -240,13 +235,13 @@ CREATE TABLE `jobs` (
 --
 
 CREATE TABLE `job_batches` (
-  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `total_jobs` int NOT NULL,
   `pending_jobs` int NOT NULL,
   `failed_jobs` int NOT NULL,
-  `failed_job_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `options` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `failed_job_ids` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` mediumtext COLLATE utf8mb4_unicode_ci,
   `cancelled_at` int DEFAULT NULL,
   `created_at` int NOT NULL,
   `finished_at` int DEFAULT NULL
@@ -260,13 +255,13 @@ CREATE TABLE `job_batches` (
 
 CREATE TABLE `karyawan` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama_karyawan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `username_karyawan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `posisi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kontak` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_karyawan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username_karyawan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `posisi` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `kontak` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tanggal_bergabung` date NOT NULL,
-  `status` enum('Aktif','Cuti','Nonaktif') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `keahlian` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('Aktif','Cuti','Nonaktif') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `keahlian` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -286,8 +281,8 @@ INSERT INTO `karyawan` (`id`, `nama_karyawan`, `username_karyawan`, `posisi`, `k
 
 CREATE TABLE `kategoris` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama_kategori` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_kategori` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `jumlah_item` int NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -309,12 +304,12 @@ INSERT INTO `kategoris` (`id`, `nama_kategori`, `deskripsi`, `jumlah_item`, `cre
 
 CREATE TABLE `kelola_makanans` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama_makanan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kategori` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_makanan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `kategori` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `harga` decimal(10,2) NOT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -324,23 +319,22 @@ CREATE TABLE `kelola_makanans` (
 --
 
 INSERT INTO `kelola_makanans` (`id`, `nama_makanan`, `kategori`, `harga`, `status`, `deskripsi`, `image`, `created_at`, `updated_at`) VALUES
-(1, 'Ayam Geprek', 'Prasmanan', 12000.00, 'Tersedia', 'Nikmati sensasi pedas dan gurih dari Ayam Geprek Sambal Bawang, perpaduan ayam crispy yang digeprek dengan sambal bawang khas, memberikan cita rasa pedas yang menggoda. Disajikan dengan nasi putih hangat dan irisan mentimun segar, menjadikannya pilihan sempurna untuk pecinta makanan pedas.', 'images/5fSVaTecLpJTXCwjZqPkyRLLm1Sbd2lCuM4n8QzM.png', '2025-04-29 11:24:44', '2025-05-01 20:09:13'),
-(2, 'Ayam Kecap', 'Prasmanan', 9000.00, 'Tersedia', 'Lezatnya Ayam Kecap Spesial, ayam empuk yang dimasak dengan saus kecap khas, menciptakan cita rasa manis, gurih, dan kaya rempah. Potongan ayam yang meresap sempurna dalam bumbu kecap ini siap menemani santapanmu dengan nasi putih hangat.', 'images/2U1Gn90AgLNdcljVLgqGjq5xfrZSGNLK4BzrTHqU.jpg', '2025-04-29 11:27:12', '2025-05-01 20:10:19'),
-(3, 'Ikan Bunjaer Gulai', 'Prasmanan', 15000.00, 'Tersedia', 'Nikmati kelezatan Gulai Ikan Bunjair, perpaduan ikan segar dengan kuah kuning khas yang kaya rempah. Ditambah dengan potongan nanas yang memberikan sensasi segar dan sedikit asam, menciptakan rasa yang unik dan menggugah selera. Cocok disantap dengan nasi putih hangat untuk pengalaman kuliner yang lebih sempurna.', 'images/CDDpthDSPmtwhgPfRsibihW9NNXWYQGkOxA2sSnC.png', '2025-04-29 11:28:06', '2025-05-01 20:31:10'),
-(4, 'Cumi Balado', 'Prasmanan', 12000.00, 'Tersedia', 'Rasakan sensasi pedas dan gurih dari Cumi Sambal Balado, hidangan khas dengan cumi segar yang dimasak dengan sambal balado merah menggugah selera. Perpaduan rasa pedas, manis, dan gurih membuat hidangan ini cocok dinikmati dengan nasi putih hangat.', 'images/Mcg4Pys6Uji8d7QxKkzSPIRnwIMgxvcy3kiHpTjT.png', '2025-04-29 11:28:51', '2025-05-01 20:36:28'),
-(5, 'Ikan Bunjaer Goreng', 'Prasmanan', 10000.00, 'Tersedia', 'Nikmati kelezatan Ikan  Bunjaer Goreng, ikan segar yang digoreng hingga keemasan dengan tekstur luar yang renyah dan daging yang lembut di dalam. Disajikan dengan irisan tomat, daun selada, dan jeruk nipis untuk menambah kesegaran rasa. Cocok disantap dengan nasi putih hangat dan sambal favoritmu!', 'images/4TEDoJtXdMcmzQaop6vohr8NrjnqzgIRqbttt5U4.jpg', '2025-04-29 11:30:11', '2025-05-01 20:36:51'),
-(6, 'Kentang Balado', 'Prasmanan', 5000.00, 'Tersedia', 'Kombinasi sempurna dari Kentang Balado, hidangan khas dengan kentang yang dipotong dadu dan digoreng hingga renyah, dipadukan dengan teri goreng yang gurih, serta dibalut dalam sambal merah pedas manis yang menggugah selera. Cocok sebagai lauk pendamping atau camilan pedas favorit!', 'images/SuIqcViIbmL0yZiScXvis2Cd5GyyBtBlb0ziri76.png', '2025-04-29 11:31:16', '2025-05-01 20:37:04'),
-(7, 'Tempe Orek', 'Prasmanan', 5000.00, 'Tersedia', 'Gurih dan manisnya Tempe Orek Kering, hidangan tradisional yang dibuat dari tempe yang dipotong tipis dan digoreng hingga renyah, kemudian dimasak dengan bumbu kecap manis, cabai merah, dan daun jeruk yang memberikan aroma khas. Cocok sebagai lauk pendamping atau camilan gurih yang nikmat!', 'images/o86q3EoQQZ0MCNW1WwP6td1GblUBjWTFfaBhrRdd.png', '2025-04-29 11:32:04', '2025-05-01 20:37:18'),
-(8, 'Ayam Goreng', 'Prasmanan', 8000.00, 'Tersedia', 'Nikmati kelezatan Ayam Goreng , ayam pilihan yang dimarinasi dengan bumbu khas, kemudian digoreng hingga kulitnya renyah dengan daging yang tetap juicy. Aroma rempah yang kuat membuat hidangan ini semakin menggugah selera. Cocok disantap dengan nasi hangat dan sambal favorit!', 'images/37ZWwLWseO3X4ymLeJtQbm03WKYJE05iRrUV4nAO.png', '2025-04-29 11:32:44', '2025-05-01 20:37:33'),
-(9, 'Telur Balado', 'Prasmanan', 5000.00, 'Tersedia', 'Pedas, gurih, dan nikmat! Telur Balado adalah hidangan khas Nusantara yang terbuat dari telur rebus yang digoreng sebentar untuk tekstur yang lebih lezat, lalu dibalut dengan sambal balado yang kaya rasa. Perpaduan sempurna antara pedas, manis, dan sedikit asam dari cabai merah segar membuat hidangan ini cocok sebagai lauk utama atau pelengkap makanan favoritmu!', 'images/JhpUVUVkzDEjVeJI5wduDXvGVSNcNQ0r318QcecM.jpg', '2025-04-29 11:33:26', '2025-05-01 20:11:07'),
-(10, 'Capcay Goreng', 'Prasmanan', 9000.00, 'Tersedia', 'Sehat, segar, dan penuh gizi! Capcay Goreng adalah hidangan khas oriental yang berisi beragam sayuran segar yang ditumis dengan bumbu gurih khas. Dilengkapi dengan bakso dan jamur untuk menambah cita rasa yang lezat dan tekstur yang kaya. Cocok untuk dinikmati sendiri atau sebagai pendamping menu favoritmu!', 'images/iqC18zI7UGBMADNQII06WTijFiAjYDFXmaK8X8TJ.png', '2025-04-29 11:33:59', '2025-05-01 20:37:44'),
-(11, 'Bihun Goreng', 'Prasmanan', 9000.00, 'Tersedia', 'Nikmati kelezatan Bihun Goreng Spesial, bihun yang ditumis dengan bumbu gurih khas dan dipadukan dengan berbagai bahan pilihan. Teksturnya yang lembut berpadu sempurna dengan rasa yang kaya, menciptakan sajian yang menggugah selera!', 'images/48E66lDKhZCAbvEcv13GK9Yfs3nQqrhennCo3ORi.png', '2025-04-29 11:34:32', '2025-05-01 20:37:56'),
-(13, 'Paket Nasi Ayam Bakar Spesial', 'Nasi Box', 35000.00, 'Tersedia', 'Nikmati hidangan lezat dengan kombinasi sempurna antara nasi hangat berbumbu, ayam bakar yang empuk dengan cita rasa gurih dan sedikit manis, serta pelengkap yang menyegarkan!', 'images/htSf1ctWYeXUkNcD9099YhrttUatFJO0I9knpLWk.png', '2025-04-29 11:46:55', '2025-05-01 20:55:21'),
-(14, 'Paket Nasi Kuning Ayam Spesial', 'Nasi Box', 35000.00, 'Tersedia', 'Nikmati hidangan spesial dengan perpaduan sempurna antara nasi kuning gurih dan lauk pendamping yang menggugah selera. Sajian lezat ini menghadirkan cita rasa autentik khas Indonesia!', 'images/2ZTJQUMMkKzsdtYLPp7Rbqty6FKGxa3swJDLuBvw.png', '2025-04-29 11:47:57', '2025-05-01 21:07:58'),
-(15, 'Paket Nasi Ayam & Rendang Spesial', 'Nasi Box', 30000.00, 'Tersedia', 'Nikmati perpaduan sempurna antara ayam goreng kremes yang gurih dan rendang daging sapi yang kaya rempah. Disajikan dengan nasi putih pulen dan aneka lauk pendamping yang menggugah selera, hidangan ini menghadirkan cita rasa autentik khas Nusantara!', 'images/GLQGW8znMlpDzmU0ixZp2EAC0OOc9twNVLVv3rU2.png', '2025-04-29 11:48:57', '2025-05-01 21:08:21'),
-(16, 'Paket Nasi Ikan Premium', 'Nasi Box', 35000.00, 'Tersedia', 'Nikmati sensasi gurih dan pedas dari Ikan Bakar Sambal Pedas, sajian lezat dengan ikan bakar yang dipanggang sempurna dan dilumuri sambal khas yang menggugah selera. Dilengkapi dengan nasi putih hangat, tahu dan tempe goreng, lalapan segar, serta sambal tambahan, menciptakan perpaduan rasa yang nikmat di setiap suapan.', 'images/vBCmcNF2DnNB0bynqC23p7ZNoZsy5NSCqHUi599P.png', '2025-04-29 11:49:34', '2025-05-01 21:08:46'),
-(17, 'Paket Nasi Kotak Spesial', 'Nasi Box', 30000.00, 'Tersedia', 'Nikmati hidangan lezat dengan kombinasi sempurna antara nasi hangat berbumbu, ayam bakar yang empuk dengan cita rasa gurih dan sedikit manis, serta pelengkap yang menyegarkan!', 'images/AkemP3OmaRC0ryRu3d7WrOsg08uQb4VIog5bpIjh.png', '2025-04-29 11:50:40', '2025-05-01 21:09:00'),
-(18, 'Paket Nasi Ayam Bakar Spesial', 'Nasi Box', 40000.00, 'Tersedia', 'Nikmati hidangan lezat dengan kombinasi sempurna antara nasi hangat berbumbu, ayam bakar yang empuk dengan cita rasa gurih dan sedikit manis, serta pelengkap yang menyegarkan!', 'images/B0xdd9w7P7r7qI0ScwcqVQztYZDKagH7F2avUiqh.png', '2025-04-29 11:51:23', '2025-05-01 21:09:43');
+(1, 'Ayam Geprek', 'Prasmanan', 12000.00, 'Tersedia', 'Nikmati sensasi pedas dan gurih dari Ayam Geprek Sambal Bawang, perpaduan ayam crispy yang digeprek dengan sambal bawang khas, memberikan cita rasa pedas yang menggoda. Disajikan dengan nasi putih hangat dan irisan mentimun segar, menjadikannya pilihan sempurna untuk pecinta makanan pedas.', 'images/iuC2LPn9qfve8JdSkhC0FC9T8Rwt3uZDpLmq7y9P.jpg', '2025-04-29 11:24:44', '2025-06-07 01:05:27'),
+(2, 'Ayam Kecap', 'Prasmanan', 9000.00, 'Tersedia', 'Lezatnya Ayam Kecap Spesial, ayam empuk yang dimasak dengan saus kecap khas, menciptakan cita rasa manis, gurih, dan kaya rempah. Potongan ayam yang meresap sempurna dalam bumbu kecap ini siap menemani santapanmu dengan nasi putih hangat.', 'images/khwOUTkaGDsVV85WHo7e3p9q5GRfVIc1kkg1FG4n.jpg', '2025-04-29 11:27:12', '2025-06-07 01:06:18'),
+(3, 'Ikan Bunjaer Gulai', 'Prasmanan', 15000.00, 'Tersedia', 'Nikmati kelezatan Gulai Ikan Bunjair, perpaduan ikan segar dengan kuah kuning khas yang kaya rempah. Ditambah dengan potongan nanas yang memberikan sensasi segar dan sedikit asam, menciptakan rasa yang unik dan menggugah selera. Cocok disantap dengan nasi putih hangat untuk pengalaman kuliner yang lebih sempurna.', 'images/zPQm4cKa8keLqI0QRj3L8PFj5WCwC8r8npp1fYFN.png', '2025-04-29 11:28:06', '2025-06-07 01:06:35'),
+(4, 'Cumi Balado', 'Prasmanan', 12000.00, 'Tersedia', 'Rasakan sensasi pedas dan gurih dari Cumi Sambal Balado, hidangan khas dengan cumi segar yang dimasak dengan sambal balado merah menggugah selera. Perpaduan rasa pedas, manis, dan gurih membuat hidangan ini cocok dinikmati dengan nasi putih hangat.', 'images/asjmUBIQii2cK8XQqme9bdzSUOaBLaZfMPKyzvCk.png', '2025-04-29 11:28:51', '2025-06-07 01:07:00'),
+(5, 'Ikan Bunjaer Goreng', 'Prasmanan', 10000.00, 'Tersedia', 'Nikmati kelezatan Ikan  Bunjaer Goreng, ikan segar yang digoreng hingga keemasan dengan tekstur luar yang renyah dan daging yang lembut di dalam. Disajikan dengan irisan tomat, daun selada, dan jeruk nipis untuk menambah kesegaran rasa. Cocok disantap dengan nasi putih hangat dan sambal favoritmu!', 'images/DwLLM2IoBG3eeOV1H9GX0Vyfl2HG0twoWcxvn38I.jpg', '2025-04-29 11:30:11', '2025-06-07 01:09:47'),
+(6, 'Kentang Balado', 'Prasmanan', 5000.00, 'Tersedia', 'Kombinasi sempurna dari Kentang Balado, hidangan khas dengan kentang yang dipotong dadu dan digoreng hingga renyah, dipadukan dengan teri goreng yang gurih, serta dibalut dalam sambal merah pedas manis yang menggugah selera. Cocok sebagai lauk pendamping atau camilan pedas favorit!', 'images/Xo15nTe8Xmh7OlZfXVgirLeg0IKSEARnmNgzARKr.png', '2025-04-29 11:31:16', '2025-06-07 01:11:18'),
+(7, 'Tempe Orek', 'Prasmanan', 5000.00, 'Tersedia', 'Gurih dan manisnya Tempe Orek Kering, hidangan tradisional yang dibuat dari tempe yang dipotong tipis dan digoreng hingga renyah, kemudian dimasak dengan bumbu kecap manis, cabai merah, dan daun jeruk yang memberikan aroma khas. Cocok sebagai lauk pendamping atau camilan gurih yang nikmat!', 'images/YXMtg7QtXZruFfsFENsfGIsS9awK4pEF7OjRaoxz.png', '2025-04-29 11:32:04', '2025-06-07 01:11:04'),
+(8, 'Ayam Goreng', 'Prasmanan', 8000.00, 'Tersedia', 'Nikmati kelezatan Ayam Goreng , ayam pilihan yang dimarinasi dengan bumbu khas, kemudian digoreng hingga kulitnya renyah dengan daging yang tetap juicy. Aroma rempah yang kuat membuat hidangan ini semakin menggugah selera. Cocok disantap dengan nasi hangat dan sambal favorit!', 'images/Xp7DaADdVkxtDKqKEcqiQvmJDpgt1WxDSxF9WKBk.png', '2025-04-29 11:32:44', '2025-06-07 01:11:35'),
+(9, 'Telur Balado', 'Prasmanan', 5000.00, 'Tersedia', 'Pedas, gurih, dan nikmat! Telur Balado adalah hidangan khas Nusantara yang terbuat dari telur rebus yang digoreng sebentar untuk tekstur yang lebih lezat, lalu dibalut dengan sambal balado yang kaya rasa. Perpaduan sempurna antara pedas, manis, dan sedikit asam dari cabai merah segar membuat hidangan ini cocok sebagai lauk utama atau pelengkap makanan favoritmu!', 'images/9d6qSzdHGAdoAsW0WwAgj3TAWFXLVVPgkkHwZ7da.jpg', '2025-04-29 11:33:26', '2025-06-07 01:11:49'),
+(10, 'Capcay Goreng', 'Prasmanan', 9000.00, 'Tersedia', 'Sehat, segar, dan penuh gizi! Capcay Goreng adalah hidangan khas oriental yang berisi beragam sayuran segar yang ditumis dengan bumbu gurih khas. Dilengkapi dengan bakso dan jamur untuk menambah cita rasa yang lezat dan tekstur yang kaya. Cocok untuk dinikmati sendiri atau sebagai pendamping menu favoritmu!', 'images/vHbBiE9Rm6tsyIx1OisGh1uI0f3TrWRLwQJ2pcVw.png', '2025-04-29 11:33:59', '2025-06-07 01:12:46'),
+(11, 'Bihun Goreng', 'Prasmanan', 9000.00, 'Tersedia', 'Nikmati kelezatan Bihun Goreng Spesial, bihun yang ditumis dengan bumbu gurih khas dan dipadukan dengan berbagai bahan pilihan. Teksturnya yang lembut berpadu sempurna dengan rasa yang kaya, menciptakan sajian yang menggugah selera!', 'images/QkUqw6jJKL9oPsZQi4HGpuo3DM7B7waegvl7sHIu.png', '2025-04-29 11:34:32', '2025-06-07 01:13:10'),
+(13, 'Paket Nasi Ayam Bakar Spesial', 'Nasi Box', 35000.00, 'Tersedia', 'Nikmati hidangan lezat dengan kombinasi sempurna antara nasi hangat berbumbu, ayam bakar yang empuk dengan cita rasa gurih dan sedikit manis, serta pelengkap yang menyegarkan!', 'images/W6EXepbEXnStUfzye4qcIXnfdUAq9JDT71lplG0u.png', '2025-04-29 11:46:55', '2025-06-07 01:18:24'),
+(14, 'Paket Nasi Kuning Ayam Spesial', 'Nasi Box', 35000.00, 'Tersedia', 'Nikmati hidangan spesial dengan perpaduan sempurna antara nasi kuning gurih dan lauk pendamping yang menggugah selera. Sajian lezat ini menghadirkan cita rasa autentik khas Indonesia!', 'images/8B8jmgyksXUpPPY1XPQlawkdvnRYXRUgjA5oukxK.png', '2025-04-29 11:47:57', '2025-06-07 01:19:19'),
+(15, 'Paket Nasi Ayam & Rendang Spesial', 'Nasi Box', 30000.00, 'Tersedia', 'Nikmati perpaduan sempurna antara ayam goreng kremes yang gurih dan rendang daging sapi yang kaya rempah. Disajikan dengan nasi putih pulen dan aneka lauk pendamping yang menggugah selera, hidangan ini menghadirkan cita rasa autentik khas Nusantara!', 'images/ZBNqGVudNDmPkSKaEfNiyM0191ENu6joUnLof3aT.png', '2025-04-29 11:48:57', '2025-06-07 01:19:34'),
+(16, 'Paket Nasi Ikan Premium', 'Nasi Box', 35000.00, 'Tersedia', 'Nikmati sensasi gurih dan pedas dari Ikan Bakar Sambal Pedas, sajian lezat dengan ikan bakar yang dipanggang sempurna dan dilumuri sambal khas yang menggugah selera. Dilengkapi dengan nasi putih hangat, tahu dan tempe goreng, lalapan segar, serta sambal tambahan, menciptakan perpaduan rasa yang nikmat di setiap suapan.', 'images/QvG4oderpR44x3T5AIgfNspiAjN7BRSIn7Y5uBpv.png', '2025-04-29 11:49:34', '2025-06-07 01:19:51'),
+(17, 'Paket Nasi Kotak Spesial', 'Nasi Box', 30000.00, 'Tersedia', 'Nikmati hidangan lezat dengan kombinasi sempurna antara nasi hangat berbumbu, ayam bakar yang empuk dengan cita rasa gurih dan sedikit manis, serta pelengkap yang menyegarkan!', 'images/q2a041FO5jYpX7JV74GOMSDeEomm0LYqfqHdZTeE.png', '2025-04-29 11:50:40', '2025-06-07 01:20:14');
 
 -- --------------------------------------------------------
 
@@ -352,7 +346,7 @@ CREATE TABLE `keranjangs` (
   `id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
   `total` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -366,7 +360,7 @@ INSERT INTO `keranjangs` (`id`, `user_id`, `total`, `status`, `created_at`, `upd
 (2, 2, 25000.00, 'active', '2025-04-27 21:11:21', '2025-04-29 17:35:32'),
 (3, 3, 1296000.00, 'active', '2025-04-29 17:49:47', '2025-04-29 17:50:00'),
 (4, 4, 81000.00, 'active', '2025-04-29 21:06:35', '2025-05-29 23:27:52'),
-(5, 8, 12000.00, 'active', '2025-06-03 09:24:52', '2025-06-05 10:40:40');
+(5, 8, 21000.00, 'active', '2025-06-03 09:24:52', '2025-06-06 23:52:15');
 
 -- --------------------------------------------------------
 
@@ -377,10 +371,10 @@ INSERT INTO `keranjangs` (`id`, `user_id`, `total`, `status`, `created_at`, `upd
 CREATE TABLE `keranjang_items` (
   `id` bigint UNSIGNED NOT NULL,
   `keranjang_id` bigint UNSIGNED NOT NULL,
-  `nama_produk` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_produk` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `quantity` int NOT NULL,
-  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -395,7 +389,8 @@ INSERT INTO `keranjang_items` (`id`, `keranjang_id`, `nama_produk`, `price`, `qu
 (16, 1, 'Paket Nasi Ayam Bakar Spesial', 35000.00, 100, '/storage/images/htSf1ctWYeXUkNcD9099YhrttUatFJO0I9knpLWk.png', '2025-05-01 22:26:31', '2025-05-01 22:26:31'),
 (17, 1, 'Ayam Geprek', 12000.00, 4, '/storage/images/5fSVaTecLpJTXCwjZqPkyRLLm1Sbd2lCuM4n8QzM.png', '2025-05-02 00:22:16', '2025-05-27 01:12:04'),
 (18, 4, 'Ayam Kecap', 9000.00, 9, '/storage/images/2U1Gn90AgLNdcljVLgqGjq5xfrZSGNLK4BzrTHqU.jpg', '2025-05-26 00:44:23', '2025-05-28 00:34:18'),
-(20, 5, 'Ayam Geprek', 12000.00, 1, '/storage/images/5fSVaTecLpJTXCwjZqPkyRLLm1Sbd2lCuM4n8QzM.png', '2025-06-03 09:24:52', '2025-06-05 10:40:40');
+(20, 5, 'Ayam Geprek', 12000.00, 1, '/storage/images/5fSVaTecLpJTXCwjZqPkyRLLm1Sbd2lCuM4n8QzM.png', '2025-06-03 09:24:52', '2025-06-05 10:40:40'),
+(21, 5, 'Ayam Kecap', 9000.00, 1, '/storage/images/2U1Gn90AgLNdcljVLgqGjq5xfrZSGNLK4BzrTHqU.jpg', '2025-06-06 23:52:15', '2025-06-06 23:52:15');
 
 -- --------------------------------------------------------
 
@@ -418,12 +413,12 @@ CREATE TABLE `konfirmasi_pesanans` (
 CREATE TABLE `laporans` (
   `id` bigint UNSIGNED NOT NULL,
   `tanggal` date NOT NULL,
-  `jenis_laporan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `laporan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `jenis_laporan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `laporan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `total` decimal(12,2) NOT NULL DEFAULT '0.00',
-  `admin` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `admin` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -443,10 +438,10 @@ INSERT INTO `laporans` (`id`, `tanggal`, `jenis_laporan`, `laporan`, `deskripsi`
 
 CREATE TABLE `menus` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama_produk` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_produk` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -471,10 +466,10 @@ CREATE TABLE `menu_prasmanans` (
 
 CREATE TABLE `metode_pembayarans` (
   `id` bigint UNSIGNED NOT NULL,
-  `metode_pembayaran` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `status` enum('Aktif','Tidak Aktif') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `admin` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `metode_pembayaran` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci,
+  `status` enum('Aktif','Tidak Aktif') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `admin` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -509,7 +504,7 @@ CREATE TABLE `metode_pembayaran_users` (
 
 CREATE TABLE `migrations` (
   `id` int UNSIGNED NOT NULL,
-  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -525,6 +520,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (5, '2025_01_13_172729_create_products_table', 1),
 (6, '2025_01_13_180436_create_kelola_makanans_table', 1),
 (7, '2025_01_14_062503_create_stok_bahans_table', 1),
+(8, '2025_01_15_174637_create_daftar_pesanans_table', 1),
+(9, '2025_01_15_180740_create_laporans_table', 1),
 (10, '2025_01_22_015651_create_metode_pembayarans_table', 1),
 (11, '2025_02_13_020333_create_caterings_table', 1),
 (12, '2025_02_13_020914_create_pesanans_table', 1),
@@ -540,21 +537,20 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (22, '2025_02_18_061653_create_check_outs_table', 1),
 (23, '2025_02_19_053407_create_metode_pembayaran_users_table', 1),
 (24, '2025_02_26_053746_create_status_pengirimen_table', 1),
-(27, '2025_04_19_084830_create_keranjang_items_table', 3),
-(28, '2025_03_10_030200_add_profile_fields_to_users_table', 4),
-(29, '2025_03_10_051825_create_registers_table', 5),
-(30, '2025_04_19_071120_create_tentang_kamis_table', 6),
-(31, '2025_04_26_171658_create_notification_admins_table', 7),
-(32, '2025_04_26_191457_transaksi', 8),
-(33, '2025_04_27_134006_create_karyawans_table', 9),
-(37, '2025_04_19_075136_create_kategoris_table', 11),
-(44, '2025_04_28_090707_create_admin_profiles_table', 14),
-(47, '2025_01_15_174637_create_daftar_pesanans_table', 15),
-(48, '2025_01_15_180740_create_laporans_table', 16),
-(49, '2025_02_26_140408_create_penilaians_table', 17),
-(50, '2025_04_29_095452_create_notifications_table', 18),
-(54, '2025_02_26_085650_create_orders_table', 19),
-(55, '2025_06_05_072117_create_reviews_table', 20);
+(25, '2025_02_26_085650_create_orders_table', 1),
+(26, '2025_02_26_140408_create_penilaians_table', 1),
+(27, '2025_03_10_030200_add_profile_fields_to_users_table', 1),
+(28, '2025_03_10_051825_create_registers_table', 1),
+(29, '2025_03_24_050746_create_payments_table', 1),
+(30, '2025_04_19_071120_create_tentang_kamis_table', 1),
+(31, '2025_04_19_075136_create_kategoris_table', 1),
+(32, '2025_04_19_084830_create_keranjang_items_table', 1),
+(33, '2025_04_26_171658_create_notification_admins_table', 1),
+(34, '2025_04_26_191457_transaksi', 1),
+(35, '2025_04_28_044940_create_karyawans_table', 1),
+(36, '2025_04_28_090707_create_admin_profiles_table', 1),
+(37, '2025_04_29_095452_create_notifications_table', 1),
+(38, '2025_06_07_053631_reviews', 1);
 
 -- --------------------------------------------------------
 
@@ -565,16 +561,23 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 CREATE TABLE `notifications` (
   `id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
-  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'info',
-  `icon_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'bell',
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'info',
+  `icon_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'bell',
   `order_id` bigint UNSIGNED DEFAULT NULL,
   `is_read` tinyint(1) NOT NULL DEFAULT '0',
   `read_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `title`, `message`, `type`, `icon_type`, `order_id`, `is_read`, `read_at`, `created_at`, `updated_at`) VALUES
+(2, 8, 'Pesanan baru', 'Pesanan #ORD1749309431582231 sedang dalam Proses', 'order', 'box', 123, 1, '2025-06-07 08:18:41', '2025-06-07 08:17:16', '2025-06-07 08:18:41');
 
 -- --------------------------------------------------------
 
@@ -584,9 +587,9 @@ CREATE TABLE `notifications` (
 
 CREATE TABLE `notification_admins` (
   `id` bigint UNSIGNED NOT NULL,
-  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_read` tinyint(1) NOT NULL DEFAULT '0',
   `data` json DEFAULT NULL,
   `admin_id` bigint UNSIGNED NOT NULL,
@@ -602,16 +605,16 @@ CREATE TABLE `notification_admins` (
 
 CREATE TABLE `orders` (
   `id` bigint UNSIGNED NOT NULL,
-  `order_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `order_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payment_status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `delivery_date` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `delivery_time` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `shipping_method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payment_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `delivery_date` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `delivery_time` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  `shipping_method` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `subtotal` decimal(10,2) NOT NULL,
   `shipping_cost` decimal(10,2) NOT NULL,
   `total` decimal(10,2) NOT NULL,
@@ -628,7 +631,7 @@ CREATE TABLE `orders` (
 CREATE TABLE `order_items` (
   `id` bigint UNSIGNED NOT NULL,
   `order_id` bigint UNSIGNED NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `quantity` int NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -642,8 +645,8 @@ CREATE TABLE `order_items` (
 --
 
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -657,11 +660,26 @@ CREATE TABLE `payments` (
   `id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
   `order_id` bigint UNSIGNED NOT NULL,
-  `payment_method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payment_method` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(10,2) NOT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `proof_of_payment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `proof_of_payment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `payment_date` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penilaians`
+--
+
+CREATE TABLE `penilaians` (
+  `id` bigint UNSIGNED NOT NULL,
+  `pesanan_id` bigint UNSIGNED NOT NULL,
+  `rating` decimal(2,1) NOT NULL,
+  `komentar` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -686,11 +704,11 @@ CREATE TABLE `pesanans` (
 
 CREATE TABLE `products` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rasa` enum('manis','gurih','pedas','pedas manis') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rasa` enum('manis','gurih','pedas','pedas manis') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci,
   `harga` decimal(10,2) NOT NULL,
-  `image_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -704,11 +722,11 @@ CREATE TABLE `products` (
 CREATE TABLE `profiles` (
   `id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
-  `first_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `bio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `first_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `bio` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -754,7 +772,7 @@ CREATE TABLE `reviews` (
   `delivery_rating` tinyint UNSIGNED NOT NULL COMMENT 'Rating kecepatan pengiriman (1-5)',
   `service_rating` tinyint UNSIGNED NOT NULL COMMENT 'Rating pelayanan (1-5)',
   `average_rating` decimal(2,1) NOT NULL COMMENT 'Rating rata-rata',
-  `review_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Ulasan tekstual (maksimal 500 karakter)',
+  `review_text` text COLLATE utf8mb4_unicode_ci COMMENT 'Ulasan tekstual (maksimal 500 karakter)',
   `photos` json DEFAULT NULL COMMENT 'Array path foto review',
   `status` enum('active','hidden','reported') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
   `is_verified` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Apakah review sudah diverifikasi admin',
@@ -779,11 +797,11 @@ INSERT INTO `reviews` (`id`, `user_id`, `order_id`, `order_number`, `quality_rat
 --
 
 CREATE TABLE `sessions` (
-  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` bigint UNSIGNED DEFAULT NULL,
-  `ip_address` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_agent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -792,8 +810,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('HnntK2FXqFILR6lGLzshvLjVT1q4Dly4QSx9XZqN', 7, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiemQ5aE14Zlp1THZzRWZYanJCUmdhZEUyV1NZMjFlWEcyYXFUTEVxbSI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NztzOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo0MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL2RhZnRhcnBlc2FuYW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1749240493),
-('v09zTVW2Gi9QgjP2Pjwf61ziGJ4XfvenwNjV5jxO', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRHRqQVB1T0ZtY3ZNQ1ZRdENoUzZEaXdpdDNPSzFnRVl3elVLM3NlaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ub3RpZmljYXRpb25zL2NvdW50Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyOToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL3Blc2FuYW4iO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo4O30=', 1749240802);
+('VBSDcOsoVoBfNhXXgLTqCL948wleqvsEl3VsIo9S', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiazA3Z3lpb1FzVm5kMnJFbG9XZkFxb0xPSXRkdW1GSGM2dUV2cXNxRiI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMvY291bnQiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czoyNzoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2xvZ2luIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1749307736),
+('YNxmcmPCSEgCrx3gkb0HqzhKIc0R0frIbl7VmK9A', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRVF5WWxWVTRKbUR2aWI0MXhrQmcza0dza0VHMW9RTjFkcEtwQUlzUSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMvY291bnQiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo0MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMvY291bnQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo4O30=', 1749311542);
 
 -- --------------------------------------------------------
 
@@ -803,11 +821,11 @@ INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, 
 
 CREATE TABLE `status_pembayarans` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama_pembeli` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_produk` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_pembeli` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_produk` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tanggal_transaksi` date NOT NULL,
-  `status_transaksi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `bukti_transaksi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status_transaksi` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `bukti_transaksi` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -820,10 +838,10 @@ CREATE TABLE `status_pembayarans` (
 
 CREATE TABLE `status_pengirimen` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama_pembeli` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_produk` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_pembeli` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_produk` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tanggal_transaksi` date NOT NULL,
-  `status_pengiriman` enum('Dikirim','Selesai','Batal') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status_pengiriman` enum('Dikirim','Selesai','Batal') COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -843,12 +861,12 @@ INSERT INTO `status_pengirimen` (`id`, `nama_pembeli`, `nama_produk`, `tanggal_t
 
 CREATE TABLE `stok_bahans` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama_bahan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `stok_tersedia` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_bahan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stok_tersedia` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tanggal_ditambahkan` date NOT NULL,
   `tanggal_kadaluarsa` date NOT NULL,
-  `status` enum('tersedia','kosong') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('tersedia','kosong') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -856,23 +874,23 @@ CREATE TABLE `stok_bahans` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tentang_kami`
+-- Table structure for table `tentang_kamis`
 --
 
-CREATE TABLE `tentang_kami` (
+CREATE TABLE `tentang_kamis` (
   `id` bigint UNSIGNED NOT NULL,
-  `foto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `foto` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `tentang_kami`
+-- Dumping data for table `tentang_kamis`
 --
 
-INSERT INTO `tentang_kami` (`id`, `foto`, `deskripsi`, `created_at`, `updated_at`) VALUES
-(4, 'tentangkami/GpbyZZJ1ZxFEJbcTPqGyZVSEiCZoRtoi5gtmNtqA.png', 'mantap', '2025-05-29 08:02:06', '2025-05-29 08:02:06');
+INSERT INTO `tentang_kamis` (`id`, `foto`, `deskripsi`, `created_at`, `updated_at`) VALUES
+(4, 'tentangkami/g5yfvSOR3hpJ6qMvVmndxnJKC2Oif0uppwKeb5PF.png', 'Catering Nikmat Rasa menyediakan nasi box dan snack box untuk berbagai acara seperti ulang tahun, arisan, syukuran, hingga acara kantor. Menu utama kami mencakup nasi bakar, nasi liwet, nasi ayam geprek, nasi kebuli, nasi tumpeng, dan banyak lagi, lengkap dengan sayur dan sambal khas. Dengan pengalaman lebih dari 10 tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat, porsi pas, dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!', '2025-05-29 08:02:06', '2025-06-07 02:22:34');
 
 -- --------------------------------------------------------
 
@@ -882,15 +900,15 @@ INSERT INTO `tentang_kami` (`id`, `foto`, `deskripsi`, `created_at`, `updated_at
 
 CREATE TABLE `transaksis` (
   `id` bigint UNSIGNED NOT NULL,
-  `nama_admin` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `nama_pelanggan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nama_admin` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_pelanggan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tanggal_transaksi` datetime NOT NULL,
-  `id_transaksi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `jenis_tindakan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deskripsi_tindakan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_transaksi` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `jenis_tindakan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deskripsi_tindakan` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `total_harga` decimal(12,2) NOT NULL,
-  `status_transaksi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `bukti_pembayaran` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status_transaksi` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `bukti_pembayaran` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -913,7 +931,9 @@ INSERT INTO `transaksis` (`id`, `nama_admin`, `nama_pelanggan`, `tanggal_transak
 (133, 'System', 'ban user', '2025-06-05 16:42:05', 'DANA-1749141725', 'Pembayaran DANA', 'Pembayaran via DANA', 24000.00, 'Menunggu Konfirmasi', 'payment_proofs/tq9CCHWWGwzGOwr0YGAHJQFtSHDJPcxIDIvqTx6d.png', '2025-06-05 09:42:05', '2025-06-05 09:42:05'),
 (134, 'System', 'ban user', '2025-06-05 17:27:34', 'DANA-1749144454', 'Pembayaran DANA', 'Pembayaran via DANA', 29000.00, 'Menunggu Konfirmasi', 'payment_proofs/DLKiLD4w8WBHQ0Q9BPlmAi2RTtqG1i6WsNZnVAnz.png', '2025-06-05 10:27:34', '2025-06-05 10:27:34'),
 (135, 'System', 'ban user', '2025-06-05 20:33:35', 'GOPAY-1749155615', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 22000.00, 'Menunggu Konfirmasi', 'payment_proofs/CuNnbw53bxyaa0PicDQNMoGLBosdt6DAJcC6imdL.jpg', '2025-06-05 13:33:35', '2025-06-05 13:33:35'),
-(136, 'System', 'ban user', '2025-06-06 20:03:04', 'BCA-1749240184', 'Pembayaran BCA', 'Pembayaran via BCA', 22000.00, 'Menunggu Konfirmasi', 'payment_proofs/7jg6TD2ra5CH0C5rLNxqU3jcoeqB3hrGZxRrDh2r.png', '2025-06-06 13:03:04', '2025-06-06 13:03:04');
+(136, 'System', 'ban user', '2025-06-06 20:03:04', 'BCA-1749240184', 'Pembayaran BCA', 'Pembayaran via BCA', 22000.00, 'Menunggu Konfirmasi', 'payment_proofs/7jg6TD2ra5CH0C5rLNxqU3jcoeqB3hrGZxRrDh2r.png', '2025-06-06 13:03:04', '2025-06-06 13:03:04'),
+(137, 'System', 'ban user', '2025-06-07 06:53:34', 'GOPAY-1749279214', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 26000.00, 'Menunggu Konfirmasi', 'payment_proofs/diucKtoQ7GnEuTmmcK4kXtDNC1cqdUvzrYxI55k1.jpg', '2025-06-06 23:53:34', '2025-06-06 23:53:34'),
+(138, 'System', 'ban user', '2025-06-07 15:17:34', 'GOPAY-1749309454', 'Pembayaran GOPAY', 'Pembayaran via GOPAY', 26000.00, 'Menunggu Konfirmasi', 'payment_proofs/k85IYNhwma7HaBlJk0COAsdWQTV9WtfvOn4krwAp.jpg', '2025-06-07 08:17:34', '2025-06-07 08:17:34');
 
 -- --------------------------------------------------------
 
@@ -923,16 +943,16 @@ INSERT INTO `transaksis` (`id`, `nama_admin`, `nama_pelanggan`, `tanggal_transak
 
 CREATE TABLE `users` (
   `id` bigint UNSIGNED NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `first_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `last_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` text COLLATE utf8mb4_unicode_ci,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `usertype` enum('admin','user') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'user',
-  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `usertype` enum('admin','user') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'user',
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1120,7 +1140,6 @@ ALTER TABLE `migrations`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `notifications_user_id_foreign` (`user_id`),
   ADD KEY `notifications_order_id_foreign` (`order_id`),
   ADD KEY `notifications_user_id_is_read_index` (`user_id`,`is_read`),
   ADD KEY `notifications_user_id_created_at_index` (`user_id`,`created_at`);
@@ -1137,13 +1156,15 @@ ALTER TABLE `notification_admins`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `orders_order_number_unique` (`order_number`);
+  ADD UNIQUE KEY `orders_order_number_unique` (`order_number`),
+  ADD KEY `orders_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `order_items`
 --
 ALTER TABLE `order_items`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_items_order_id_foreign` (`order_id`);
 
 --
 -- Indexes for table `password_reset_tokens`
@@ -1157,6 +1178,13 @@ ALTER TABLE `password_reset_tokens`
 ALTER TABLE `payments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `payments_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `penilaians`
+--
+ALTER TABLE `penilaians`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `penilaians_pesanan_id_foreign` (`pesanan_id`);
 
 --
 -- Indexes for table `pesanans`
@@ -1189,7 +1217,6 @@ ALTER TABLE `registers`
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_user_order_review` (`user_id`,`order_id`),
-  ADD KEY `reviews_user_id_foreign` (`user_id`),
   ADD KEY `reviews_order_id_foreign` (`order_id`),
   ADD KEY `reviews_average_rating_index` (`average_rating`),
   ADD KEY `reviews_status_index` (`status`);
@@ -1221,9 +1248,9 @@ ALTER TABLE `stok_bahans`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `tentang_kami`
+-- Indexes for table `tentang_kamis`
 --
-ALTER TABLE `tentang_kami`
+ALTER TABLE `tentang_kamis`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1266,7 +1293,7 @@ ALTER TABLE `caterings`
 -- AUTO_INCREMENT for table `check_outs`
 --
 ALTER TABLE `check_outs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `contacts`
@@ -1278,7 +1305,7 @@ ALTER TABLE `contacts`
 -- AUTO_INCREMENT for table `daftar_pesanans`
 --
 ALTER TABLE `daftar_pesanans`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=122;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
 
 --
 -- AUTO_INCREMENT for table `detail_acaras`
@@ -1320,7 +1347,7 @@ ALTER TABLE `kategoris`
 -- AUTO_INCREMENT for table `kelola_makanans`
 --
 ALTER TABLE `kelola_makanans`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `keranjangs`
@@ -1332,7 +1359,7 @@ ALTER TABLE `keranjangs`
 -- AUTO_INCREMENT for table `keranjang_items`
 --
 ALTER TABLE `keranjang_items`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `konfirmasi_pesanans`
@@ -1374,13 +1401,13 @@ ALTER TABLE `metode_pembayaran_users`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `notification_admins`
@@ -1404,6 +1431,12 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `penilaians`
+--
+ALTER TABLE `penilaians`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -1455,16 +1488,16 @@ ALTER TABLE `stok_bahans`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tentang_kami`
+-- AUTO_INCREMENT for table `tentang_kamis`
 --
-ALTER TABLE `tentang_kami`
+ALTER TABLE `tentang_kamis`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `transaksis`
 --
 ALTER TABLE `transaksis`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1492,7 +1525,8 @@ ALTER TABLE `check_outs`
 -- Constraints for table `daftar_pesanans`
 --
 ALTER TABLE `daftar_pesanans`
-  ADD CONSTRAINT `daftar_pesanans_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `daftar_pesanans_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_daftar_pesanans_kelola_makanan_id` FOREIGN KEY (`kelola_makanan_id`) REFERENCES `kelola_makanans` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `keranjangs`
@@ -1520,10 +1554,28 @@ ALTER TABLE `notification_admins`
   ADD CONSTRAINT `notification_admins_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`);
 
 --
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `order_items`
+--
+ALTER TABLE `order_items`
+  ADD CONSTRAINT `order_items_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `payments`
 --
 ALTER TABLE `payments`
   ADD CONSTRAINT `payments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `penilaians`
+--
+ALTER TABLE `penilaians`
+  ADD CONSTRAINT `penilaians_pesanan_id_foreign` FOREIGN KEY (`pesanan_id`) REFERENCES `daftar_pesanans` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `profiles`

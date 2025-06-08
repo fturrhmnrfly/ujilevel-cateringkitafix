@@ -500,53 +500,58 @@
     </div>
     <script>
         async function removeItem(itemId) {
-    // Show SweetAlert2 confirmation dialog
     const result = await Swal.fire({
         title: 'Delete',
-        text: 'apakah kamu yakin kamu akan menghapus produk tersebut',
+        text: 'Apakah kamu yakin akan menghapus produk tersebut?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Ok',
-        cancelButtonText: 'Cancel'
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
     });
 
-    // If user confirms deletion
     if (result.isConfirmed) {
         try {
+            // Gunakan route yang benar - sesuaikan dengan route yang Anda define
             const response = await fetch(`/keranjang/delete/${itemId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json', // Penting untuk memastikan response JSON
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             });
 
+            // Periksa apakah response OK sebelum parsing JSON
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
 
             if (data.success) {
-                // Show success message
                 await Swal.fire({
                     icon: 'success',
-                    title: 'Menu Berhasil Di Hapus',
+                    title: 'Berhasil!',
+                    text: 'Item berhasil dihapus',
                     showConfirmButton: false,
                     timer: 1500
                 });
 
-                // Remove item from view
+                // Remove item from view atau reload page
                 const itemRow = document.querySelector(`tr.cart-item[data-id="${itemId}"]`);
                 if (itemRow) {
                     itemRow.remove();
                 }
                 
-                // Reload page to update totals
+                // Reload untuk update total
                 window.location.reload();
             } else {
-                throw new Error(data.message);
+                throw new Error(data.message || 'Gagal menghapus item');
             }
         } catch (error) {
-            // Show error message
+            console.error('Error details:', error);
             await Swal.fire({
                 icon: 'error',
                 title: 'Oops...',

@@ -126,7 +126,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [KeranjangController::class, 'index'])->name('index');
         Route::post('/add', [KeranjangController::class, 'addToCart'])->name('add');
         Route::patch('/{id}', [KeranjangController::class, 'updateQuantity'])->name('update');
-        Route::delete('/{id}', [KeranjangController::class, 'removeItem'])->name('remove');
+        Route::delete('/delete/{id}', [KeranjangController::class, 'removeItem'])->name('delete');
+        // Route::delete('/keranjang/delete/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.delete');
         Route::get('/count', [KeranjangController::class, 'getCartCount'])->name('count');
     });
 

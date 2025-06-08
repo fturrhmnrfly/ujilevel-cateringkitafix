@@ -114,6 +114,14 @@ class KeranjangController extends Controller
             $item = KeranjangItem::findOrFail($id);
             $keranjang = $item->keranjang;
             
+            // TAMBAHAN: Validasi ownership untuk keamanan
+            if ($keranjang->user_id !== Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
+            }
+            
             // Hapus item
             $item->delete();
 
@@ -129,10 +137,16 @@ class KeranjangController extends Controller
                 'message' => 'Item berhasil dihapus'
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus item: ' . $e->getMessage()
+                'message' => 'Item tidak ditemukan'
+            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting cart item: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus item'
             ], 500);
         }
     }

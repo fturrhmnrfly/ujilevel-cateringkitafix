@@ -1,5 +1,5 @@
--- Data Only SQL - Ujilevel Catering Kita (SAFE MODE)
--- Menggunakan INSERT IGNORE untuk menghindari duplicate entry
+-- Data Only SQL - Ujilevel Catering Kita (COMPLETE BACKUP)
+-- Generated from ujilevel-cateringkita.sql
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -8,11 +8,11 @@ SET time_zone = "+00:00";
 -- Disable foreign key checks untuk import yang aman
 SET FOREIGN_KEY_CHECKS=0;
 
--- Data untuk tabel admin_profiles (menggunakan INSERT IGNORE)
+-- Data untuk tabel admin_profiles
 INSERT IGNORE INTO `admin_profiles` (`id`, `user_id`, `phone`, `bio`, `created_at`, `updated_at`) VALUES
 (1, 1, '', 'Hello guys', '2025-04-29 00:17:07', '2025-04-29 00:17:07');
 
--- Data untuk tabel users (menggunakan INSERT IGNORE)
+-- Data untuk tabel users
 INSERT IGNORE INTO `users` (`id`, `name`, `first_name`, `last_name`, `email`, `phone`, `address`, `email_verified_at`, `password`, `usertype`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'admin cateringkita', NULL, NULL, 'budisosial1@gmail.com', NULL, NULL, NULL, '$2y$12$EngY7DbJRTs6KcorA3ZimuYY3pLUAT4lhBKGGp8nBd.wMYZbQJorS', 'admin', NULL, '2025-04-27 08:40:19', '2025-04-28 09:21:54'),
 (2, 'user ganteng', NULL, NULL, 'user@gmail.com', NULL, NULL, NULL, '$2y$12$CGaq86otXiAWuI6hRBjexu4P.Na2yYasE2z5WgAz.BZwv563r2SRC', 'user', NULL, '2025-04-27 21:10:52', '2025-04-27 21:10:52'),
@@ -23,7 +23,7 @@ INSERT IGNORE INTO `users` (`id`, `name`, `first_name`, `last_name`, `email`, `p
 (7, 'Gibran Tes', NULL, NULL, 'ban@gmail.com', NULL, NULL, NULL, '$2y$12$VQkwtGwd0wySLXrDc9sUaegHBPzr3KbV/dSrZ0OkFexsgVYsp2NHa', 'admin', 'YcunWiPAffDUuL6WPVunp09pphpuY2VittVO3iooH4bWa0PKTO8k5HE5424t', '2025-06-03 09:20:50', '2025-06-03 09:20:50'),
 (8, 'ban user', NULL, NULL, 'banuser@gmail.com', NULL, NULL, NULL, '$2y$12$m1vBXGmLrkv.3GNbYK1ugubyW.Gdxw4w8cYlLlTJuq8obinNvIvTe', 'user', NULL, '2025-06-03 09:23:20', '2025-06-03 09:23:20');
 
--- Data untuk tabel daftar_pesanans (menggunakan INSERT IGNORE)
+-- Data untuk tabel daftar_pesanans
 INSERT IGNORE INTO `daftar_pesanans` (`id`, `order_id`, `nama_pelanggan`, `user_id`, `kategori_pesanan`, `kelola_makanan_id`, `tanggal_pesanan`, `jumlah_pesanan`, `tanggal_pengiriman`, `waktu_pengiriman`, `lokasi_pengiriman`, `nomor_telepon`, `pesan`, `opsi_pengiriman`, `total_harga`, `status_pengiriman`, `status_pembayaran`, `created_at`, `updated_at`) VALUES
 (99, 'ORD1745981486436920', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-04-29 19:51:26', 20, '2025-05-01', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang wjnk', 'regular', 250000.00, 'diproses', 'pending', '2025-04-29 19:51:27', '2025-04-29 19:51:27'),
 (100, 'ORD1745981679193113', 'admin cateringkita', 1, 'Lainnya', NULL, '2025-04-29 19:54:39', 20, '2025-05-01', '15:00:00', 'ciomas', '+62 881 0115 62638', 'yang enaka', 'instant', 260000.00, 'diproses', 'pending', '2025-04-29 19:54:39', '2025-04-29 19:54:39'),
@@ -44,17 +44,17 @@ INSERT IGNORE INTO `daftar_pesanans` (`id`, `order_id`, `nama_pelanggan`, `user_
 (120, 'ORD1749155597714981', 'ban user', 8, 'Lainnya', NULL, '2025-06-04 17:00:00', 1, '2025-06-14', '08:33:00', 'jkk', '0895392982328', 'jkghj', 'instant', 22000.00, 'diterima', 'pending', '2025-06-05 13:33:22', '2025-06-06 12:48:18'),
 (121, 'ORD1749240164741910', 'ban user', 8, 'Lainnya', NULL, '2025-06-05 17:00:00', 1, '2025-06-25', '11:02:00', 'MDTV', '087652552114', 'TRANS TV', 'instant', 22000.00, 'diterima', 'pending', '2025-06-06 13:02:50', '2025-06-06 13:08:24');
 
--- Data untuk tabel karyawan (menggunakan INSERT IGNORE)
+-- Data untuk tabel karyawan
 INSERT IGNORE INTO `karyawan` (`id`, `nama_karyawan`, `username_karyawan`, `posisi`, `kontak`, `tanggal_bergabung`, `status`, `keahlian`, `created_at`, `updated_at`) VALUES
 (1, 'wildan', 'wildansyah23', 'office boy', '08981323242321', '2025-04-02', 'Cuti', 'membersihkan ruangan dengan cepat', '2025-04-27 09:01:59', '2025-04-29 02:16:50');
 
 -- Data untuk tabel kategoris
-INSERT INTO `kategoris` (`id`, `nama_kategori`, `deskripsi`, `jumlah_item`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `kategoris` (`id`, `nama_kategori`, `deskripsi`, `jumlah_item`, `created_at`, `updated_at`) VALUES
 (3, 'Prasmanan', 'Hidangan lengkap dengan berbagai prasmanan untuk berbagai acara', 9, '2025-04-29 02:14:45', '2025-04-29 02:14:45'),
 (4, 'Nasi Box', 'Paket nasi lengkap dalam kotak untuk berbagai praktis', 6, '2025-04-29 02:15:15', '2025-04-29 02:15:15');
 
 -- Data untuk tabel kelola_makanans
-INSERT INTO `kelola_makanans` (`id`, `nama_makanan`, `kategori`, `harga`, `status`, `deskripsi`, `image`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `kelola_makanans` (`id`, `nama_makanan`, `kategori`, `harga`, `status`, `deskripsi`, `image`, `created_at`, `updated_at`) VALUES
 (1, 'Ayam Geprek', 'Prasmanan', 12000.00, 'Tersedia', 'Nikmati sensasi pedas dan gurih dari Ayam Geprek Sambal Bawang, perpaduan ayam crispy yang digeprek dengan sambal bawang khas, memberikan cita rasa pedas yang menggoda. Disajikan dengan nasi putih hangat dan irisan mentimun segar, menjadikannya pilihan sempurna untuk pecinta makanan pedas.', 'images/5fSVaTecLpJTXCwjZqPkyRLLm1Sbd2lCuM4n8QzM.png', '2025-04-29 11:24:44', '2025-05-01 20:09:13'),
 (2, 'Ayam Kecap', 'Prasmanan', 9000.00, 'Tersedia', 'Lezatnya Ayam Kecap Spesial, ayam empuk yang dimasak dengan saus kecap khas, menciptakan cita rasa manis, gurih, dan kaya rempah. Potongan ayam yang meresap sempurna dalam bumbu kecap ini siap menemani santapanmu dengan nasi putih hangat.', 'images/2U1Gn90AgLNdcljVLgqGjq5xfrZSGNLK4BzrTHqU.jpg', '2025-04-29 11:27:12', '2025-05-01 20:10:19'),
 (3, 'Ikan Bunjaer Gulai', 'Prasmanan', 15000.00, 'Tersedia', 'Nikmati kelezatan Gulai Ikan Bunjair, perpaduan ikan segar dengan kuah kuning khas yang kaya rempah. Ditambah dengan potongan nanas yang memberikan sensasi segar dan sedikit asam, menciptakan rasa yang unik dan menggugah selera. Cocok disantap dengan nasi putih hangat untuk pengalaman kuliner yang lebih sempurna.', 'images/CDDpthDSPmtwhgPfRsibihW9NNXWYQGkOxA2sSnC.png', '2025-04-29 11:28:06', '2025-05-01 20:31:10'),
@@ -74,7 +74,7 @@ INSERT INTO `kelola_makanans` (`id`, `nama_makanan`, `kategori`, `harga`, `statu
 (18, 'Paket Nasi Ayam Bakar Spesial', 'Nasi Box', 40000.00, 'Tersedia', 'Nikmati hidangan lezat dengan kombinasi sempurna antara nasi hangat berbumbu, ayam bakar yang empuk dengan cita rasa gurih dan sedikit manis, serta pelengkap yang menyegarkan!', 'images/B0xdd9w7P7r7qI0ScwcqVQztYZDKagH7F2avUiqh.png', '2025-04-29 11:51:23', '2025-05-01 21:09:43');
 
 -- Data untuk tabel keranjangs
-INSERT INTO `keranjangs` (`id`, `user_id`, `total`, `status`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `keranjangs` (`id`, `user_id`, `total`, `status`, `created_at`, `updated_at`) VALUES
 (1, 1, 3548000.00, 'active', '2025-04-27 08:40:57', '2025-05-27 01:12:04'),
 (2, 2, 25000.00, 'active', '2025-04-27 21:11:21', '2025-04-29 17:35:32'),
 (3, 3, 1296000.00, 'active', '2025-04-29 17:49:47', '2025-04-29 17:50:00'),
@@ -82,7 +82,7 @@ INSERT INTO `keranjangs` (`id`, `user_id`, `total`, `status`, `created_at`, `upd
 (5, 8, 12000.00, 'active', '2025-06-03 09:24:52', '2025-06-05 10:40:40');
 
 -- Data untuk tabel keranjang_items
-INSERT INTO `keranjang_items` (`id`, `keranjang_id`, `nama_produk`, `price`, `quantity`, `image`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `keranjang_items` (`id`, `keranjang_id`, `nama_produk`, `price`, `quantity`, `image`, `created_at`, `updated_at`) VALUES
 (4, 2, 'Paket Nasi Kotak Premium A', 25000.00, 1, 'http://127.0.0.1:8000/assets/paketassets1.png', '2025-04-27 21:11:21', '2025-04-27 21:11:21'),
 (14, 3, 'Ayam Geprek', 12000.00, 108, '/storage/images/F4pQodn3T2Bb97IfMWbj2NzU9SwKHdzwMOTJkIVP.jpg', '2025-04-29 17:49:47', '2025-04-29 17:49:59'),
 (16, 1, 'Paket Nasi Ayam Bakar Spesial', 35000.00, 100, '/storage/images/htSf1ctWYeXUkNcD9099YhrttUatFJO0I9knpLWk.png', '2025-05-01 22:26:31', '2025-05-01 22:26:31'),
@@ -91,20 +91,58 @@ INSERT INTO `keranjang_items` (`id`, `keranjang_id`, `nama_produk`, `price`, `qu
 (20, 5, 'Ayam Geprek', 12000.00, 1, '/storage/images/5fSVaTecLpJTXCwjZqPkyRLLm1Sbd2lCuM4n8QzM.png', '2025-06-03 09:24:52', '2025-06-05 10:40:40');
 
 -- Data untuk tabel laporans
-INSERT INTO `laporans` (`id`, `tanggal`, `jenis_laporan`, `laporan`, `deskripsi`, `total`, `admin`, `status`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `laporans` (`id`, `tanggal`, `jenis_laporan`, `laporan`, `deskripsi`, `total`, `admin`, `status`, `created_at`, `updated_at`) VALUES
 (1, '2025-04-29', 'Harian', 'Pendapatan Harian', 'Pendapatan dari pesanan catering', 0.00, 'admin cateringkita', 'males', '2025-04-28 22:33:08', '2025-04-29 02:27:07');
 
 -- Data untuk tabel metode_pembayarans
-INSERT INTO `metode_pembayarans` (`id`, `metode_pembayaran`, `deskripsi`, `status`, `admin`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `metode_pembayarans` (`id`, `metode_pembayaran`, `deskripsi`, `status`, `admin`, `created_at`, `updated_at`) VALUES
 (3, 'BCA', 'Pembayaran via Transfer Bank', 'Aktif', 'Admin 1', '2025-04-29 02:32:44', '2025-04-29 02:32:44'),
 (4, 'Dana', 'Pembayaran via E-wallet', 'Aktif', 'admin 1', '2025-04-29 02:33:15', '2025-04-29 02:33:15'),
 (5, 'Gopay', 'Pembayaran via Gopay', 'Aktif', 'admin 1', '2025-04-29 02:33:39', '2025-04-29 02:33:39'),
 (6, 'COD', 'Pembayaran dilakukan di tempat saat pesanan diterima(wajib membayar dp 35% saat memesan)', 'Aktif', 'admin 1', '2025-04-29 02:34:25', '2025-04-29 02:35:31');
 
--- JANGAN IMPORT DATA MIGRATIONS - Laravel akan mengelola sendiri
+-- Data untuk tabel migrations
+INSERT IGNORE INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '0001_01_01_000000_create_users_table', 1),
+(2, '0001_01_01_000001_create_cache_table', 1),
+(3, '0001_01_01_000002_create_jobs_table', 1),
+(4, '2024_03_10_000000_create_profiles_table', 1),
+(5, '2025_01_13_172729_create_products_table', 1),
+(6, '2025_01_13_180436_create_kelola_makanans_table', 1),
+(7, '2025_01_14_062503_create_stok_bahans_table', 1),
+(10, '2025_01_22_015651_create_metode_pembayarans_table', 1),
+(11, '2025_02_13_020333_create_caterings_table', 1),
+(12, '2025_02_13_020914_create_pesanans_table', 1),
+(13, '2025_02_13_021514_create_contacts_table', 1),
+(14, '2025_02_13_022217_create_menu_prasmanans_table', 1),
+(15, '2025_02_13_022849_create_menu_nasi_boxes_table', 1),
+(16, '2025_02_13_054143_create_keranjangs_table', 1),
+(17, '2025_02_14_022536_create_status_pembayarans_table', 1),
+(18, '2025_02_18_024754_create_abouts_table', 1),
+(19, '2025_02_18_033135_create_formulir_pesanans_table', 1),
+(20, '2025_02_18_033802_create_detail_acaras_table', 1),
+(21, '2025_02_18_035502_create_konfirmasi_pesanans_table', 1),
+(22, '2025_02_18_061653_create_check_outs_table', 1),
+(23, '2025_02_19_053407_create_metode_pembayaran_users_table', 1),
+(24, '2025_02_26_053746_create_status_pengirimen_table', 1),
+(27, '2025_04_19_084830_create_keranjang_items_table', 3),
+(28, '2025_03_10_030200_add_profile_fields_to_users_table', 4),
+(29, '2025_03_10_051825_create_registers_table', 5),
+(30, '2025_04_19_071120_create_tentang_kamis_table', 6),
+(31, '2025_04_26_171658_create_notification_admins_table', 7),
+(32, '2025_04_26_191457_transaksi', 8),
+(33, '2025_04_27_134006_create_karyawans_table', 9),
+(37, '2025_04_19_075136_create_kategoris_table', 11),
+(44, '2025_04_28_090707_create_admin_profiles_table', 14),
+(47, '2025_01_15_174637_create_daftar_pesanans_table', 15),
+(48, '2025_01_15_180740_create_laporans_table', 16),
+(49, '2025_02_26_140408_create_penilaians_table', 17),
+(50, '2025_04_29_095452_create_notifications_table', 18),
+(54, '2025_02_26_085650_create_orders_table', 19),
+(55, '2025_06_05_072117_create_reviews_table', 20);
 
 -- Data untuk tabel profiles
-INSERT INTO `profiles` (`id`, `user_id`, `first_name`, `last_name`, `phone`, `address`, `bio`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `profiles` (`id`, `user_id`, `first_name`, `last_name`, `phone`, `address`, `bio`, `created_at`, `updated_at`) VALUES
 (1, 1, 'budi', 'sosial', '0881011562638', 'ciomas bogor kota', 'hello guys', '2025-04-27 08:40:19', '2025-04-28 09:27:16'),
 (2, 2, 'user', 'catering', '0881011562638', 'ciomas bogor kota', NULL, '2025-04-27 21:10:52', '2025-04-29 07:52:23'),
 (3, 3, 'budi', 'user', '0881011562638', 'ciomas bogor kota', NULL, '2025-04-29 17:49:23', '2025-04-29 17:49:23'),
@@ -115,21 +153,26 @@ INSERT INTO `profiles` (`id`, `user_id`, `first_name`, `last_name`, `phone`, `ad
 (8, 8, 'dan', 'user', '0895387455678', 'fsdaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', NULL, '2025-06-03 09:23:20', '2025-06-03 09:23:20');
 
 -- Data untuk tabel reviews
-INSERT INTO `reviews` (`id`, `user_id`, `order_id`, `order_number`, `quality_rating`, `delivery_rating`, `service_rating`, `average_rating`, `review_text`, `photos`, `status`, `is_verified`, `reviewed_at`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `reviews` (`id`, `user_id`, `order_id`, `order_number`, `quality_rating`, `delivery_rating`, `service_rating`, `average_rating`, `review_text`, `photos`, `status`, `is_verified`, `reviewed_at`, `created_at`, `updated_at`) VALUES
 (2, 8, 119, 'ORD1749144441258577', 5, 5, 5, 5.0, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id elit tellus. Donec rutrum a quam pulvinar dignissim. Nam ultricies nibh ut arcu dignissim aliquam. Aliquam consequat condimentum odio sed auctor. Maecenas eu sagittis risus, ac consequat arcu. Maecenas vehicula dignissim lectus, et luctus ipsum blandit quis. Maecenas vestibulum non mauris a congue. Nulla ut imperdiet ante, et facilisis sapien. Sed sed egestas diam, sit amet molestie nunc. Aenean ornare auctor est, vel faucibus elit molestie et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec venenatis lectus dui, nec imperdiet purus luctus quis.', '[]', 'active', 0, '2025-06-05 12:56:23', '2025-06-05 12:56:23', '2025-06-05 12:56:23'),
 (3, 8, 117, 'ORD1749053890012128', 5, 5, 5, 5.0, 'Woi Jala Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id elit tellus. Donec rutrum a quam pulvinar dignissim. Nam ultricies nibh ut arcu dignissim aliquam. Aliquam consequat condimentum odio sed auctor. Maecenas eu sagittis risus, ac consequat arcu. Maecenas vehicula dignissim lectus, et luctus ipsum blandit quis. Maecenas vestibulum non mauris a congue. Nulla ut imperdiet ante, et facilisis sapien. Sed sed egestas diam, sit amet molestie nunc. Aenean ornare auctor est, vel faucibus elit molestie et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec venenatis lectus dui, nec imperdiet purus luctus quis.', '[\"reviews/rf4sLqKNDOdhEd4X8SgihhL7FU33GDrxII1tgsgy.png\", \"reviews/x6zZGwAHYcEcxFC8tLeQtC2oS4FFIIw4IdHo6v1b.png\"]', 'active', 0, '2025-06-05 12:59:55', '2025-06-05 12:59:55', '2025-06-05 12:59:55'),
 (4, 8, 116, 'ORD1749052811367896', 5, 5, 5, 5.0, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id elit tellus. Donec rutrum a quam pulvinar dignissim. Nam ultricies nibh ut arcu dignissim aliquam. Aliquam consequat condimentum odio sed auctor. Maecenas eu sagittis risus, ac consequat arcu. Maecenas vehicula dignissim lectus, et luctus ipsum blandit quis. Maecenas vestibulum non mauris a congue. Nulla ut imperdiet ante, et facilisis sapien. Sed sed egestas diam, sit amet molestie nunc. Aenean ornare auctor est, vel faucibus', '[\"reviews/tkP6Gn3T4r1y8vwJFFj17ix4pGVJYJdukdIRzF1g.png\"]', 'active', 0, '2025-06-06 10:28:21', '2025-06-06 10:28:21', '2025-06-06 10:28:21');
 
+-- Data untuk tabel sessions
+INSERT IGNORE INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('HnntK2FXqFILR6lGLzshvLjVT1q4Dly4QSx9XZqN', 7, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiemQ5aE14Zlp1THZzRWZYanJCUmdhZEUyV1NZMjFlWEcyYXFUTEVxbSI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NztzOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo0MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL2RhZnRhcnBlc2FuYW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1749240493),
+('v09zTVW2Gi9QgjP2Pjwf61ziGJ4XfvenwNjV5jxO', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRHRqQVB1T0ZtY3ZNQ1ZRdENoUzZEaXdpdDNPSzFnRVl3elVLM3NlaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ub3RpZmljYXRpb25zL2NvdW50Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyOToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL3Blc2FuYW4iO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo4O30=', 1749240802);
+
 -- Data untuk tabel status_pengirimen
-INSERT INTO `status_pengirimen` (`id`, `nama_pembeli`, `nama_produk`, `tanggal_transaksi`, `status_pengiriman`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `status_pengirimen` (`id`, `nama_pembeli`, `nama_produk`, `tanggal_transaksi`, `status_pengiriman`, `created_at`, `updated_at`) VALUES
 (1, 'wabak', 'ayam', '2025-04-28', 'Dikirim', '2025-04-27 21:04:11', '2025-04-27 21:04:11');
 
 -- Data untuk tabel tentang_kami
-INSERT INTO `tentang_kamis` (`id`, `foto`, `deskripsi`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `tentang_kamis` (`id`, `foto`, `deskripsi`, `created_at`, `updated_at`) VALUES
 (4, 'tentangkami/GpbyZZJ1ZxFEJbcTPqGyZVSEiCZoRtoi5gtmNtqA.png', 'mantap', '2025-05-29 08:02:06', '2025-05-29 08:02:06');
 
 -- Data untuk tabel transaksis
-INSERT INTO `transaksis` (`id`, `nama_admin`, `nama_pelanggan`, `tanggal_transaksi`, `id_transaksi`, `jenis_tindakan`, `deskripsi_tindakan`, `total_harga`, `status_transaksi`, `bukti_pembayaran`, `created_at`, `updated_at`) VALUES
+INSERT IGNORE INTO `transaksis` (`id`, `nama_admin`, `nama_pelanggan`, `tanggal_transaksi`, `id_transaksi`, `jenis_tindakan`, `deskripsi_tindakan`, `total_harga`, `status_transaksi`, `bukti_pembayaran`, `created_at`, `updated_at`) VALUES
 (123, 'System', 'admin cateringkita', '2025-05-02 05:27:12', 'BCA-1746163632', 'Pembayaran BCA', 'Pembayaran via BCA', 3510000.00, 'Menunggu Konfirmasi', 'payment_proofs/7LESLU2YAkMA2EvvPYHRbQtjdZDeRSVDXTdAq7j8.jpg', '2025-05-01 22:27:12', '2025-05-01 22:27:12'),
 (124, 'System', 'admin cateringkita', '2025-05-02 07:12:07', 'BCA-1746169927', 'Pembayaran BCA', 'Pembayaran via BCA', 3510000.00, 'Menunggu Konfirmasi', 'payment_proofs/bnQTOcAnSdnmvRfnrMNmOilv3r4MgmsWbSJ3lWUU.png', '2025-05-02 00:12:07', '2025-05-02 00:12:07'),
 (125, 'System', 'admin cateringkita', '2025-05-05 04:51:03', 'BCA-1746420663', 'Pembayaran BCA', 'Pembayaran via BCA', 3522000.00, 'Menunggu Konfirmasi', 'payment_proofs/ZOUw2diwHUP2gNRRwuSfTdYYONUpK7v5Ck3rzI2u.png', '2025-05-04 21:51:03', '2025-05-04 21:51:03'),
