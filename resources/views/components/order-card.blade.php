@@ -444,3 +444,34 @@
     }
 }
 </style>
+
+{{-- Add this script at the bottom of the component --}}
+<script>
+// Pass order data to JavaScript for modal display
+window.orderData = window.orderData || {};
+window.orderData[{{ $order->id }}] = {
+    id: {{ $order->id }},
+    order_id: '{{ $order->order_id }}',
+    created_at: '{{ $order->created_at->format('Y-m-d H:i:s') }}',
+    tanggal_pesanan: '{{ $order->tanggal_pesanan->format('Y-m-d H:i:s') }}',
+    tanggal_pengiriman: '{{ $order->tanggal_pengiriman->format('Y-m-d') }}',
+    waktu_pengiriman: '{{ $order->waktu_pengiriman }}',
+    status_pengiriman: '{{ $order->status_pengiriman }}',
+    status_pembayaran: '{{ $order->status_pembayaran ?? "pending" }}',
+    kategori_pesanan: '{{ $order->kategori_pesanan }}',
+    jumlah_pesanan: {{ $order->jumlah_pesanan }},
+    lokasi_pengiriman: '{{ addslashes($order->lokasi_pengiriman) }}',
+    nomor_telepon: '{{ $order->nomor_telepon }}',
+    opsi_pengiriman: '{{ $order->opsi_pengiriman }}',
+    total_harga: {{ $order->total_harga }},
+    pesan: '{{ addslashes($order->pesan ?? "") }}',
+    payment_method: '{{ $order->payment_method ?? "COD" }}'
+};
+
+// Debug log dengan lebih detail
+console.log('=== ORDER CARD REGISTRATION ===');
+console.log('Order ID {{ $order->id }} registered successfully');
+console.log('Data:', window.orderData[{{ $order->id }}]);
+console.log('Total orders in window.orderData:', Object.keys(window.orderData).length);
+console.log('================================');
+</script>

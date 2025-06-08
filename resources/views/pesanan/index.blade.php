@@ -45,11 +45,26 @@
     @endif
 </div>
 
+{{-- Include the modals component --}}
 <x-order-modals />
 
 <script>
-    ordersData = @json($orders ?? []);
+    // Initialize global order data
+    window.orderData = window.orderData || {};
+    console.log('Global order data initialized:', window.orderData);
+    
+    // Debug function
+    function debugOrderData() {
+        console.log('Current orderData:', window.orderData);
+        console.log('Available order IDs:', Object.keys(window.orderData));
+    }
+    
+    // Call debug after page load
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(debugOrderData, 1000);
+    });
 </script>
+
 <script src="{{ asset('pesanan.js') }}"></script>
 </body>
 </html>
