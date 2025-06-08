@@ -20,13 +20,47 @@
     $hasReview = $order->hasReviewByUser(auth()->id());
     
     // PERBAIKI PERHITUNGAN SUBTOTAL
-    $biayaPengiriman = 3000; // Biaya pengiriman tetap
-    $subtotal = $order->total_harga - $biayaPengiriman; // Subtotal = Total - Biaya pengiriman
+    $subtotal = 0;
+    $biayaPengiriman = 0;
     
-    // Pastikan subtotal tidak negatif
-    if ($subtotal < 0) {
-        $subtotal = $order->total_harga; // Jika total lebih kecil dari biaya pengiriman, subtotal = total
-        $biayaPengiriman = 0; // Set biaya pengiriman ke 0
+    // Hitung subtotal berdasarkan item yang ada
+    if ($order->items && $order->items->count() > 0) {
+        // Jika ada relasi items, hitung dari items
+        $subtotal = $order->items->sum(function($item) {
+            return $item->price * $item->quantity;
+        });
+    } elseif ($order->kelolaMakanan) {
+        // Jika ada relasi dengan KelolaMakanan
+        $subtotal = $order->kelolaMakanan->harga * $order->jumlah_pesanan;
+    } else {
+        // Fallback: gunakan total_harga dan estimasi biaya pengiriman
+        // Mapping biaya pengiriman berdasarkan opsi_pengiriman
+        $shippingCosts = [
+            'self' => 0,
+            'instant' => 10000,
+            'regular' => 5000,
+            'economy' => 2000
+        ];
+        
+        $biayaPengiriman = $shippingCosts[$order->opsi_pengiriman] ?? 3000;
+        $subtotal = $order->total_harga - $biayaPengiriman;
+        
+        // Pastikan subtotal tidak negatif
+        if ($subtotal < 0) {
+            $subtotal = $order->total_harga;
+            $biayaPengiriman = 0;
+        }
+    }
+    
+    // Jika biaya pengiriman belum dihitung, hitung berdasarkan opsi pengiriman
+    if ($biayaPengiriman == 0 && $order->opsi_pengiriman) {
+        $shippingCosts = [
+            'self' => 0,
+            'instant' => 10000,
+            'regular' => 5000,
+            'economy' => 2000
+        ];
+        $biayaPengiriman = $shippingCosts[$order->opsi_pengiriman] ?? 3000;
     }
 @endphp
 
@@ -61,7 +95,7 @@
                         <p class="item-quantity-new">x {{ $item->quantity }}</p>
                     </div>
                     <div class="item-price-new">
-                        Rp {{ number_format($item->price, 0, ',', '.') }}
+                        Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}
                     </div>
                 </div>
             @endforeach
@@ -100,7 +134,7 @@
         @endif
     </div>
 
-    <!-- Summary Section - PERBAIKI PERHITUNGAN -->
+    <!-- Summary Section - PERHITUNGAN YANG DIPERBAIKI -->
     <div class="order-summary-new">
         <div class="summary-row-new">
             <span>Subtotal</span>

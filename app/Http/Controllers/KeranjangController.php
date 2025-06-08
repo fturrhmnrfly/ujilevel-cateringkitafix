@@ -102,27 +102,36 @@ class KeranjangController extends Controller
     public function removeItem($id)
     {
         try {
-            // Cari item di keranjang
-            $item = KeranjangItem::findOrFail($id);
-            $keranjang = $item->keranjang;
+            // Log untuk debugging
+            Log::info('Attempting to delete cart item', ['item_id' => $id, 'user_id' => Auth::id()]);
             
-            // TAMBAHAN: Validasi ownership untuk keamanan
-            if ($keranjang->user_id !== Auth::id()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized access'
-                ], 403);
-            }
+            // Cari item di keranjang dengan validasi user
+            $item = KeranjangItem::whereHas('keranjang', function($query) {
+                $query->where('user_id', Auth::id());
+            })->findOrFail($id);
+            
+            Log::info('Cart item found', ['item' => $item->toArray()]);
+            
+            $keranjang = $item->keranjang;
             
             // Hapus item
             $item->delete();
+            
+            Log::info('Cart item deleted successfully');
 
-            // Update total keranjang
-            $keranjang->update([
-                'total' => $keranjang->items->sum(function($item) {
+            // Update total keranjang jika masih ada items
+            if ($keranjang->items()->count() > 0) {
+                $newTotal = $keranjang->items->sum(function($item) {
                     return $item->price * $item->quantity;
-                })
-            ]);
+                });
+                
+                $keranjang->update(['total' => $newTotal]);
+                Log::info('Cart total updated', ['new_total' => $newTotal]);
+            } else {
+                // Jika tidak ada item lagi, set total ke 0
+                $keranjang->update(['total' => 0]);
+                Log::info('Cart is now empty, total set to 0');
+            }
 
             return response()->json([
                 'success' => true,
@@ -130,15 +139,23 @@ class KeranjangController extends Controller
             ]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::warning('Cart item not found', ['item_id' => $id, 'user_id' => Auth::id()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Item tidak ditemukan'
             ], 404);
+            
         } catch (\Exception $e) {
-            Log::error('Error deleting cart item: ' . $e->getMessage());
+            Log::error('Error deleting cart item', [
+                'item_id' => $id,
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus item'
+                'message' => 'Gagal menghapus item: ' . $e->getMessage()
             ], 500);
         }
     }
