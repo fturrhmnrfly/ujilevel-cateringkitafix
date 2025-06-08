@@ -8,6 +8,7 @@ use App\Models\KelolaMakanan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\AdminNotificationService;
 
 class CheckOutController extends Controller
 {
@@ -70,7 +71,7 @@ class CheckOutController extends Controller
                 }
             }
 
-            $daftarPesanan = DaftarPesanan::create([
+            $orderData = [
                 'order_id' => $validated['order_id'],
                 'user_id' => Auth::id(),
                 'kelola_makanan_id' => $kelolaMakananId, // Bisa null
@@ -87,16 +88,21 @@ class CheckOutController extends Controller
                 'total_harga' => $validated['total_harga'],
                 'status_pengiriman' => 'diproses',
                 'status_pembayaran' => 'pending'
-            ]);
+            ];
 
+            $pesanan = DaftarPesanan::create($orderData);
+            
+            // ✅ TRIGGER ADMIN NOTIFICATION FOR NEW ORDER ✅
+            AdminNotificationService::createNewOrderNotification($pesanan->id);
+            
             DB::commit();
             
             Log::info('Order created successfully:', [
-                'order_id' => $daftarPesanan->order_id,
+                'order_id' => $pesanan->order_id,
                 'kelola_makanan_id' => $kelolaMakananId
             ]);
             
-            return response()->json(['success' => true, 'order_id' => $daftarPesanan->order_id]);
+            return response()->json(['success' => true, 'order_id' => $pesanan->order_id]);
             
         } catch (\Exception $e) {
             DB::rollback();

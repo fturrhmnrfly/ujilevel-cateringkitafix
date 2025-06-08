@@ -385,3 +385,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pesanan/cancel/{id}', [PesananController::class, 'cancelOrder'])
          ->name('pesanan.cancel');
 });
+
+// Admin Notification Routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // ...existing admin routes...
+    
+    // Admin Notifications
+    Route::get('/notifications', [NotificationAdminController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/api', [NotificationAdminController::class, 'api'])->name('notifications.api');
+    Route::get('/notifications/count', [NotificationAdminController::class, 'getUnreadCount'])->name('notifications.count');
+    Route::post('/notifications/mark-all-read', [NotificationAdminController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('/notifications/delete-multiple', [NotificationAdminController::class, 'deleteMultiple'])->name('notifications.deleteMultiple');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationAdminController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::delete('/notifications/{id}', [NotificationAdminController::class, 'delete'])->name('notifications.delete');
+});

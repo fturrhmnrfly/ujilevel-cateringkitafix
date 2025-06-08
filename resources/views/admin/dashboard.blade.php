@@ -1033,6 +1033,15 @@
             // Update setiap 30 detik untuk simulasi real-time
             setInterval(updateRealTimeData, 30000);
         });
+
+        // Initialize admin notification badge on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if badge exists and has count
+            const badge = document.getElementById('admin-notification-badge');
+            if (badge && parseInt(badge.textContent) > 0) {
+                badge.classList.add('show');
+            }
+        });
     </script>
 </body>
 

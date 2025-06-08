@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Models\Review;
 use App\Models\DaftarPesanan;
+use App\Services\AdminNotificationService;
 
 class ReviewController extends Controller
 {
@@ -69,7 +70,7 @@ class ReviewController extends Controller
             $averageRating = round(($validated['quality_rating'] + $validated['delivery_rating'] + $validated['service_rating']) / 3, 1);
 
             // Create review
-            $review = Review::create([
+            $reviewData = [
                 'user_id' => $userId,
                 'order_id' => $orderId,
                 'order_number' => $order->order_id,
@@ -82,7 +83,12 @@ class ReviewController extends Controller
                 'status' => 'active',
                 'is_verified' => false,
                 'reviewed_at' => now()
-            ]);
+            ];
+
+            $review = Review::create($reviewData);
+
+            // ✅ TRIGGER ADMIN NOTIFICATION FOR NEW REVIEW ✅
+            AdminNotificationService::createNewReviewNotification($review->id);
 
             DB::commit();
 

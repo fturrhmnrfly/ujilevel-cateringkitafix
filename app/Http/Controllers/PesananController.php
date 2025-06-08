@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\DaftarPesanan;
 use App\Services\NotificationService;
+use App\Services\AdminNotificationService;
 
 class PesananController extends Controller
 {
@@ -92,6 +93,9 @@ class PesananController extends Controller
             }
 
             $order->update(['status_pengiriman' => 'diterima']);
+
+            // ✅ TRIGGER ADMIN NOTIFICATION FOR ORDER COMPLETED ✅
+            AdminNotificationService::createOrderCompletedNotification($order->id);
 
             NotificationService::createStatusChangeNotification(
                 $order->id,
