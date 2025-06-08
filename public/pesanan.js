@@ -1,4 +1,5 @@
 let currentOrderId = null;
+let currentCancelOrderId = null;
 
 function acceptOrder(orderId) {
     currentOrderId = orderId;
@@ -90,16 +91,29 @@ function showReviewModal(orderId) {
     }
 }
 
+// Tambahkan function untuk update status card setelah pembatalan
 function updateOrderCardStatus(orderId, newStatus) {
     const orderCard = document.querySelector(`[data-order-id="${orderId}"]`);
     if (!orderCard) return;
     
+    // Update status badge
     const statusBadge = orderCard.querySelector('.status-badge-new');
     if (statusBadge) {
         statusBadge.className = `status-badge-new ${newStatus}`;
         statusBadge.textContent = capitalizeFirst(newStatus);
     }
     
+    // Update action buttons
+    const actionButtons = orderCard.querySelector('.action-buttons-new');
+    if (actionButtons && newStatus === 'dibatalkan') {
+        actionButtons.innerHTML = `
+            <button class="btn-reorder-new" onclick="reorderItems(${orderId})">
+                <i class="fas fa-redo"></i> Pesan Lagi
+            </button>
+        `;
+    }
+    
+    // Update data attribute
     orderCard.setAttribute('data-order-status', newStatus);
 }
 
@@ -131,7 +145,82 @@ function formatCurrency(amount) {
 }
 
 function capitalizeFirst(str) {
+    if (!str) return '';
     return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// ✅ TAMBAHKAN FUNGSI UNTUK CANCEL ORDER ✅
+function confirmOrderCancellation() {
+    if (!currentCancelOrderId) {
+        alert('Order ID tidak valid');
+        return;
+    }
+    
+    // Get selected reason
+    const selectedReason = document.querySelector('input[name="cancellation_reason"]:checked');
+    if (!selectedReason) {
+        alert('Silakan pilih alasan pembatalan');
+        return;
+    }
+    
+    let cancellationReason = selectedReason.value;
+    
+    // If "other" is selected, get custom reason
+    if (cancellationReason === 'other') {
+        const customReason = document.getElementById('otherReasonText').value.trim();
+        if (!customReason) {
+            alert('Silakan isi alasan pembatalan');
+            return;
+        }
+        cancellationReason = customReason;
+    }
+    
+    // Disable button and show loading
+    const confirmBtn = document.getElementById('confirmCancelBtn');
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Membatalkan...';
+    
+    // ✅ SEND CANCELLATION REQUEST KE BACKEND ✅
+    fetch(`/pesanan/cancel/${currentCancelOrderId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+            reason: cancellationReason
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update order card status
+            updateOrderCardStatus(currentCancelOrderId, 'dibatalkan');
+            
+            // Close modal
+            closeModal('cancelOrderModal');
+            
+            // Show success message
+            showMessage('Pesanan berhasil dibatalkan!', 'success');
+            
+            // Reload page after short delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            throw new Error(data.message || 'Gagal membatalkan pesanan');
+        }
+    })
+    .catch(error => {
+        console.error('Error cancelling order:', error);
+        showMessage('Terjadi kesalahan: ' + error.message, 'error');
+    })
+    .finally(() => {
+        // Reset button
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Konfirmasi Pembatalan';
+    });
 }
 
 // Initialize

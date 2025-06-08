@@ -12,7 +12,10 @@ return new class extends Migration
             $table->id();
             $table->string('order_id')->unique();
             $table->string('nama_pelanggan');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('kategori_pesanan');
+            // ✅ TAMBAHKAN KOLOM YANG HILANG ✅
+            $table->bigInteger('kelola_makanan_id')->unsigned()->nullable();
             $table->dateTime('tanggal_pesanan');
             $table->integer('jumlah_pesanan');
             $table->date('tanggal_pengiriman');
@@ -22,37 +25,38 @@ return new class extends Migration
             $table->text('pesan')->nullable();
             $table->string('opsi_pengiriman');
             $table->decimal('total_harga', 10, 2);
-            $table->string('status_pengiriman');
-            $table->string('status_pembayaran');
+            $table->enum('status_pengiriman', ['diproses', 'dikirim', 'diterima', 'dibatalkan']);
+            $table->enum('status_pembayaran', ['pending', 'paid', 'failed']);
+            
+            // ✅ TAMBAHKAN 4 KOLOM PEMBATALAN BARU ✅
+            $table->text('catatan_pembatalan')->nullable()
+                ->comment('Alasan pembatalan pesanan (dari admin atau user)');
+            $table->timestamp('cancelled_at')->nullable()
+                ->comment('Tanggal dan waktu pembatalan');
+            $table->unsignedBigInteger('cancelled_by')->nullable()
+                ->comment('ID user yang membatalkan (admin atau user)');
+            $table->enum('cancelled_by_type', ['admin', 'user'])->nullable()
+                ->comment('Jenis pembatal: admin atau user');
+                
             $table->timestamps();
-        });
-        
-        Schema::table('daftar_pesanans', function (Blueprint $table) {
-            // Tambahkan kolom yang hilang dari struktur asli
-            if (!Schema::hasColumn('daftar_pesanans', 'user_id')) {
-                $table->foreignId('user_id')->nullable()->after('nama_pelanggan')->constrained()->onDelete('set null');
-            }
-            if (!Schema::hasColumn('daftar_pesanans', 'kelola_makanan_id')) {
-                $table->bigInteger('kelola_makanan_id')->unsigned()->nullable()->after('kategori_pesanan');
-            }
             
-            // Update enum values sesuai SQL dump
-            $table->enum('status_pengiriman', ['diproses', 'dikirim', 'diterima', 'dibatalkan'])->change();
-            $table->enum('status_pembayaran', ['pending', 'paid', 'failed'])->change();
-            
-            // Tambahkan index
+            // ✅ TAMBAHKAN FOREIGN KEYS ✅
+            $table->foreign('kelola_makanan_id')
+                  ->references('id')->on('kelola_makanans')
+                  ->onDelete('set null');
+            $table->foreign('cancelled_by')
+                  ->references('id')->on('users')
+                  ->onDelete('set null');
+                  
+            // ✅ TAMBAHKAN INDEXES UNTUK PERFORMA ✅
             $table->index('kelola_makanan_id', 'idx_kelola_makanan_id');
+            $table->index(['status_pengiriman', 'cancelled_at'], 'idx_status_cancelled');
+            $table->index('cancelled_by', 'idx_cancelled_by');
         });
     }
 
     public function down()
     {
-        Schema::table('daftar_pesanans', function (Blueprint $table) {
-            $table->dropIndex('idx_kelola_makanan_id');
-            $table->dropForeign(['user_id']);
-            $table->dropColumn(['user_id', 'kelola_makanan_id']);
-        });
-        
         Schema::dropIfExists('daftar_pesanans');
     }
 };

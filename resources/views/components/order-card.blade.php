@@ -144,10 +144,6 @@
             <span>Biaya Pengiriman</span>
             <span>Rp {{ number_format($biayaPengiriman, 0, ',', '.') }}</span>
         </div>
-        {{-- <div class="summary-row-new">
-            <span>Metode Pembayaran</span>
-            <span>{{ $order->payment_method ?? 'COD' }}</span>
-        </div> --}}
         <div class="summary-row-new total-row">
             <span>Total</span>
             <span>Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
@@ -160,6 +156,27 @@
         <span>Pengiriman dijadwalkan: {{ $order->tanggal_pengiriman->format('d F Y') }}, {{ $order->waktu_pengiriman }}</span>
     </div>
 
+    <!-- TAMBAHKAN INFORMASI PEMBATALAN -->
+    @if($order->status_pengiriman === 'dibatalkan' && $order->catatan_pembatalan)
+        <div class="cancellation-info-new">
+            <i class="fas fa-exclamation-triangle cancellation-icon-new"></i>
+            <div class="cancellation-content-new">
+                <div class="cancellation-title-new">Alasan Pembatalan:</div>
+                <div class="cancellation-reason-new">{{ $order->catatan_pembatalan }}</div>
+                @if($order->cancelled_at)
+                    <div class="cancellation-date-new">
+                        Dibatalkan pada: {{ $order->cancelled_at->format('d F Y, H:i') }}
+                    </div>
+                @endif
+                @if($order->cancelled_by_name)
+                    <div class="cancellation-by-new">
+                        Dibatalkan oleh: {{ $order->cancelled_by_name }}
+                    </div>
+                @endif
+            </div>
+        </div>
+    @endif
+
     <!-- Action Buttons -->
     <div class="action-buttons-new">
         @if($isUnpaidTab)
@@ -168,15 +185,15 @@
             </button>
         @else
             @if($order->status_pengiriman == 'diproses')
-                <button class="btn-detail-full" onclick="showOrderDetail({{ $order->id }})">
+                <button class="btn-detail-new" onclick="showOrderDetail({{ $order->id }})">
                     <i class="fas fa-eye"></i> Lihat Detail
+                </button>
+                <button class="btn-cancel-new" onclick="showCancelOrderModal({{ $order->id }})">
+                    <i class="fas fa-times"></i> Batalkan Pesanan
                 </button>
             @elseif($order->status_pengiriman == 'dikirim')
                 <button class="btn-accept-new" onclick="acceptOrder({{ $order->id }})">
                     <i class="fas fa-check"></i> Terima Pesanan
-                </button>
-                <button class="btn-track-new" onclick="showOrderDetail({{ $order->id }})">
-                    <i class="fas fa-map-marker-alt"></i> Lacak Pesanan
                 </button>
             @elseif($order->status_pengiriman == 'diterima')
                 <button class="btn-reorder-new" onclick="reorderItems({{ $order->id }})">
@@ -191,6 +208,10 @@
                         <i class="fas fa-star"></i> Beri Ulasan
                     </button>
                 @endif
+            @elseif($order->status_pengiriman == 'dibatalkan')
+                <button class="btn-reorder-new" onclick="reorderItems({{ $order->id }})">
+                    <i class="fas fa-redo"></i> Pesan Lagi
+                </button>
             @else
                 <button class="btn-detail-full" onclick="showOrderDetail({{ $order->id }})">
                     <i class="fas fa-eye"></i> Lihat Detail
@@ -200,7 +221,7 @@
     </div>
 </div>
 
-<!-- Style tetap sama seperti sebelumnya -->
+<!-- Style -->
 <style>
 /* New Order Card Styles - Matching the image */
 .order-card-new {
@@ -248,6 +269,11 @@
 .status-badge-new.diproses { background: #fff3cd; color: #856404; }
 .status-badge-new.dikirim { background: #cce5ff; color: #0066cc; }
 .status-badge-new.diterima { background: #d4edda; color: #155724; }
+.status-badge-new.dibatalkan { 
+    background: #f8d7da; 
+    color: #721c24; 
+    border: 1px solid #f5c6cb;
+}
 
 .order-date-new {
     font-size: 13px;
@@ -361,13 +387,55 @@
     color: #999;
 }
 
+/* STYLE UNTUK INFORMASI PEMBATALAN */
+.cancellation-info-new {
+    display: flex;
+    align-items: flex-start;
+    background: #fff5f5;
+    border: 1px solid #fed7d7;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.cancellation-icon-new {
+    color: #e53e3e;
+    margin-right: 10px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.cancellation-content-new {
+    flex: 1;
+}
+
+.cancellation-title-new {
+    font-weight: 600;
+    color: #721c24;
+    margin-bottom: 4px;
+}
+
+.cancellation-reason-new {
+    color: #721c24;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.cancellation-date-new,
+.cancellation-by-new {
+    font-size: 11px;
+    color: #a0a0a0;
+    margin-bottom: 2px;
+}
+
 .action-buttons-new {
     display: flex;
     gap: 10px;
 }
 
-.btn-detail-new, .btn-detail-full, .btn-accept-new, .btn-track-new, 
-.btn-reorder-new, .btn-review-new, .btn-reviewed-new {
+.btn-detail-new, .btn-detail-full, .btn-accept-new, 
+.btn-reorder-new, .btn-review-new, .btn-reviewed-new, .btn-cancel-new {
     flex: 1;
     padding: 12px;
     border: none;
@@ -401,16 +469,6 @@
     background: #1f1f5c;
 }
 
-.btn-track-new {
-    background: white;
-    color: #27276e;
-    border: 1px solid #27276e;
-}
-
-.btn-track-new:hover {
-    background: #f8f9fa;
-}
-
 .btn-reorder-new, .btn-review-new {
     background: #27276e;
     color: white;
@@ -427,6 +485,16 @@
     opacity: 0.7;
 }
 
+/* STYLE UNTUK BUTTON BATALKAN PESANAN */
+.btn-cancel-new {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-cancel-new:hover {
+    background: #c82333;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .order-card-new {
@@ -438,9 +506,19 @@
         flex-direction: column;
     }
     
-    .btn-detail-new, .btn-detail-full, .btn-accept-new, .btn-track-new, 
-    .btn-reorder-new, .btn-review-new {
+    .btn-detail-new, .btn-detail-full, .btn-accept-new, 
+    .btn-reorder-new, .btn-review-new, .btn-cancel-new {
         width: 100%;
+    }
+    
+    .cancellation-info-new {
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .cancellation-date-new,
+    .cancellation-by-new {
+        font-size: 10px;
     }
 }
 </style>
@@ -465,7 +543,12 @@ window.orderData[{{ $order->id }}] = {
     opsi_pengiriman: '{{ $order->opsi_pengiriman }}',
     total_harga: {{ $order->total_harga }},
     pesan: '{{ addslashes($order->pesan ?? "") }}',
-    payment_method: '{{ $order->payment_method ?? "COD" }}'
+    // TAMBAHKAN DATA PEMBATALAN
+    catatan_pembatalan: '{{ addslashes($order->catatan_pembatalan ?? "") }}',
+    cancelled_at: '{{ $order->cancelled_at ? $order->cancelled_at->format('Y-m-d H:i:s') : "" }}',
+    cancelled_by: {{ $order->cancelled_by ?? 'null' }},
+    cancelled_by_type: '{{ $order->cancelled_by_type ?? "" }}',
+    cancelled_by_name: '{{ addslashes($order->cancelled_by_name ?? "") }}'
 };
 
 // Debug log dengan lebih detail

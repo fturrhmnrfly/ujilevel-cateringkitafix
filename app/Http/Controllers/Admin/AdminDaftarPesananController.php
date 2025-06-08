@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\DaftarPesanan;
-use App\Models\Order;
-use App\Models\StatusPengiriman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Services\NotificationService;
 
 class AdminDaftarPesananController extends Controller
@@ -150,14 +148,12 @@ class AdminDaftarPesananController extends Controller
     public function updateStatus(Request $request, $id)
     {
         try {
-            // Log the incoming request for debugging
             Log::info('Update status request received', [
                 'order_id' => $id,
                 'request_data' => $request->all(),
                 'admin_id' => Auth::id()
             ]);
 
-            // Find the order
             $pesanan = DaftarPesanan::find($id);
             if (!$pesanan) {
                 return response()->json([
@@ -166,17 +162,14 @@ class AdminDaftarPesananController extends Controller
                 ], 404);
             }
             
-            // Validate request data
             $validated = $request->validate([
                 'status_pengiriman' => 'required|in:diproses,dikirim,diterima,dibatalkan',
                 'catatan' => 'nullable|string|max:1000'
             ]);
 
-            // Get current and new status
             $currentStatus = $pesanan->status_pengiriman;
             $newStatus = $validated['status_pengiriman'];
             
-            // Validate status transition
             if (!$this->isValidStatusTransition($currentStatus, $newStatus)) {
                 return response()->json([
                     'success' => false,
@@ -184,28 +177,27 @@ class AdminDaftarPesananController extends Controller
                 ], 422);
             }
 
-            // Prepare update data
+            // ✅ PREPARE UPDATE DATA DENGAN KOLOM PEMBATALAN ✅
             $updateData = [
                 'status_pengiriman' => $newStatus,
                 'updated_at' => now()
             ];
 
-            // Add specific data based on status change
+            // ✅ TAMBAHKAN DATA KHUSUS BERDASARKAN STATUS ✅
             switch ($newStatus) {
                 case 'dibatalkan':
                     $updateData['catatan_pembatalan'] = $validated['catatan'] ?? 'Dibatalkan oleh admin';
                     $updateData['cancelled_at'] = now();
                     $updateData['cancelled_by'] = Auth::id();
+                    $updateData['cancelled_by_type'] = 'admin';
                     break;
                     
                 case 'dikirim':
-                    $updateData['shipped_at'] = now();
-                    $updateData['shipped_by'] = Auth::id();
+                    // Optional: tambahkan tracking data
                     break;
                     
                 case 'diterima':
-                    $updateData['delivered_at'] = now();
-                    $updateData['confirmed_by'] = Auth::id();
+                    // Optional: tambahkan completion data
                     break;
             }
 
@@ -216,7 +208,6 @@ class AdminDaftarPesananController extends Controller
                 throw new \Exception('Gagal menyimpan perubahan ke database');
             }
 
-            // Log the successful update
             Log::info('Order status updated successfully', [
                 'order_id' => $pesanan->order_id,
                 'old_status' => $currentStatus,
@@ -225,7 +216,7 @@ class AdminDaftarPesananController extends Controller
                 'catatan' => $validated['catatan'] ?? null
             ]);
 
-            // Send notification if status is 'dikirim' or 'diterima'
+            // Send notification if needed
             if ($newStatus === 'dikirim' || $newStatus === 'diterima') {
                 NotificationService::createStatusChangeNotification(
                     $pesanan->id, 
@@ -235,7 +226,6 @@ class AdminDaftarPesananController extends Controller
                 );
             }
 
-            // Return success response
             return response()->json([
                 'success' => true,
                 'message' => 'Status pesanan berhasil diperbarui',
@@ -244,63 +234,36 @@ class AdminDaftarPesananController extends Controller
                     'order_id' => $pesanan->order_id,
                     'old_status' => $currentStatus,
                     'new_status' => $newStatus,
+                    'catatan_pembatalan' => $pesanan->catatan_pembatalan,
+                    'cancelled_at' => $pesanan->cancelled_at?->format('Y-m-d H:i:s'),
+                    'cancelled_by_type' => $pesanan->cancelled_by_type,
                     'updated_at' => $pesanan->updated_at->toISOString()
                 ]
             ], 200);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::warning('Validation failed for status update', [
-                'order_id' => $id,
-                'errors' => $e->errors(),
-                'admin_id' => Auth::id()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Data yang dikirim tidak valid',
-                'errors' => $e->errors()
-            ], 422);
 
         } catch (\Exception $e) {
             Log::error('Error updating order status', [
                 'order_id' => $id,
                 'error_message' => $e->getMessage(),
-                'error_file' => $e->getFile(),
-                'error_line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
                 'admin_id' => Auth::id()
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan internal server. Silakan coba lagi atau hubungi administrator.'
+                'message' => 'Terjadi kesalahan saat memperbarui status'
             ], 500);
         }
     }
 
-    /**
-     * Validate if status transition is allowed
-     * 
-     * @param string $currentStatus
-     * @param string $newStatus
-     * @return bool
-     */
     private function isValidStatusTransition($currentStatus, $newStatus)
     {
-        // Define allowed status transitions
         $allowedTransitions = [
             'diproses' => ['dikirim', 'dibatalkan'],
-            'dikirim' => ['diterima', 'dibatalkan'], // Allow cancellation even after shipped
-            'diterima' => [], // No further transitions allowed
-            'dibatalkan' => [] // No further transitions allowed
+            'dikirim' => ['diterima', 'dibatalkan'],
+            'diterima' => [], // Status final
+            'dibatalkan' => [] // Status final
         ];
 
-        // Check if current status exists in transitions map
-        if (!isset($allowedTransitions[$currentStatus])) {
-            return false;
-        }
-
-        // Check if new status is allowed from current status
-        return in_array($newStatus, $allowedTransitions[$currentStatus]);
+        return in_array($newStatus, $allowedTransitions[$currentStatus] ?? []);
     }
 }

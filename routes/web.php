@@ -370,4 +370,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::delete('/notifications/{id}', [NotificationController::class, 'delete'])->name('notifications.delete');
     Route::post('/notifications/delete-multiple', [NotificationController::class, 'deleteMultiple'])->name('notifications.deleteMultiple');
+    
+    // Route untuk user cancel order
+    Route::post('/pesanan/cancel/{id}', [PesananController::class, 'cancelOrder'])
+         ->name('pesanan.cancel');
 });

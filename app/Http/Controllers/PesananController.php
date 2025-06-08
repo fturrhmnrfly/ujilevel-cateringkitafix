@@ -113,4 +113,64 @@ class PesananController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Cancel an order - change status from 'diproses' to 'dibatalkan'
+     */
+    public function cancelOrder(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'reason' => 'required|string|max:500'
+            ]);
+
+            $order = DaftarPesanan::where('id', $id)
+                                  ->where('user_id', Auth::id()) // Pastikan user hanya bisa cancel order mereka sendiri
+                                  ->where('status_pengiriman', 'diproses') // Hanya order yang sedang diproses yang bisa dibatalkan
+                                  ->firstOrFail();
+
+            // Update order dengan status dibatalkan
+            $order->update([
+                'status_pengiriman' => 'dibatalkan',
+                'catatan_pembatalan' => $request->reason,
+                'cancelled_at' => now(),
+                'cancelled_by' => Auth::id(),
+                'cancelled_by_type' => 'user'
+            ]);
+
+            // Log activity
+            Log::info('Order cancelled by user', [
+                'order_id' => $order->order_id,
+                'user_id' => Auth::id(),
+                'reason' => $request->reason,
+                'cancelled_at' => now()
+            ]);
+
+            // Kirim notifikasi ke admin (optional)
+            // NotificationService::notifyAdminOrderCancelled($order);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan berhasil dibatalkan',
+                'data' => [
+                    'order_id' => $order->order_id,
+                    'status' => $order->status_pengiriman,
+                    'cancelled_at' => $order->cancelled_at->format('Y-m-d H:i:s'),
+                    'reason' => $order->catatan_pembatalan
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error cancelling order by user', [
+                'order_id' => $id,
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat membatalkan pesanan'
+            ], 500);
+        }
+    }
 }

@@ -357,14 +357,14 @@
 <body>
     <x-navbar></x-navbar>
 
-    <div class="breadcrumb-container">
+    {{-- <div class="breadcrumb-container">
         <div class="breadcrumb">
             <div class="breadcrumb-title">Checkout</div>
             <div class="breadcrumb-nav">
                 <a href="{{ route('home') }}">Home</a> » <a href="{{ route('keranjang.index') }}">Keranjang</a> » Checkout
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="container">
         <!-- Update input hidden untuk menyimpan user data -->

@@ -87,6 +87,73 @@
     </div>
 </div>
 
+{{-- Modal Cancel Order --}}
+<div id="cancelOrderModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Batalkan Pesanan</h3>
+            <button class="modal-close" onclick="closeModal('cancelOrderModal')">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="cancel-order-info">
+                <h4>Order ID: <span id="cancel-order-id">-</span></h4>
+                <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                    Silakan pilih alasan pembatalan pesanan Anda:
+                </p>
+            </div>
+
+            <div class="cancellation-reasons">
+                <div class="reason-option">
+                    <input type="radio" id="reason1" name="cancellation_reason" value="Berubah pikiran, tidak jadi pesan">
+                    <label for="reason1">Berubah pikiran, tidak jadi pesan</label>
+                </div>
+                <div class="reason-option">
+                    <input type="radio" id="reason2" name="cancellation_reason" value="Menemukan harga yang lebih murah di tempat lain">
+                    <label for="reason2">Menemukan harga yang lebih murah di tempat lain</label>
+                </div>
+                <div class="reason-option">
+                    <input type="radio" id="reason3" name="cancellation_reason" value="Tanggal acara berubah">
+                    <label for="reason3">Tanggal acara berubah</label>
+                </div>
+                <div class="reason-option">
+                    <input type="radio" id="reason4" name="cancellation_reason" value="Kesalahan dalam pemesanan">
+                    <label for="reason4">Kesalahan dalam pemesanan</label>
+                </div>
+                <div class="reason-option">
+                    <input type="radio" id="reason5" name="cancellation_reason" value="Situasi darurat/mendesak">
+                    <label for="reason5">Situasi darurat/mendesak</label>
+                </div>
+                <div class="reason-option">
+                    <input type="radio" id="reasonOther" name="cancellation_reason" value="other">
+                    <label for="reasonOther">Lainnya</label>
+                </div>
+            </div>
+
+            <!-- Text area untuk alasan lainnya -->
+            <div class="other-reason-container" id="otherReasonContainer" style="display: none;">
+                <label for="otherReasonText" class="other-reason-label">Jelaskan alasan Anda:</label>
+                <textarea 
+                    id="otherReasonText" 
+                    class="other-reason-textarea" 
+                    placeholder="Tuliskan alasan pembatalan pesanan Anda..."
+                    maxlength="500"
+                ></textarea>
+                <div class="char-count">0/500</div>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-modal btn-secondary" onclick="closeModal('cancelOrderModal')">
+                Batal
+            </button>
+            <button class="btn-modal btn-danger" id="confirmCancelBtn" onclick="confirmOrderCancellation()">
+                Konfirmasi Pembatalan
+            </button>
+        </div>
+    </div>
+</div>
+
 {{-- Modal Review Pesanan - Desain Baru Sesuai Gambar --}}
 <div id="reviewModal" class="modal">
     <div class="review-modal-container">
@@ -337,6 +404,21 @@
     background: #218838;
 }
 
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-danger:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 /* NEW REVIEW MODAL STYLES - Sesuai dengan gambar */
 .review-modal-container {
     background: white;
@@ -575,6 +657,97 @@
 .btn-loading {
     opacity: 0.7;
     pointer-events: none;
+}
+
+/* TAMBAHAN STYLE UNTUK CANCEL ORDER MODAL */
+.cancel-order-info {
+    margin-bottom: 20px;
+}
+
+.cancel-order-info h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.cancellation-reasons {
+    margin-bottom: 20px;
+}
+
+.reason-option {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reason-option:hover {
+    background: #f8f9fa;
+    border-color: #dc3545;
+}
+
+.reason-option input[type="radio"] {
+    margin-right: 12px;
+    margin-top: 2px;
+    accent-color: #dc3545;
+}
+
+.reason-option label {
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+    flex: 1;
+}
+
+.reason-option.selected {
+    background: #fff5f5;
+    border-color: #dc3545;
+}
+
+.other-reason-container {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.other-reason-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.other-reason-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.other-reason-textarea:focus {
+    outline: none;
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+.char-count {
+    text-align: right;
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
 }
 
 /* Responsive */
@@ -1152,6 +1325,184 @@ document.addEventListener('keydown', function(e) {
         if (openModal) {
             openModal.classList.remove('show');
         }
+    }
+});
+
+// TAMBAHKAN SCRIPT UNTUK CANCEL ORDER MODAL
+let currentCancelOrderId = null;
+
+function showCancelOrderModal(orderId) {
+    console.log('showCancelOrderModal called with orderId:', orderId);
+    
+    currentCancelOrderId = orderId;
+    
+    // Reset form
+    resetCancelOrderForm();
+    
+    // Set order ID di modal
+    const orderIdElement = document.getElementById('cancel-order-id');
+    if (orderIdElement && window.orderData && window.orderData[orderId]) {
+        orderIdElement.textContent = window.orderData[orderId].order_id || orderId;
+    }
+    
+    // Show modal
+    const modal = document.getElementById('cancelOrderModal');
+    if (modal) {
+        modal.classList.add('show');
+    } else {
+        console.error('Cancel order modal not found');
+        alert('Modal pembatalan tidak ditemukan');
+    }
+}
+
+function resetCancelOrderForm() {
+    // Reset radio buttons
+    const radioButtons = document.querySelectorAll('input[name="cancellation_reason"]');
+    radioButtons.forEach(radio => {
+        radio.checked = false;
+    });
+    
+    // Hide other reason container
+    const otherContainer = document.getElementById('otherReasonContainer');
+    if (otherContainer) {
+        otherContainer.style.display = 'none';
+    }
+    
+    // Clear textarea
+    const otherTextarea = document.getElementById('otherReasonText');
+    if (otherTextarea) {
+        otherTextarea.value = '';
+    }
+    
+    // Reset char count
+    const charCount = document.querySelector('.char-count');
+    if (charCount) {
+        charCount.textContent = '0/500';
+    }
+    
+    // Remove selected class from all options
+    document.querySelectorAll('.reason-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+}
+
+function confirmOrderCancellation() {
+    if (!currentCancelOrderId) {
+        alert('Order ID tidak valid');
+        return;
+    }
+    
+    // Get selected reason
+    const selectedReason = document.querySelector('input[name="cancellation_reason"]:checked');
+    if (!selectedReason) {
+        alert('Silakan pilih alasan pembatalan');
+        return;
+    }
+    
+    let cancellationReason = selectedReason.value;
+    
+    // If "other" is selected, get custom reason
+    if (cancellationReason === 'other') {
+        const customReason = document.getElementById('otherReasonText').value.trim();
+        if (!customReason) {
+            alert('Silakan isi alasan pembatalan');
+            return;
+        }
+        cancellationReason = customReason;
+    }
+    
+    // Disable button and show loading
+    const confirmBtn = document.getElementById('confirmCancelBtn');
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Membatalkan...';
+    
+    // Send cancellation request
+    fetch(`/pesanan/cancel/${currentCancelOrderId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+            reason: cancellationReason
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update order card status
+            updateOrderCardStatus(currentCancelOrderId, 'dibatalkan');
+            
+            // Close modal
+            closeModal('cancelOrderModal');
+            
+            // Show success message
+            showMessage('Pesanan berhasil dibatalkan!', 'success');
+            
+            // Reload page after short delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            throw new Error(data.message || 'Gagal membatalkan pesanan');
+        }
+    })
+    .catch(error => {
+        console.error('Error cancelling order:', error);
+        showMessage('Terjadi kesalahan: ' + error.message, 'error');
+    })
+    .finally(() => {
+        // Reset button
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Konfirmasi Pembatalan';
+    });
+}
+
+// Event listeners untuk cancel order modal
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle reason option selection
+    document.querySelectorAll('input[name="cancellation_reason"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Remove selected class from all options
+            document.querySelectorAll('.reason-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to current option
+            this.closest('.reason-option').classList.add('selected');
+            
+            // Show/hide other reason container
+            const otherContainer = document.getElementById('otherReasonContainer');
+            if (this.value === 'other') {
+                otherContainer.style.display = 'block';
+                document.getElementById('otherReasonText').focus();
+            } else {
+                otherContainer.style.display = 'none';
+            }
+        });
+    });
+    
+    // Handle reason option click (untuk area yang lebih besar)
+    document.querySelectorAll('.reason-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+    
+    // Handle textarea character count
+    const otherTextarea = document.getElementById('otherReasonText');
+    if (otherTextarea) {
+        otherTextarea.addEventListener('input', function() {
+            const charCount = document.querySelector('.char-count');
+            if (charCount) {
+                charCount.textContent = `${this.value.length}/500`;
+            }
+        });
     }
 });
 </script>

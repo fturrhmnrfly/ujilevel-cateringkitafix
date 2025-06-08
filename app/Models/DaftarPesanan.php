@@ -28,14 +28,21 @@ class DaftarPesanan extends Model
         'pesan',
         'total_harga',
         'status_pengiriman',
-        'status_pembayaran'
+        'status_pembayaran',
+        // ✅ TAMBAHKAN KOLOM PEMBATALAN KE FILLABLE ✅
+        'catatan_pembatalan',
+        'cancelled_at',
+        'cancelled_by',
+        'cancelled_by_type'
     ];
 
     protected $casts = [
-        'tanggal_pesanan' => 'date',
+        'tanggal_pesanan' => 'datetime',
         'tanggal_pengiriman' => 'date',
         'waktu_pengiriman' => 'datetime:H:i',
-        'total_harga' => 'decimal:2'
+        'total_harga' => 'decimal:2',
+        // ✅ TAMBAHKAN CAST UNTUK KOLOM PEMBATALAN ✅
+        'cancelled_at' => 'datetime'
     ];
 
     // Relasi dengan User
@@ -54,6 +61,17 @@ class DaftarPesanan extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class, 'order_id', 'id');
+    }
+
+    // Relasi dengan Review
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'order_id');
+    }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'order_id');
     }
 
     // Helper method untuk check apakah order sudah direview
@@ -75,14 +93,36 @@ class DaftarPesanan extends Model
         return $this->reviews()->where('user_id', $userId)->first();
     }
 
-    // Relasi dengan Review
-    public function reviews()
+    // ✅ TAMBAHKAN RELASI UNTUK CANCELLED_BY ✅
+    public function cancelledBy()
     {
-        return $this->hasMany(Review::class, 'order_id');
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
 
-    public function review()
+    // ✅ TAMBAHKAN ACCESSOR UNTUK NAMA PEMBATAL ✅
+    public function getCancelledByNameAttribute()
     {
-        return $this->hasOne(Review::class, 'order_id');
+        if ($this->cancelled_by && $this->cancelledBy) {
+            return $this->cancelledBy->name;
+        }
+        return null;
+    }
+
+    // ✅ TAMBAHKAN SCOPE UNTUK FILTER PEMBATALAN ✅
+    public function scopeCancelled($query)
+    {
+        return $query->where('status_pengiriman', 'dibatalkan');
+    }
+
+    public function scopeCancelledByUser($query)
+    {
+        return $query->where('status_pengiriman', 'dibatalkan')
+                    ->where('cancelled_by_type', 'user');
+    }
+
+    public function scopeCancelledByAdmin($query)
+    {
+        return $query->where('status_pengiriman', 'dibatalkan')
+                    ->where('cancelled_by_type', 'admin');
     }
 }
