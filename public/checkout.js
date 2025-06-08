@@ -329,6 +329,18 @@ class CheckoutManager {
 
         const orderData = this.prepareOrderData();
 
+        // SIMPAN DATA PENGIRIMAN KE LOCALSTORAGE SEBELUM SUBMIT
+        const shippingData = {
+            deliveryDate: document.getElementById('delivery-date').value,
+            deliveryTime: document.getElementById('delivery-time').value,
+            address: document.getElementById('address').value,
+            phone: document.getElementById('phone').value,
+            notes: document.getElementById('notes').value || ''
+        };
+        
+        localStorage.setItem('shippingData', JSON.stringify(shippingData));
+        localStorage.setItem('orderTotal', orderData.total_harga.toString());
+
         fetch('/checkout/store', {
             method: 'POST',
             headers: {
@@ -341,6 +353,19 @@ class CheckoutManager {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // SIMPAN ORDER DATA DENGAN INFORMASI PENGIRIMAN
+                const successOrderData = {
+                    id: data.order_id || this.generateOrderId(),
+                    date: new Date().toISOString(),
+                    total: orderData.total_harga,
+                    deliveryDate: shippingData.deliveryDate,
+                    deliveryTime: shippingData.deliveryTime,
+                    address: shippingData.address,
+                    phone: shippingData.phone,
+                    notes: shippingData.notes
+                };
+                
+                localStorage.setItem('currentOrder', JSON.stringify(successOrderData));
                 localStorage.removeItem('cartItems');
                 alert('Pesanan berhasil dibuat!');
                 window.location.href = `/payment/metodepembayaran/${localStorage.getItem('selectedPaymentMethod')}`;

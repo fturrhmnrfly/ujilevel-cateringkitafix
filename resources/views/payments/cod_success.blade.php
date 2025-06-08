@@ -105,6 +105,10 @@
             margin-bottom: 16px;
         }
         
+        .shipping-detail:last-child {
+            margin-bottom: 0;
+        }
+        
         .shipping-detail strong {
             display: block;
             font-weight: 500;
@@ -148,7 +152,7 @@
     <div class="header">
         Catering Kita
     </div>
-
+    
     <div class="container">
         <div class="success-icon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -207,45 +211,98 @@
             return `ORD${timestamp}${random}`;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function formatDate(dateString) {
+            if (!dateString) return '-';
             try {
-                // Get data from localStorage
-                const orderData = JSON.parse(localStorage.getItem('currentOrder')) || {};
-                const orderTotal = localStorage.getItem('orderTotal');
-                
-                // Display order info
-                document.getElementById('orderId').textContent = orderData.id || generateOrderId();
-                document.getElementById('orderDate').textContent = new Date(orderData.date || new Date()).toLocaleDateString('id-ID', {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('id-ID', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'
                 });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        function formatTime(timeString) {
+            if (!timeString) return '-';
+            try {
+                // Jika format sudah HH:MM, langsung return
+                if (timeString.match(/^\d{2}:\d{2}$/)) {
+                    return timeString;
+                }
+                // Jika format datetime, extract time
+                const date = new Date(timeString);
+                return date.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return timeString;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== COD SUCCESS PAGE DEBUG ===');
+            
+            try {
+                // Ambil data dari localStorage dengan prioritas yang benar
+                const orderData = JSON.parse(localStorage.getItem('currentOrder')) || {};
+                const shippingData = JSON.parse(localStorage.getItem('shippingData')) || {};
+                const orderTotal = localStorage.getItem('orderTotal');
+                
+                console.log('Order Data:', orderData);
+                console.log('Shipping Data:', shippingData);
+                console.log('Order Total:', orderTotal);
+                
+                // Display order info
+                document.getElementById('orderId').textContent = orderData.id || generateOrderId();
+                
+                // Format tanggal pemesanan
+                const orderDate = orderData.date || new Date().toISOString();
+                document.getElementById('orderDate').textContent = formatDate(orderDate);
                 
                 // Display payment total
                 if (orderTotal) {
                     document.getElementById('totalPayment').textContent = `Rp ${parseInt(orderTotal).toLocaleString('id-ID')}`;
+                } else if (orderData.total) {
+                    document.getElementById('totalPayment').textContent = `Rp ${parseInt(orderData.total).toLocaleString('id-ID')}`;
+                } else {
+                    document.getElementById('totalPayment').textContent = 'Rp 0';
                 }
 
-                // Display shipping info langsung dari orderData
-                if (orderData) {
-                    document.getElementById('deliveryDate').textContent = orderData.deliveryDate || '-';
-                    document.getElementById('deliveryTime').textContent = orderData.deliveryTime || '-';
-                    document.getElementById('deliveryAddress').textContent = orderData.address || '-';
-                }
+                // Display shipping info dengan prioritas data
+                // Prioritas: orderData > shippingData > fallback
+                const deliveryDate = orderData.deliveryDate || shippingData.deliveryDate || '-';
+                const deliveryTime = orderData.deliveryTime || shippingData.deliveryTime || '-';
+                const deliveryAddress = orderData.address || shippingData.address || '-';
+                
+                console.log('Final Delivery Data:', {
+                    deliveryDate,
+                    deliveryTime,
+                    deliveryAddress
+                });
+                
+                document.getElementById('deliveryDate').textContent = formatDate(deliveryDate);
+                document.getElementById('deliveryTime').textContent = formatTime(deliveryTime);
+                document.getElementById('deliveryAddress').textContent = deliveryAddress;
 
-                // Clear localStorage after successful display
+                // Clear localStorage setelah 2 detik untuk memastikan data sudah tampil
                 setTimeout(() => {
                     localStorage.removeItem('currentOrder');
                     localStorage.removeItem('orderTotal');
                     localStorage.removeItem('cartItems');
                     localStorage.removeItem('selectedPaymentMethod');
-                }, 1000);
+                    localStorage.removeItem('shippingData');
+                    console.log('LocalStorage cleared');
+                }, 2000);
 
             } catch (error) {
                 console.error('Error displaying order data:', error);
                 // Set default values if there's an error
                 document.getElementById('orderId').textContent = generateOrderId();
-                document.getElementById('orderDate').textContent = new Date().toLocaleDateString('id-ID');
+                document.getElementById('orderDate').textContent = formatDate(new Date().toISOString());
                 document.getElementById('totalPayment').textContent = 'Rp 0';
                 document.getElementById('deliveryDate').textContent = '-';
                 document.getElementById('deliveryTime').textContent = '-';

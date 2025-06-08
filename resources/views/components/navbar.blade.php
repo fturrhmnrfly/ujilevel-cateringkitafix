@@ -5,7 +5,7 @@
 <nav class="navbar">
     <!-- Logo -->
     <div class="logo">
-        <img src="{{ asset('assets/logo.png') }}" alt="Logo">
+        <img src="{{ asset('assets/logo.png') }}" alt="Logo" style="width: 70px; height: 70px;">
         <div class="text-navbar">
             <p>CATERING</p>
             <p>KITA</p>
