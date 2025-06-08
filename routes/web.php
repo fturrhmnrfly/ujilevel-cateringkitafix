@@ -391,11 +391,26 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // ...existing admin routes...
     
     // Admin Notifications
-    Route::get('/notifications', [NotificationAdminController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/api', [NotificationAdminController::class, 'api'])->name('notifications.api');
-    Route::get('/notifications/count', [NotificationAdminController::class, 'getUnreadCount'])->name('notifications.count');
-    Route::post('/notifications/mark-all-read', [NotificationAdminController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
-    Route::post('/notifications/delete-multiple', [NotificationAdminController::class, 'deleteMultiple'])->name('notifications.deleteMultiple');
-    Route::post('/notifications/{id}/mark-as-read', [NotificationAdminController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::delete('/notifications/{id}', [NotificationAdminController::class, 'delete'])->name('notifications.delete');
+    Route::get('/notifications', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/api', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'api'])->name('notifications.api');
+    Route::get('/notifications/count', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'getUnreadCount'])->name('notifications.count');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('/notifications/delete-multiple', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'deleteMultiple'])->name('notifications.deleteMultiple');
+    Route::post('/notifications/{id}/mark-as-read', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::delete('/notifications/{id}', [\App\Http\Controllers\Admin\NotificationAdminController::class, 'delete'])->name('notifications.delete');
+});
+
+// Admin DaftarPesanan routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // ...existing admin routes...
+    
+    Route::get('/daftarpesanan', [AdminDaftarPesananController::class, 'index'])->name('daftarpesanan.index');
+    Route::get('/daftarpesanan/create', [AdminDaftarPesananController::class, 'create'])->name('daftarpesanan.create');
+    Route::post('/daftarpesanan', [AdminDaftarPesananController::class, 'store'])->name('daftarpesanan.store');
+    Route::get('/daftarpesanan/{id}/edit', [AdminDaftarPesananController::class, 'edit'])->name('daftarpesanan.edit');
+    Route::put('/daftarpesanan/{id}', [AdminDaftarPesananController::class, 'update'])->name('daftarpesanan.update');
+    Route::delete('/daftarpesanan/{id}', [AdminDaftarPesananController::class, 'destroy'])->name('daftarpesanan.destroy');
+    
+    // ✅ ROUTE UNTUK UPDATE STATUS ✅
+    Route::post('/daftarpesanan/{id}/update-status', [AdminDaftarPesananController::class, 'updateStatus'])->name('daftarpesanan.updateStatus');
 });

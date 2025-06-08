@@ -25,10 +25,18 @@ class NotificationAdminController extends Controller
     public function api()
     {
         try {
+            Log::info('Admin notifications API called', ['admin_id' => Auth::id()]);
+            
             $notifications = NotificationAdmin::where('admin_id', Auth::id())
                 ->orderBy('created_at', 'desc')
                 ->limit(50)
                 ->get();
+                
+            Log::info('Admin notifications found', [
+                'admin_id' => Auth::id(),
+                'count' => $notifications->count(),
+                'notifications' => $notifications->toArray()
+            ]);
             
             return response()->json([
                 'success' => true,
@@ -52,6 +60,11 @@ class NotificationAdminController extends Controller
             $count = NotificationAdmin::where('admin_id', Auth::id())
                 ->where('is_read', false)
                 ->count();
+                
+            Log::info('Admin notification count', [
+                'admin_id' => Auth::id(),
+                'unread_count' => $count
+            ]);
                 
             return response()->json([
                 'success' => true,

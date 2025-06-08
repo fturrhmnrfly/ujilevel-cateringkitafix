@@ -94,9 +94,21 @@ class PesananController extends Controller
 
             $order->update(['status_pengiriman' => 'diterima']);
 
-            // ✅ TRIGGER ADMIN NOTIFICATION FOR ORDER COMPLETED ✅
-            AdminNotificationService::createOrderCompletedNotification($order->id);
+            Log::info('Order accepted, triggering admin notification', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_id,
+                'user_id' => Auth::id()
+            ]);
 
+            // ✅ TRIGGER ADMIN NOTIFICATION FOR ORDER COMPLETED ✅
+            $adminNotificationResult = AdminNotificationService::createOrderCompletedNotification($order->id);
+            
+            Log::info('Admin notification for completed order', [
+                'order_id' => $order->id,
+                'notification_created' => $adminNotificationResult
+            ]);
+
+            // ✅ TRIGGER USER NOTIFICATION FOR REVIEW ✅
             NotificationService::createStatusChangeNotification(
                 $order->id,
                 Auth::id(),

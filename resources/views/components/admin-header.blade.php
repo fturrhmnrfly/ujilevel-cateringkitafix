@@ -12,7 +12,9 @@
                         ->count();
                 @endphp
                 @if($unreadCount > 0)
-                    <span class="notification-badge" id="admin-notification-badge">{{ $unreadCount }}</span>
+                    <span class="notification-badge show" id="admin-notification-badge">{{ $unreadCount }}</span>
+                @else
+                    <span class="notification-badge" id="admin-notification-badge">0</span>
                 @endif
             </a>
         </div>
@@ -350,3 +352,18 @@
 
 <!-- Include Admin Notification Script -->
 <script src="{{ asset('admin-notifications.js') }}"></script>
+
+<script>
+// Debug notification count on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Admin header loaded');
+    const badge = document.getElementById('admin-notification-badge');
+    if (badge) {
+        console.log('Admin notification badge count:', badge.textContent);
+        const count = parseInt(badge.textContent);
+        if (count > 0) {
+            badge.classList.add('show');
+        }
+    }
+});
+</script>

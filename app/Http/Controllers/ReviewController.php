@@ -87,40 +87,30 @@ class ReviewController extends Controller
 
             $review = Review::create($reviewData);
 
+            Log::info('Review created, triggering admin notification', [
+                'review_id' => $review->id,
+                'order_id' => $orderId,
+                'user_id' => $userId
+            ]);
+
             // ✅ TRIGGER ADMIN NOTIFICATION FOR NEW REVIEW ✅
-            AdminNotificationService::createNewReviewNotification($review->id);
+            $adminNotificationResult = AdminNotificationService::createNewReviewNotification($review->id);
+
+            Log::info('Admin notification for new review', [
+                'review_id' => $review->id,
+                'notification_created' => $adminNotificationResult
+            ]);
 
             DB::commit();
 
-            Log::info('Review submitted successfully', [
-                'review_id' => $review->id,
-                'user_id' => $userId,
-                'order_id' => $orderId,
-                'average_rating' => $averageRating
-            ]);
-
             return response()->json([
                 'success' => true,
-                'message' => 'Review berhasil dikirim! Terima kasih atas feedback Anda.',
-                'data' => [
-                    'review_id' => $review->id,
-                    'average_rating' => $averageRating,
-                    'photos_count' => count($photoPaths)
-                ]
-            ], 201);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak valid',
-                'errors' => $e->errors()
-            ], 422);
+                'message' => 'Review berhasil dikirim! Terima kasih atas feedback Anda.'
+            ]);
 
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Review submission error', [
-                'user_id' => Auth::id(),
-                'order_id' => $request->order_id,
                 'error' => $e->getMessage()
             ]);
 

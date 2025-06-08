@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Services\AdminNotificationService;
+use App\Services\NotificationService;
 
 class CheckOutController extends Controller
 {
@@ -93,7 +94,20 @@ class CheckOutController extends Controller
             $pesanan = DaftarPesanan::create($orderData);
             
             // ✅ TRIGGER ADMIN NOTIFICATION FOR NEW ORDER ✅
-            AdminNotificationService::createNewOrderNotification($pesanan->id);
+            Log::info('Triggering admin notification for new order', [
+                'order_id' => $pesanan->id,
+                'order_number' => $pesanan->order_id
+            ]);
+            
+            $notificationResult = AdminNotificationService::createNewOrderNotification($pesanan->id);
+            
+            Log::info('Admin notification result', [
+                'order_id' => $pesanan->id,
+                'notification_created' => $notificationResult
+            ]);
+            
+            // ✅ TRIGGER USER NOTIFICATION TOO ✅
+            NotificationService::createOrderNotification($pesanan->id, $pesanan->user_id);
             
             DB::commit();
             
