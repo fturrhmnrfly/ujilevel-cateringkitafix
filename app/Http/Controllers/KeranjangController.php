@@ -7,6 +7,7 @@ use App\Models\KeranjangItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class KeranjangController extends Controller
 {
@@ -23,67 +24,58 @@ class KeranjangController extends Controller
     public function addToCart(Request $request)
     {
         try {
-            DB::beginTransaction();
-            
-            // Validate input
             $validated = $request->validate([
+                'id' => 'nullable|integer', // Tambahkan validasi untuk id
                 'nama_produk' => 'required|string',
                 'price' => 'required|numeric',
                 'quantity' => 'required|integer|min:1',
-                'image' => 'required|string'
+                'image' => 'nullable|string',
+                'kelola_makanan_id' => 'nullable|integer'
             ]);
 
-            // Get or create active cart
-            $keranjang = Keranjang::firstOrCreate(
-                [
-                    'user_id' => Auth::id(),
-                    'status' => 'active'
-                ],
-                [
-                    'total' => 0
-                ]
-            );
+            $keranjang = Keranjang::firstOrCreate([
+                'user_id' => Auth::id(),
+                'status' => 'active'
+            ]);
 
-            // Check existing item
-            $existingItem = KeranjangItem::where('keranjang_id', $keranjang->id)
-                                    ->where('nama_produk', $validated['nama_produk'])
-                                    ->first();
+            // Debug: Log data yang diterima
+            Log::info('Add to cart data:', $validated);
 
-            if ($existingItem) {
-                // Update quantity if exists
-                $existingItem->update([
-                    'quantity' => $existingItem->quantity + $validated['quantity']
-                ]);
-            } else {
-                // Create new item
-                KeranjangItem::create([
-                    'keranjang_id' => $keranjang->id,
-                    'nama_produk' => $validated['nama_produk'],
-                    'price' => $validated['price'],
-                    'quantity' => $validated['quantity'],
-                    'image' => $validated['image']
-                ]);
+            // Cari kelola_makanan_id dengan prioritas
+            $kelolaMakananId = $validated['kelola_makanan_id'] ?? $validated['id'] ?? null;
+            
+            if (!$kelolaMakananId) {
+                // Fallback: cari berdasarkan nama produk
+                $product = \App\Models\KelolaMakanan::where('nama_makanan', $validated['nama_produk'])->first();
+                $kelolaMakananId = $product ? $product->id : null;
             }
 
-            // Update cart total
-            $keranjang->update([
-                'total' => $keranjang->items->sum(function($item) {
-                    return $item->price * $item->quantity;
-                })
-            ]);
+            Log::info('Final kelola_makanan_id for cart:', ['id' => $kelolaMakananId]);
 
-            DB::commit();
+            $item = KeranjangItem::create([
+                'keranjang_id' => $keranjang->id,
+                'kelola_makanan_id' => $kelolaMakananId, // Simpan ID ini
+                'nama_produk' => $validated['nama_produk'],
+                'price' => $validated['price'],
+                'quantity' => $validated['quantity'],
+                'image' => $validated['image']
+            ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Produk berhasil ditambahkan ke keranjang'
+                'message' => 'Item berhasil ditambahkan ke keranjang',
+                'kelola_makanan_id' => $kelolaMakananId // Debug info
             ]);
 
         } catch (\Exception $e) {
-            DB::rollback();
+            Log::error('Add to cart error:', [
+                'message' => $e->getMessage(),
+                'request_data' => $request->all()
+            ]);
+            
             return response()->json([
-                'success' => false, 
-                'message' => 'Gagal menambahkan ke keranjang: ' . $e->getMessage()
+                'success' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
     }
@@ -143,7 +135,7 @@ class KeranjangController extends Controller
                 'message' => 'Item tidak ditemukan'
             ], 404);
         } catch (\Exception $e) {
-            \Log::error('Error deleting cart item: ' . $e->getMessage());
+            Log::error('Error deleting cart item: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus item'
@@ -180,6 +172,38 @@ class KeranjangController extends Controller
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function getCartItems()
+    {
+        try {
+            $keranjang = Keranjang::where('user_id', Auth::id())
+                             ->where('status', 'active')
+                             ->with(['items.kelolaMakanan']) // Eager load relasi
+                             ->first();
+
+            if (!$keranjang || !$keranjang->items) {
+                return response()->json(['items' => []]);
+            }
+
+            $items = $keranjang->items->map(function ($item) {
+                return [
+                    'id' => $item->kelola_makanan_id, // Kirim kelola_makanan_id sebagai id
+                    'kelola_makanan_id' => $item->kelola_makanan_id, // Kirim juga secara eksplisit
+                    'nama_produk' => $item->nama_produk,
+                    'price' => $item->price,
+                    'quantity' => $item->quantity,
+                    'image' => $item->image,
+                    'total' => $item->price * $item->quantity
+                ];
+            });
+
+            return response()->json(['items' => $items]);
+
+        } catch (\Exception $e) {
+            Log::error('Get cart items error:', $e->getMessage());
+            return response()->json(['items' => []], 500);
         }
     }
 }

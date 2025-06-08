@@ -161,6 +161,8 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({
+                        id: {{ $menu->id }},
+                        kelola_makanan_id: {{ $menu->id }},
                         nama_produk: '{{ $menu->nama_makanan }}',
                         price: {{ $menu->harga }},
                         quantity: quantity,

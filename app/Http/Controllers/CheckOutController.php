@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DaftarPesanan;
+use App\Models\KelolaMakanan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use App\Services\NotificationService;
 
 class CheckOutController extends Controller
 {
@@ -20,31 +20,60 @@ class CheckOutController extends Controller
     {
         try {
             // Log incoming request untuk debugging
-            Log::info('Checkout request received:', $request->all());
-
-            // Validasi data yang diterima
+            Log::info('Checkout request data:', $request->all());
+            
             $validated = $request->validate([
-                'order_id' => 'required|string|unique:daftar_pesanans,order_id',
+                'order_id' => 'required|string',
+                'user_id' => 'required|integer',
+                'kelola_makanan_id' => 'nullable|integer', // HAPUS exists validation sementara
                 'nama_pelanggan' => 'required|string|max:255',
-                'kategori_pesanan' => 'required|string|max:255',
+                'kategori_pesanan' => 'required|string',
                 'tanggal_pesanan' => 'required|date',
                 'jumlah_pesanan' => 'required|integer|min:1',
-                'tanggal_pengiriman' => 'required|date|after:today',
-                'waktu_pengiriman' => 'required',
+                'tanggal_pengiriman' => 'required|date',
+                'waktu_pengiriman' => 'required|string',
                 'lokasi_pengiriman' => 'required|string',
-                'nomor_telepon' => 'required|string|max:20',
-                'opsi_pengiriman' => 'required|string|in:self,instant,regular,economy',
+                'nomor_telepon' => 'required|string',
                 'pesan' => 'nullable|string',
-                'total_harga' => 'required|numeric|min:0',
-                'items' => 'required|array|min:1'
+                'opsi_pengiriman' => 'required|string',
+                'total_harga' => 'required|numeric',
+                'items' => 'required|array'
             ]);
 
             DB::beginTransaction();
 
-            // Buat pesanan baru dengan user_id otomatis
+            // Handle missing kelola_makanan_id dengan debugging
+            $kelolaMakananId = $validated['kelola_makanan_id'] ?? null;
+            
+            Log::info('Initial kelola_makanan_id:', ['id' => $kelolaMakananId]);
+            
+            // Jika kelola_makanan_id masih null, coba ambil dari items array
+            if (!$kelolaMakananId && !empty($validated['items'])) {
+                $firstItem = $validated['items'][0];
+                Log::info('First item from items array:', $firstItem);
+                
+                $kelolaMakananId = $firstItem['id'] ?? 
+                                 $firstItem['kelola_makanan_id'] ?? 
+                                 $firstItem['menu_id'] ?? 
+                                 $firstItem['product_id'] ??
+                                 null;
+                                 
+                Log::info('Extracted kelola_makanan_id from items:', ['id' => $kelolaMakananId]);
+            }
+            
+            // Validasi manual kelola_makanan_id jika ada
+            if ($kelolaMakananId) {
+                $makananExists = KelolaMakanan::find($kelolaMakananId);
+                if (!$makananExists) {
+                    Log::warning('kelola_makanan_id not found in database:', ['id' => $kelolaMakananId]);
+                    $kelolaMakananId = null; // Set ke null jika tidak ditemukan
+                }
+            }
+
             $daftarPesanan = DaftarPesanan::create([
                 'order_id' => $validated['order_id'],
-                'user_id' => Auth::id(), // Tambahkan user_id otomatis
+                'user_id' => Auth::id(),
+                'kelola_makanan_id' => $kelolaMakananId, // Bisa null
                 'nama_pelanggan' => $validated['nama_pelanggan'],
                 'kategori_pesanan' => $validated['kategori_pesanan'],
                 'tanggal_pesanan' => $validated['tanggal_pesanan'],
@@ -53,49 +82,33 @@ class CheckOutController extends Controller
                 'waktu_pengiriman' => $validated['waktu_pengiriman'],
                 'lokasi_pengiriman' => $validated['lokasi_pengiriman'],
                 'nomor_telepon' => $validated['nomor_telepon'],
-                'opsi_pengiriman' => $validated['opsi_pengiriman'],
                 'pesan' => $validated['pesan'],
+                'opsi_pengiriman' => $validated['opsi_pengiriman'],
                 'total_harga' => $validated['total_harga'],
                 'status_pengiriman' => 'diproses',
                 'status_pembayaran' => 'pending'
             ]);
 
             DB::commit();
-
-            NotificationService::createOrderNotification($daftarPesanan->id, Auth::id());
-
+            
             Log::info('Order created successfully:', [
                 'order_id' => $daftarPesanan->order_id,
-                'user_id' => $daftarPesanan->user_id
+                'kelola_makanan_id' => $kelolaMakananId
             ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Pesanan berhasil dibuat',
-                'order_id' => $daftarPesanan->order_id,
-                'user_id' => $daftarPesanan->user_id
-            ], 200);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            DB::rollback();
-            Log::error('Validation Error:', $e->errors());
             
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak valid',
-                'errors' => $e->errors()
-            ], 422);
+            return response()->json(['success' => true, 'order_id' => $daftarPesanan->order_id]);
             
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('Checkout Error: ' . $e->getMessage(), [
+            Log::error('Checkout error:', [
+                'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'request' => $request->all()
+                'request_data' => $request->all()
             ]);
             
             return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan server: ' . $e->getMessage()
+                'success' => false, 
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
     }

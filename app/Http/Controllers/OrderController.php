@@ -20,7 +20,7 @@ class OrderController extends Controller
             // Create order
             $order = Order::create([
                 'order_number' => 'ORD-' . strtoupper(uniqid()),
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'status' => 'pending',
                 'payment_status' => 'unpaid',
                 'delivery_date' => $request->deliveryDate,
@@ -67,13 +67,11 @@ class OrderController extends Controller
      */
     public function index()
     {
-        // Ambil semua pesanan pengguna yang sedang login
-        $orders = Order::with('items.product')
-                    ->where('user_id', auth()->id())
+        $orders = Order::with('items.product') // Tambahkan eager loading
+                    ->where('user_id', Auth::id())
                     ->orderBy('created_at', 'desc')
                     ->get();
 
-        // Kirim data ke view
         return view('pesanan.index', compact('orders'));
     }
 
@@ -85,7 +83,7 @@ class OrderController extends Controller
         // Ambil pesanan berdasarkan ID dengan relasi
         $order = Order::with('items.product')
                 ->where('id', $id)
-                ->where('user_id', auth()->id())
+                ->where('user_id', Auth::id())
                 ->firstOrFail();
 
         // Kirim data pesanan ke view
@@ -98,7 +96,7 @@ class OrderController extends Controller
     public function process()
     {
         $orders = Order::with('items.product')
-                    ->where('user_id', auth()->id())
+                    ->where('user_id', Auth::id())
                     ->where('status', 'processing')
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -112,7 +110,7 @@ class OrderController extends Controller
     public function shipped()
     {
         $orders = Order::with('items.product')
-                    ->where('user_id', auth()->id())
+                    ->where('user_id', Auth::id())
                     ->where('status', 'shipped')
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -126,7 +124,7 @@ class OrderController extends Controller
     public function completed()
     {
         $orders = Order::with('items.product')
-                    ->where('user_id', auth()->id())
+                    ->where('user_id', Auth::id())
                     ->where('status', 'completed')
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -145,7 +143,7 @@ class OrderController extends Controller
         // LALU CARI ORDER BERDASARKAN order_number
         $order = Order::where('order_number', $request->order_id)
                     ->where('status', 'pending')
-                    ->where('user_id', auth()->id()) // untuk keamanan
+                    ->where('user_id', Auth::id()) // untuk keamanan
                     ->firstOrFail();
 
         // UPDATE STATUS

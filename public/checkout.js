@@ -394,13 +394,36 @@ class CheckoutManager {
         return true;
     }
 
+    // Perbaiki method prepareOrderData()
     prepareOrderData() {
         const shippingOptionElement = document.querySelector('input[name="shipping_option"]:checked');
         const userId = document.getElementById('user-name').getAttribute('data-user-id') || null;
         
-        return {
+        // DEBUG: Log cartItems untuk melihat struktur data
+        console.log('Cart Items struktur:', this.cartItems);
+        console.log('First item detail:', this.cartItems[0]);
+        
+        // Ambil kelola_makanan_id dari item pertama di keranjang
+        let kelolaMakananId = null;
+        if (this.cartItems && this.cartItems.length > 0) {
+            const firstItem = this.cartItems[0];
+            
+            // DEBUG: Log semua properti dari item pertama
+            console.log('All properties of first item:', Object.keys(firstItem));
+            
+            // Coba beberapa kemungkinan property name dengan prioritas yang benar
+            kelolaMakananId = firstItem.kelola_makanan_id || // Prioritas pertama
+                         firstItem.id ||                  // Prioritas kedua
+                         firstItem.menu_id || 
+                         firstItem.product_id ||
+                         null;
+                         
+            console.log('Extracted kelola_makanan_id:', kelolaMakananId);
+        }
+        
+        const orderData = {
             order_id: this.currentOrderId || this.generateOrderId(),
-            user_id: userId, // Tambahkan user_id
+            user_id: userId,
             nama_pelanggan: document.getElementById('user-name').value,
             kategori_pesanan: this.determineOrderCategory(this.cartItems),
             tanggal_pesanan: new Date().toISOString().split('T')[0],
@@ -411,11 +434,27 @@ class CheckoutManager {
             nomor_telepon: document.getElementById('phone').value,
             pesan: document.getElementById('notes').value || null,
             opsi_pengiriman: shippingOptionElement.value,
-            total_harga: parseFloat(document.getElementById('total').textContent.replace(/[^\d]/g, '')),
-            status_pengiriman: 'diproses',
-            status_pembayaran: 'pending',
+            total_harga: this.calculateTotal(),
+            kelola_makanan_id: kelolaMakananId, // Pastikan ini dikirim
             items: this.cartItems
         };
+        
+        // DEBUG: Log final order data
+        console.log('Final Order Data:', orderData);
+        console.log('kelola_makanan_id yang akan dikirim:', kelolaMakananId);
+        
+        return orderData;
+    }
+
+    calculateTotal() {
+        this.cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        const subtotal = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+        const selectedShipping = document.querySelector('input[name="shipping_option"]:checked');
+        const shippingCosts = { 'self': 0, 'instant': 10000, 'regular': 5000, 'economy': 2000 };
+        const shippingCost = selectedShipping ? shippingCosts[selectedShipping.value] : 0;
+    
+        return subtotal + shippingCost;
     }
 
     determineOrderCategory(cartItems) {

@@ -79,7 +79,6 @@
                     <p class="item-quantity-new">x {{ $order->jumlah_pesanan }}</p>
                 </div>
                 <div class="item-price-new">
-                    {{-- TAMPILKAN HARGA PER ITEM DIKALIKAN JUMLAH --}}
                     Rp {{ number_format($order->kelolaMakanan->harga * $order->jumlah_pesanan, 0, ',', '.') }}
                 </div>
             </div>
