@@ -355,10 +355,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // Admin Profile Routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/profile', [App\Http\Controllers\Admin\AdminProfileController::class, 'show'])->name('admin.profile.show');
-    Route::post('/profile/update', [App\Http\Controllers\Admin\AdminProfileController::class, 'update'])->name('admin.profile.update');
-    Route::delete('/profile/destroy', [App\Http\Controllers\Admin\AdminProfileController::class, 'destroy'])->name('admin.profile.destroy');
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [AdminProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [AdminProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile/destroy', [AdminProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';
