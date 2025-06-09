@@ -7,6 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Menu Nasi Box</title>
+    <!-- Add SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <style>
     body {
@@ -17,7 +19,7 @@
         position: relative;
     }
 
-    /* Add overlay for better readability */
+    /* Add this to create an overlay */
     body::before {
         content: '';
         position: absolute;
@@ -42,24 +44,21 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #2c2c77;
+        background-color: #fff;
+        /* Warna biru navbar */
         padding: 15px 30px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
     }
 
     .navbar .logo {
         display: flex;
         align-items: center;
-        color: #fff;
+        color: #000000;
     }
 
     .navbar .logo img {
         width: 50px;
+        /* Ukuran logo */
         height: 50px;
         margin-right: 10px;
     }
@@ -73,7 +72,7 @@
     }
 
     .navbar .logo .text-navbar p:nth-child(2) {
-        color: #fff;
+        color: #000000;
     }
 
     .navbar .search-bar {
@@ -110,62 +109,63 @@
         padding: 0;
     }
 
+    .navbar .nav-links li {
+        display: inline-block;
+    }
+
     .navbar .nav-links li a {
-        color: #fff;
+        color: #000000;
         font-size: 16px;
         font-weight: bold;
+        text-decoration: none;
         transition: color 0.3s ease-in-out;
     }
 
     .navbar .nav-links li a:hover {
         color: #ffcc00;
-    }
-
-    .navbar .profile {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: white;
+        /* Warna hover */
     }
 
     .cart-icon {
         position: relative;
         font-size: 24px;
-        color: #ffffff;
+        color: #000000;
         border-radius: 50%;
         width: 40px;
         height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: transform 0.3s ease;
-        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .cart-icon[data-count]:after {
+    .cart-icon:hover {
+        transform: scale(1.1);
+    }
+
+    .cart-icon::after {
         content: attr(data-count);
         position: absolute;
-        top: -8px;
-        right: -8px;
-        background: #ff0000;
-        color: white;
+        top: -5px;
+        right: -5px;
+        color: black;
         font-size: 12px;
         font-weight: bold;
-        padding: 2px 6px;
-        border-radius: 50%;
-        min-width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
+        border-radius: 50%;
+        box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.2);
     }
+
 
     /* Breadcrumb Styles */
     .breadcrumb-container {
         background-color: #f3f4f6;
         padding: 1rem 2rem;
         border-bottom: 1px solid #e5e7eb;
-        margin-top: 0;
     }
 
     .breadcrumb {
@@ -185,6 +185,7 @@
 
     .breadcrumb-nav a {
         color: #6b7280;
+        text-decoration: none;
     }
 
     /* Updated Menu Section Styles */
@@ -193,6 +194,7 @@
         margin: 20px auto;
         padding: 20px;
         position: relative;
+        z-index: 1;
         border-radius: 15px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         animation: fadeIn 0.8s ease-out;
@@ -202,10 +204,10 @@
         font-size: 32px;
         font-weight: bold;
         color: #333;
-        margin: 0 auto 30px;
         text-align: center;
         position: relative;
         padding: 0 0 15px;
+        margin-bottom: 30px;
     }
 
     .section-title::after {
@@ -258,13 +260,21 @@
     }
 
     .menu-item-description {
-        font-size: 12px;
+        font-size: 14px;
+        /* Dinaikkan dari 12px ke 14px */
         color: #666;
-        margin-bottom: 8px;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        margin-bottom: 10px;
+        /* Dinaikkan dari 8px ke 10px */
+        line-height: 1.5;
+        /* Dinaikkan dari 1.4 ke 1.5 untuk readability */
+        min-height: auto;
+        /* Hilangkan fixed height */
+        word-wrap: break-word;
+        /* Memastikan text wrap dengan baik */
+        overflow-wrap: break-word;
+        /* Untuk browser compatibility */
+        white-space: normal;
+        /* Memastikan text bisa wrap ke baris baru */
     }
 
     .menu-item-details {
@@ -315,22 +325,30 @@
         font-size: 14px;
     }
 
-    .menu-item-button {
-        background: #e67e22;
+    /* Updated button styles untuk add to cart dengan warna #D38524 */
+    .add-to-cart-btn {
+        background: #D38524;
         color: white;
-        padding: 8px 0;
-        font-size: 14px;
+        padding: 8px 12px;
+        font-size: 12px;
         border-radius: 6px;
         text-align: center;
-        display: block;
-        width: 100%;
         border: none;
+        cursor: pointer;
         transition: background-color 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        margin-top: 8px;
     }
 
-    .menu-item-button:hover {
-        background: #d35400;
+    .add-to-cart-btn:hover {
+        background: #B8721C;
         transform: scale(1.02);
+    }
+
+    .add-to-cart-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
     }
 
     /* Animation keyframes */
@@ -374,113 +392,206 @@
 
 <body>
     <header>
-        <x-navbar />
+        <x-navbar></x-navbar>
+        
         <div class="breadcrumb-container">
             <div class="breadcrumb">
-                <div class="breadcrumb-title">Paket Nasi Box</div>
+                <div class="breadcrumb-title">Catering</div>
                 <div class="breadcrumb-nav">
-                    <a href="{{ route('home') }}">Home</a> » Paket Nasi Box
+                    <a href="{{ route('home') }}">Home</a> » Menu Nasi Box
                 </div>
             </div>
         </div>
 
+        <!-- Nasi Box Section -->
         <div class="menu-section">
-            <h2 class="section-title">Paket Nasi Box</h2>
+            <h2 class="section-title">Nasi Box</h2>
             <div class="menu-grid">
-                @foreach($menuItems as $item)
-                <div class="menu-item">
-                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->nama_makanan }}">
+                @foreach($menuItems as $menu)
+                <div class="menu-item" data-id="{{ $menu->id }}">
+                    @if($menu->image && Storage::disk('public')->exists($menu->image))
+                        <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->nama_makanan }}">
+                    @else
+                        <img src="{{ asset('assets/default-food.png') }}" alt="Default food image">
+                    @endif
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">{{ $item->nama_makanan }}</h3>
-                        <p class="menu-item-description">{{ $item->deskripsi }}</p>
+                        <h3 class="menu-item-title">{{ $menu->nama_makanan }}</h3>
+                        <p class="menu-item-description">{{ Str::limit($menu->deskripsi, 80, '...') }}</p>
                         <div class="menu-item-details">
-                            <p class="menu-item-price">Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
+                            <p class="menu-item-price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
                             <div class="counter">
-                                <button class="minus" type="button">-</button>
-                                <input type="number" class="count" value="0" min="0" readonly>
-                                <button class="plus" type="button">+</button>
+                                <button class="minus">-</button>
+                                <input type="number" class="count" value="0" min="0">
+                                <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="{{ route('menunasibox.show', $item->id) }}" class="menu-item-button">Keranjang</a>
+                        <button class="add-to-cart-btn" data-menu-id="{{ $menu->id }}" 
+                                data-menu-name="{{ $menu->nama_makanan }}" 
+                                data-menu-price="{{ $menu->harga }}" 
+                                data-menu-image="{{ $menu->image ? Storage::url($menu->image) : asset('assets/default-food.png') }}">
+                            + Keranjang
+                        </button>
                     </div>
                 </div>
                 @endforeach
             </div>
         </div>
-    </header>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    // Handle menu items
-    document.querySelectorAll(".menu-item").forEach(item => {
-        const countInput = item.querySelector(".count");
-        const minusButton = item.querySelector(".minus");
-        const plusButton = item.querySelector(".plus");
-        const detailButton = item.querySelector(".menu-item-button");
-        
-        // Get menu id from the product URL
-        const menuId = detailButton.href.split('/').pop();
-        
-        // Set initial value from localStorage or default to 0
-        const savedQuantity = localStorage.getItem(`menu_${menuId}_quantity`) || 0;
-        countInput.value = savedQuantity;
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const cartIcon = document.querySelector('.cart-icon');
+    let cartUpdateTimeout;
 
-        minusButton.addEventListener("click", () => {
+    // Fungsi untuk update counter dengan debouncing
+    function updateCartCounter() {
+        clearTimeout(cartUpdateTimeout);
+        cartUpdateTimeout = setTimeout(() => {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                cartIcon.setAttribute('data-count', totalItems);
+            } else {
+                cartIcon.removeAttribute('data-count');
+            }
+        }, 100); // Delay 100ms untuk debouncing
+    }
+
+    // Handle menu item interactions
+    document.querySelectorAll('.menu-item').forEach(item => {
+        const countInput = item.querySelector('.count');
+        const minusButton = item.querySelector('.minus');
+        const plusButton = item.querySelector('.plus');
+        const addToCartBtn = item.querySelector('.add-to-cart-btn');
+        const menuId = item.dataset.id;
+
+        // Set initial value
+        countInput.value = localStorage.getItem(`menu_${menuId}_quantity`) || 0;
+
+        // Minus button click
+        minusButton.addEventListener('click', () => {
             let value = parseInt(countInput.value) || 0;
             if (value > 0) {
                 value -= 1;
                 countInput.value = value;
-                // Save to localStorage
                 localStorage.setItem(`menu_${menuId}_quantity`, value);
+                updateCartCounter();
             }
         });
 
-        plusButton.addEventListener("click", () => {
+        // Plus button click
+        plusButton.addEventListener('click', () => {
             let value = parseInt(countInput.value) || 0;
             value += 1;
             countInput.value = value;
-            // Save to localStorage
             localStorage.setItem(`menu_${menuId}_quantity`, value);
+            updateCartCounter();
         });
 
-        // Save quantity when manually typing
-        countInput.addEventListener("input", function() {
+        // Manual input
+        countInput.addEventListener('input', function() {
             let value = parseInt(this.value) || 0;
             if (value < 0) value = 0;
             this.value = value;
-            // Save to localStorage
             localStorage.setItem(`menu_${menuId}_quantity`, value);
+            updateCartCounter();
         });
 
-        // Save quantity before going to detail page
-        detailButton.addEventListener('click', function(e) {
+        // Add to cart button click
+        addToCartBtn.addEventListener('click', async function() {
             const quantity = parseInt(countInput.value) || 0;
-            localStorage.setItem(`menu_${menuId}_quantity`, quantity);
+            
+            if (quantity <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Peringatan',
+                    text: 'Silakan pilih jumlah item terlebih dahulu!',
+                    confirmButtonColor: '#2c2c77'
+                });
+                return;
+            }
+
+            const menuData = {
+                id: this.dataset.menuId,
+                nama_produk: this.dataset.menuName,
+                price: this.dataset.menuPrice,
+                quantity: quantity,
+                image: this.dataset.menuImage
+            };
+
+            // Disable button during request
+            this.disabled = true;
+            this.textContent = 'Adding...';
+
+            try {
+                const response = await fetch('/keranjang/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(menuData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Reset quantity
+                    countInput.value = 0;
+                    localStorage.setItem(`menu_${menuId}_quantity`, 0);
+                    updateCartCounter();
+
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: `${quantity} ${menuData.nama_produk} berhasil ditambahkan ke keranjang`,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Lihat Keranjang',
+                        showCancelButton: true,
+                        cancelButtonText: 'Lanjut Belanja',
+                        confirmButtonColor: '#2c2c77',
+                        cancelButtonColor: '#6c757d'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '{{ route("keranjang.index") }}';
+                        }
+                    });
+                } else {
+                    throw new Error(data.message || 'Gagal menambahkan ke keranjang');
+                }
+            } catch (error) {
+                console.error('Add to cart error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Gagal menambahkan ke keranjang: ' + error.message,
+                    confirmButtonColor: '#dc3545'
+                });
+            } finally {
+                // Re-enable button
+                this.disabled = false;
+                this.textContent = '+ Keranjang';
+            }
         });
     });
 
-    // Update cart icon counter
-    function updateCartCounter() {
-        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        const cartIcon = document.querySelector('.cart-icon');
-        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-        
-        if (totalItems > 0) {
-            cartIcon.setAttribute('data-count', totalItems);
-        } else {
-            cartIcon.removeAttribute('data-count');
+    // Listen for storage changes from other tabs/windows
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'cartItems') {
+            updateCartCounter();
         }
-    }
+    });
 
-    // Update counter when page loads
+    // Initial counter update
     updateCartCounter();
 
-    // Make cart icon redirect to cart page
-    document.querySelector('.cart-icon').addEventListener('click', function(e) {
+    // Cart icon click handler
+    cartIcon.addEventListener('click', function(e) {
         e.preventDefault();
         window.location.href = '{{ route("keranjang.index") }}';
     });
 });
-    </script>
-</body>
+</script>
 
 </html>

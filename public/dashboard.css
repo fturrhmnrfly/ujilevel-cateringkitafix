@@ -384,11 +384,12 @@ img {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px; /* Perbesar gap untuk memberi ruang shadow */
+    padding: 20px; /* Tambahkan padding pada container */
 }
 
 .category-card {
-    background: white;
+    background: #683E0C;
     border-radius: 15px;
     padding: 30px;
     text-align: center;
@@ -397,12 +398,47 @@ img {
     transition: all 0.3s ease;
     text-decoration: none;
     display: block;
+    position: relative;
+    margin: 10px;
+    z-index: 2; /* Naikkan z-index card utama */
+}
+
+/* Perbaiki pseudo-element untuk layer belakang */
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    background: white;
+    border-radius: 15px;
+    z-index: -1; /* Pastikan layer belakang benar-benar di bawah */
+    transition: all 0.3s ease;
 }
 
 .category-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     background-color: #f8f8f8;
+    z-index: 3; /* Naikkan z-index saat hover */
+}
+
+/* Efek hover pada layer belakang */
+.category-card:hover::before {
+    top: 12px;
+    left: 12px;
+    right: -12px;
+    bottom: -12px;
+}
+
+/* Pastikan konten card tetap di atas dengan z-index yang lebih tinggi */
+.category-icon,
+.category-name,
+.category-desc,
+.category-menu-count {
+    position: relative;
+    z-index: 10; /* Z-index yang sangat tinggi untuk konten */
 }
 
 .category-icon {

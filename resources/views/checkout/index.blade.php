@@ -103,6 +103,67 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
+            /* TAMBAHAN UNTUK MEMPERLEBAR CONTAINER */
+            max-width: 1200px; /* Dari default yang mungkin 800px-1000px */
+            width: 95%; /* Gunakan 95% dari lebar layar */
+            margin: 0 auto; /* Center container */
+            padding: 30px 40px; /* Tambah padding kiri-kanan */
+        }
+
+        /* Responsive adjustments untuk container yang lebih lebar */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 1000px;
+                width: 90%;
+                padding: 25px 35px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 900px;
+                width: 90%;
+                padding: 25px 30px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                max-width: 750px;
+                width: 95%;
+                padding: 20px 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+                width: 95%;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+                padding: 15px;
+                margin: 0;
+            }
+        }
+
+        /* Optional: Jika ingin container lebih lebar pada layar sangat besar */
+        @media (min-width: 1600px) {
+            .container {
+                max-width: 1400px;
+                padding: 40px 50px;
+            }
+        }
+
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1600px;
+                padding: 50px 60px;
+            }
         }
 
         /* Optional: Dark overlay untuk readability yang lebih baik */

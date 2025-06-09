@@ -41,7 +41,7 @@
             <!-- Free Box Feature -->
             <div class="feature-card">
                 <img src="{{ asset('assets/freebox.png') }}" alt="Free Box" class="feature-icon">
-                <h3 class="feature-title">Free box</h3>
+                <h3 class="feature-title">Gratis Box</h3>
             </div>
 
             <!-- Payment Feature -->

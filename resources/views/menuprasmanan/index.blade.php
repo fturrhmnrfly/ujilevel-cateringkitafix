@@ -7,6 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Menu Prasmanan</title>
+    <!-- Add SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <style>
     body {
@@ -258,9 +260,14 @@
     }
 
     .menu-item-description {
-        font-size: 12px;
+        font-size: 14px; /* Dinaikkan dari 12px ke 14px */
         color: #666;
-        margin-bottom: 8px;
+        margin-bottom: 10px; /* Dinaikkan dari 8px ke 10px */
+        line-height: 1.5; /* Dinaikkan dari 1.4 ke 1.5 untuk readability */
+        min-height: auto; /* Hilangkan fixed height */
+        word-wrap: break-word; /* Memastikan text wrap dengan baik */
+        overflow-wrap: break-word; /* Untuk browser compatibility */
+        white-space: normal; /* Memastikan text bisa wrap ke baris baru */
     }
 
     .menu-item-details {
@@ -311,22 +318,30 @@
         font-size: 14px;
     }
 
-    .menu-item-button {
-        background: #e67e22;
+    /* Updated button styles untuk add to cart dengan warna #D38524 */
+    .add-to-cart-btn {
+        background: #D38524;
         color: white;
-        padding: 8px 0;
-        font-size: 14px;
+        padding: 8px 12px;
+        font-size: 12px;
         border-radius: 6px;
         text-align: center;
-        display: block;
-        width: 100%;
         border: none;
+        cursor: pointer;
         transition: background-color 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        margin-top: 8px;
     }
 
-    .menu-item-button:hover {
-        background: #d35400;
+    .add-to-cart-btn:hover {
+        background: #B8721C;
         transform: scale(1.02);
+    }
+
+    .add-to-cart-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
     }
 
     /* Animation keyframes */
@@ -394,6 +409,7 @@
                     @endif
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">{{ $menu->nama_makanan }}</h3>
+                        <p class="menu-item-description">{{ Str::limit($menu->deskripsi, 80, '...') }}</p>
                         <div class="menu-item-details">
                             <p class="menu-item-price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
                             <div class="counter">
@@ -402,7 +418,12 @@
                                 <button class="plus">+</button>
                             </div>
                         </div>
-                        <a href="{{ route('menuprasmanan.show', $menu->id) }}" class="menu-item-button">Detail Menu</a>
+                        <button class="add-to-cart-btn" data-menu-id="{{ $menu->id }}" 
+                                data-menu-name="{{ $menu->nama_makanan }}" 
+                                data-menu-price="{{ $menu->harga }}" 
+                                data-menu-image="{{ $menu->image ? Storage::url($menu->image) : asset('assets/default-food.png') }}">
+                            + Keranjang
+                        </button>
                     </div>
                 </div>
                 @endforeach
@@ -434,6 +455,7 @@
         const countInput = item.querySelector('.count');
         const minusButton = item.querySelector('.minus');
         const plusButton = item.querySelector('.plus');
+        const addToCartBtn = item.querySelector('.add-to-cart-btn');
         const menuId = item.dataset.id;
 
         // Set initial value
@@ -468,11 +490,82 @@
             updateCartCounter();
         });
 
-        // Detail menu link click
-        const detailLink = item.querySelector('.menu-item-button');
-        detailLink.addEventListener('click', function(e) {
+        // Add to cart button click
+        addToCartBtn.addEventListener('click', async function() {
             const quantity = parseInt(countInput.value) || 0;
-            localStorage.setItem(`menu_${menuId}_quantity`, quantity);
+            
+            if (quantity <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Peringatan',
+                    text: 'Silakan pilih jumlah item terlebih dahulu!',
+                    confirmButtonColor: '#2c2c77'
+                });
+                return;
+            }
+
+            const menuData = {
+                id: this.dataset.menuId,
+                nama_produk: this.dataset.menuName,
+                price: this.dataset.menuPrice,
+                quantity: quantity,
+                image: this.dataset.menuImage
+            };
+
+            // Disable button during request
+            this.disabled = true;
+            this.textContent = 'Adding...';
+
+            try {
+                const response = await fetch('/keranjang/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(menuData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Reset quantity
+                    countInput.value = 0;
+                    localStorage.setItem(`menu_${menuId}_quantity`, 0);
+                    updateCartCounter();
+
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: `${quantity} ${menuData.nama_produk} berhasil ditambahkan ke keranjang`,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Lihat Keranjang',
+                        showCancelButton: true,
+                        cancelButtonText: 'Lanjut Belanja',
+                        confirmButtonColor: '#2c2c77',
+                        cancelButtonColor: '#6c757d'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '{{ route("keranjang.index") }}';
+                        }
+                    });
+                } else {
+                    throw new Error(data.message || 'Gagal menambahkan ke keranjang');
+                }
+            } catch (error) {
+                console.error('Add to cart error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Gagal menambahkan ke keranjang: ' + error.message,
+                    confirmButtonColor: '#dc3545'
+                });
+            } finally {
+                // Re-enable button
+                this.disabled = false;
+                this.textContent = '+ Keranjang';
+            }
         });
     });
 
