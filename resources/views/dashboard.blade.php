@@ -97,118 +97,40 @@
             <!-- Popular Menu Section -->
             <h2 class="section-title">Paket Nasi Box</h2>
             <div class="menu-grid" id="nasi-box">
-                <div class="menu-item-p">
-                    <img src="{{ asset('assets/paketassets1.png') }}" alt="Paket Nasi Box A">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium A</h3>
-                        <h4>Nasi Liwet, Ayam Bakar, Tumis Jagung Manis, Telur Ceplok, Sambal</h4>
+                @foreach($menunasibox as $menu)
+                    <div class="menu-item-p">
+                        @if($menu->image && Storage::disk('public')->exists($menu->image))
+                            <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->nama_makanan }}">
+                        @else
+                            <img src="{{ asset('assets/default-food.png') }}" alt="Default food image">
+                        @endif
+                        <div class="menu-item-content">
+                            <h3 class="menu-item-title">{{ $menu->nama_makanan }}</h3>
+                            <h4>{{ Str::limit($menu->deskripsi, 100, '...') }}</h4>
+                        </div>
                     </div>
-                </div>
-
-                <div class="menu-item-p">
-                    <img src="{{ asset('assets/paketassets2.png') }}" alt="Paket Nasi Box B">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium B</h3>
-                        <h4>Nasi putih, Ayam Bakar, Tumis Sayur, Tempe Goreng</h4>
-                    </div>
-                </div>
-
-                <div class="menu-item-p">
-                    <img src="{{ asset('assets/nasikotakpremium2.png') }}" alt="Paket Nasi Box C">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium C</h3>
-                        <h4>Nasi putih, Ayam Goreng, daging cincang,tempe orak arik,
-                            samba, lalapan</h4>
-                    </div>
-                </div>
-
-                <div class="menu-item-p">
-                    <img src="{{ asset('assets/nasikotakpremium3.png') }}" alt="Paket Nasi Box D">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium D</h4>
-                            <h4>Nasi putih, daging sapi,sate,naget,sayur,telur kuning,kacang , sambal saus </h4>
-                    </div>
-                </div>
-                <div class="menu-item-p">
-                    <img src="{{ asset('assets/nasikotakpremium4.png') }}" alt="Paket Nasi Box E">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Box Premium E</h3>
-                        <h4>Nasi putih, telur, mie, capcay, ayam suir, sambal, kentang</h4>
-                    </div>
-                </div>
-
-                <div class="menu-item-p">
-                    <img src="{{ asset('assets/nasikotakthailand.png') }}" alt="Paket Nasi Thailand">
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">Paket Nasi Campur Thailand</h3>
-                        <h4>Nasi kecap, udang, chicken, sayur</h4>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
 
         <!-- Prasmanan Section -->
         <h2 class="section-title">Prasmanan</h2>
         <div class="menu-grid" id="prasmanan">
-            <div class="menu-item">
-                <img src="{{ asset('assets/homeassets6.jpg') }}" alt="Paket Prasmanan Gold">
-                <div class="menu-item-content">
-                    <h3 class="menu-item-title">Ayam Kecap</h3>
-                    <div class="menu-item-details">
-                        <p class="menu-item-price">Rp 9.000</p>
+            @foreach($menuprasmanan as $menu)
+                <div class="menu-item">
+                    @if($menu->image && Storage::disk('public')->exists($menu->image))
+                        <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->nama_makanan }}">
+                    @else
+                        <img src="{{ asset('assets/default-food.png') }}" alt="Default food image">
+                    @endif
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">{{ $menu->nama_makanan }}</h3>
+                        <div class="menu-item-details">
+                            <p class="menu-item-price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="menu-item">
-                <img src="{{ asset('assets/homeassets5.jpg') }}" alt="Paket Prasmanan Gold">
-                <div class="menu-item-content">
-                    <h3 class="menu-item-title">Ikan Goreng</h3>
-                    <div class="menu-item-details">
-                        <p class="menu-item-price">Rp 10.000</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <img src="{{ asset('assets/capcay.png') }}" alt="Paket Prasmanan Gold">
-                <div class="menu-item-content">
-                    <h3 class="menu-item-title">Capcay</h3>
-                    <div class="menu-item-details">
-                        <p class="menu-item-price">Rp 10.000</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <img src="{{ asset('assets/bihungoreng.png') }}" alt="Paket Prasmanan Gold">
-                <div class="menu-item-content">
-                    <h3 class="menu-item-title">Bihun Goreng</h3>
-                    <div class="menu-item-details">
-                        <p class="menu-item-price">Rp 8.000</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <img src="{{ asset('assets/miegoreng.png') }}" alt="Paket Prasmanan Gold">
-                <div class="menu-item-content">
-                    <h3 class="menu-item-title">Mie Goreng</h3>
-                    <div class="menu-item-details">
-                        <p class="menu-item-price">Rp 10.000</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <img src="{{ asset('assets/homeassets4.jpg') }}" alt="Paket Prasmanan Gold">
-                <div class="menu-item-content">
-                    <h3 class="menu-item-title">Telur Balado</h3>
-                    <div class="menu-item-details">
-                        <p class="menu-item-price">Rp 5.000</p>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
 
         <!-- Dynamic Reviews Section dengan Avatar Generator -->
@@ -339,3 +261,7 @@
 </body>
 
 </html>
+
+@php
+use Illuminate\Support\Facades\Storage;
+@endphp

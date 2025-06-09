@@ -10,33 +10,43 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Get top reviews with user relationships
+        // Get menu counts for categories
+        $nasiBoxCount = KelolaMakanan::where('kategori', 'Nasi Box')
+                                ->where('status', 'Tersedia')
+                                ->count();
+    
+        $prasmananCount = KelolaMakanan::where('kategori', 'Prasmanan')
+                                  ->where('status', 'Tersedia')
+                                  ->count();
+
+        // Get top reviews (existing code)
         $topReviews = Review::with('user')
                           ->orderBy('average_rating', 'desc')
                           ->orderBy('created_at', 'desc')
                           ->limit(3)
                           ->get();
 
-        // Hitung jumlah menu berdasarkan kategori dari tabel kelola_makanans
-        $prasmananCount = KelolaMakanan::where('kategori', 'Prasmanan')
-                                    ->where('status', 'Tersedia')
-                                    ->count();
-                                    
-        $nasiBoxCount = KelolaMakanan::where('kategori', 'Nasi Box')
-                                   ->where('status', 'Tersedia')
-                                   ->count();
+        // Get menu data for display
+        $menuNasiBox = KelolaMakanan::where('kategori', 'Nasi Box')
+                                ->where('status', 'Tersedia')
+                                ->orderBy('id', 'asc')
+                                ->limit(6) // Limit untuk tampilan dashboard
+                                ->get();
+
+        $menuPrasmanan = KelolaMakanan::where('kategori', 'Prasmanan')
+                                  ->where('status', 'Tersedia')
+                                  ->orderBy('id', 'asc')
+                                  ->limit(6) // Limit untuk tampilan dashboard
+                                  ->get();
 
         $data = [
-            'tentangkami' => TentangKami::latest()->first(),
-            'menuprasmanan' => KelolaMakanan::where('kategori', 'Prasmanan')
-                                         ->where('status', 'Tersedia')
-                                         ->get(),
-            'penilaian' => $topReviews, // Gunakan data review yang sama
+            'menunasibox' => $menuNasiBox,
+            'menuprasmanan' => $menuPrasmanan,
+            'penilaian' => $topReviews,
             'nasibox_count' => $nasiBoxCount,
             'prasmanan_count' => $prasmananCount
         ];
 
-        // Gabungkan data dengan topReviews
         return view('dashboard', array_merge($data, compact('topReviews')));
     }
 }
