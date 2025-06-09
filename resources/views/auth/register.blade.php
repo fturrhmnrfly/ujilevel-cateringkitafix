@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Catering Kita</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         * {
@@ -16,23 +15,20 @@
 
         body {
             min-height: 100vh;
-            padding-top: 70px; /* Adjust this value based on your navbar height */
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('{{ asset("assets/nasikotakpremium2.png") }}') no-repeat center center;
             background-size: cover;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding-top: 70px;
         }
 
         .navbar {
             background-color: #E78B24;
             width: 100%;
             padding: 0.5rem;
-            position: fixed; /* Make navbar fixed */
-            top: 0; /* Stick to top */
+            position: fixed;
+            top: 0;
             left: 0;
-            z-index: 1000; /* Ensure navbar stays on top of other elements */
+            z-index: 1000;
         }
 
         .nav-brand {
@@ -57,7 +53,7 @@
             max-width: 500px;
             margin: 20px auto;
             padding: 20px;
-            min-height: calc(100vh - 90px); /* Mengurangi tinggi navbar */
+            min-height: calc(100vh - 90px);
             display: flex;
             flex-direction: column;
         }
@@ -65,7 +61,7 @@
         .register-title {
             color: white; 
             text-align: center;
-            font-size: 64px;
+            font-size: 56px;
             margin-bottom: 30px;
             font-family: "Times New Roman", serif;
         }
@@ -78,21 +74,46 @@
             display: block;
             color: white;
             margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
             padding: 15px;
-            border: none;
+            border: 2px solid transparent;
             border-radius: 5px;
             font-size: 16px;
             background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input.error,
+        .form-group textarea.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #E78B24;
         }
 
         .form-group textarea {
-            resize: vertical;
             min-height: 100px;
+            resize: vertical;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
         }
 
         .btn-register {
@@ -105,11 +126,19 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
         }
 
         .btn-register:hover {
-            background-color: #d47a1c;
+            background-color: #d67d1f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-register:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .divider {
@@ -129,13 +158,16 @@
             font-weight: bold;
         }
 
-        .input-error {
-            color: #ff4444;
-            font-size: 14px;
-            margin-top: 5px;
+        .server-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        /* Tambahkan media queries untuk responsivitas */
         @media screen and (max-width: 768px) {
             .container {
                 max-width: 100%;
@@ -161,10 +193,6 @@
             .register-title {
                 font-size: 36px;
             }
-
-            .form-group {
-                margin-bottom: 15px;
-            }
         }
     </style>
 </head>
@@ -179,63 +207,61 @@
     <div class="container">
         <h1 class="register-title">Register</h1>
         
-        <form method="POST" action="{{ route('register') }}">
+        <!-- Server Error Messages -->
+        @if ($errors->any())
+            <div class="server-error">
+                @foreach ($errors->all() as $error)
+                    {{ $error }}<br>
+                @endforeach
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('register') }}" id="registerForm">
             @csrf
             
             <div class="form-group">
                 <label>Nama Depan*</label>
-                <input type="text" name="first_name" value="{{ old('first_name') }}">
-                @if ($errors->has('first_name'))
-                    <div class="input-error">{{ $errors->first('first_name') }}</div>
-                @endif
+                <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}" required>
+                <div class="error-message" id="first_name-error">Nama depan harus diisi minimal 2 karakter</div>
             </div>
 
             <div class="form-group">
                 <label>Nama Belakang*</label>
-                <input type="text" name="last_name" value="{{ old('last_name') }}" >
-                @if ($errors->has('last_name'))
-                    <div class="input-error">{{ $errors->first('last_name') }}</div>
-                @endif
+                <input type="text" name="last_name" id="last_name" value="{{ old('last_name') }}" required>
+                <div class="error-message" id="last_name-error">Nama belakang harus diisi minimal 2 karakter</div>
             </div>
 
             <div class="form-group">
                 <label>Email*</label>
-                <input type="email" name="email" value="{{ old('email') }}" >
-                @if ($errors->has('email'))
-                    <div class="input-error">{{ $errors->first('email') }}</div>
-                @endif
+                <input type="email" name="email" id="email" value="{{ old('email') }}" required>
+                <div class="error-message" id="email-error">Email harus diisi dengan format yang benar</div>
             </div>
 
             <div class="form-group">
                 <label>No.Telepon*</label>
-                <input type="text" name="phone" value="{{ old('phone') }}" >
-                @if ($errors->has('phone'))
-                    <div class="input-error">{{ $errors->first('phone') }}</div>
-                @endif
+                <input type="text" name="phone" id="phone" value="{{ old('phone') }}" required>
+                <div class="error-message" id="phone-error">Nomor telepon harus diisi dengan format Indonesia yang valid</div>
             </div>
 
             <div class="form-group">
                 <label>Alamat*</label>
-                <textarea name="address">{{ old('address') }}</textarea>
-                @if ($errors->has('address'))
-                    <div class="input-error">{{ $errors->first('address') }}</div>
-                @endif
+                <textarea name="address" id="address" required>{{ old('address') }}</textarea>
+                <div class="error-message" id="address-error">Alamat harus diisi minimal 10 karakter</div>
             </div>
 
             <div class="form-group">
                 <label>Password*</label>
-                <input type="password" name="password" >
-                @if ($errors->has('password'))
-                    <div class="input-error">{{ $errors->first('password') }}</div>
-                @endif
+                <input type="password" name="password" id="password" required>
+                <div class="error-message" id="password-error">Password harus diisi minimal 8 karakter</div>
             </div>
 
             <div class="form-group">
                 <label>Konfirmasi Password*</label>
-                <input type="password" name="password_confirmation" >
+                <input type="password" name="password_confirmation" id="password_confirmation" required>
+                <div class="error-message" id="password_confirmation-error">Konfirmasi password harus sama dengan password</div>
             </div>
 
-            <button type="submit" class="btn-register">Register</button>
+            <button type="submit" class="btn-register" id="registerBtn">Register</button>
         </form>
 
         <div class="divider">Atau</div>
@@ -246,206 +272,142 @@
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    const inputs = {
-        firstName: document.getElementById('first_name'),
-        lastName: document.getElementById('last_name'),
-        email: document.getElementById('email'),
-        phone: document.getElementById('phone'),
-        address: document.getElementById('address'),
-        password: document.getElementById('password'),
-        passwordConfirm: document.getElementById('password_confirmation')
-    };
-
-    // Remove default invalid styling
-    const style = document.createElement('style');
-    style.textContent = `
-        .form-group input:invalid {
-            border-color: #e5e7eb;
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Update phone validation in validators object
-    const validators = {
-        firstName: (value) => value.length >= 2,
-        lastName: (value) => value.length >= 2,
-        email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-        phone: (value) => {
-            // Allow +62, 62, or 0 prefix followed by 8 and 8-11 digits
-            const phoneRegex = /^(?:\+62|62|0)8[1-9][0-9]{7,10}$/;
-            return phoneRegex.test(value);
-        },
-        address: (value) => value.length >= 10,
-        password: (value) => value.length >= 8
-    };
-
-    // Validasi input
-    function validateInput(input, validatorFn, key) {
-        // Hapus error message yang ada
-        const errorDiv = input.parentElement.querySelector('.validation-error');
-        if (errorDiv) {
-            errorDiv.remove();
-        }
-
-        // Reset border color ke default untuk input kosong
-        if (!input.value) {
-            input.style.borderColor = '#e5e7eb';
-            return;
-        }
-
-        // Validasi input
-        if (!validatorFn(input.value)) {
-            // Tampilkan border merah untuk input tidak valid
-            input.style.borderColor = '#ef4444';
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registerForm');
+            const registerBtn = document.getElementById('registerBtn');
             
-            // Tambahkan pesan error
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'validation-error';
-            errorMessage.style.color = '#ef4444';
-            errorMessage.style.fontSize = '0.875rem';
-            errorMessage.style.marginTop = '0.5rem';
-            
-            // Pesan error untuk setiap field
-            const errorMessages = {
-                firstName: 'Nama depan harus minimal 2 karakter',
-                lastName: 'Nama belakang harus minimal 2 karakter',
-                email: 'Email Sudah Ter Daftar',
-                phone: 'Silakan masukkan nomor telepon Indonesia yang valid',
-                address: 'Alamat harus minimal 10 karakter',
-                password: 'Password harus minimal 8 karakter'
+            const inputs = {
+                first_name: document.getElementById('first_name'),
+                last_name: document.getElementById('last_name'),
+                email: document.getElementById('email'),
+                phone: document.getElementById('phone'),
+                address: document.getElementById('address'),
+                password: document.getElementById('password'),
+                password_confirmation: document.getElementById('password_confirmation')
             };
-            
-            errorMessage.textContent = errorMessages[key];
-            input.parentElement.appendChild(errorMessage);
-        } else {
-            // Kembalikan ke warna default untuk input valid
-            input.style.borderColor = '#e7e7eb';
-        }
-    }
 
-    // Update event listeners
-    Object.entries(inputs).forEach(([key, input]) => {
-        if (key !== 'passwordConfirm') {
-            input.addEventListener('input', () => {
-                validateInput(input, validators[key], key);
+            // Clear all fields if there were server errors
+            @if ($errors->any())
+                Object.values(inputs).forEach(input => {
+                    input.value = '';
+                });
+            @endif
 
-                if (key === 'password') {
-                    const confirmInput = inputs.passwordConfirm;
-                    if (confirmInput.value) {
-                        validatePasswordConfirmation(confirmInput, input.value);
+            // Validation functions
+            const validators = {
+                first_name: (value) => value.trim().length >= 2,
+                last_name: (value) => value.trim().length >= 2,
+                email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+                phone: (value) => /^(?:(?:\+62|62)|0)[8][1-9][0-9]{8,10}$/.test(value),
+                address: (value) => value.trim().length >= 10,
+                password: (value) => value.length >= 8,
+                password_confirmation: (value) => value === inputs.password.value
+            };
+
+            function showError(input, fieldName, message) {
+                input.classList.add('error');
+                const errorElement = document.getElementById(fieldName + '-error');
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+            }
+
+            function hideError(input, fieldName) {
+                input.classList.remove('error');
+                const errorElement = document.getElementById(fieldName + '-error');
+                errorElement.classList.remove('show');
+            }
+
+            function validateField(fieldName, customMessage = null) {
+                const input = inputs[fieldName];
+                const value = input.value;
+
+                if (!value.trim()) {
+                    showError(input, fieldName, customMessage || `${fieldName.replace('_', ' ')} harus diisi`);
+                    return false;
+                }
+
+                if (validators[fieldName] && !validators[fieldName](value)) {
+                    const errorMessages = {
+                        first_name: 'Nama depan harus minimal 2 karakter',
+                        last_name: 'Nama belakang harus minimal 2 karakter',
+                        email: 'Format email tidak valid',
+                        phone: 'Format nomor telepon Indonesia tidak valid (contoh: 08123456789)',
+                        address: 'Alamat harus minimal 10 karakter',
+                        password: 'Password harus minimal 8 karakter',
+                        password_confirmation: 'Konfirmasi password tidak sama dengan password'
+                    };
+                    showError(input, fieldName, errorMessages[fieldName]);
+                    return false;
+                }
+
+                hideError(input, fieldName);
+                return true;
+            }
+
+            function validateForm() {
+                let isValid = true;
+                
+                // Validate all fields
+                Object.keys(inputs).forEach(fieldName => {
+                    if (!validateField(fieldName)) {
+                        isValid = false;
+                    }
+                });
+
+                return isValid;
+            }
+
+            // Real-time validation
+            Object.entries(inputs).forEach(([fieldName, input]) => {
+                input.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        validateField(fieldName);
+                    } else {
+                        hideError(this, fieldName);
+                    }
+
+                    // Special handling for password confirmation
+                    if (fieldName === 'password' && inputs.password_confirmation.value) {
+                        validateField('password_confirmation');
+                    }
+                });
+
+                input.addEventListener('focus', function() {
+                    this.classList.remove('error');
+                });
+            });
+
+            // Phone number formatting
+            inputs.phone.addEventListener('input', function(e) {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length > 13) {
+                    value = value.slice(0, 13);
+                }
+                this.value = value;
+            });
+
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (validateForm()) {
+                    registerBtn.disabled = true;
+                    registerBtn.textContent = 'Mendaftar...';
+                    this.submit();
+                } else {
+                    // Clear all fields if validation fails
+                    Object.values(inputs).forEach(input => {
+                        input.value = '';
+                    });
+                    
+                    // Focus on first error field
+                    const firstErrorField = document.querySelector('.error');
+                    if (firstErrorField) {
+                        firstErrorField.focus();
                     }
                 }
             });
-        }
-    });
-
-    // Add password confirmation validation
-    function validatePasswordConfirmation(input, passwordValue) {
-        const errorDiv = input.parentElement.querySelector('.validation-error');
-        if (errorDiv) {
-            errorDiv.remove();
-        }
-
-        if (!input.value) {
-            input.style.borderColor = '#e7e7eb';
-            return;
-        }
-
-        if (input.value !== passwordValue) {
-            input.style.borderColor = '#ef4444';
-            
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'validation-error';
-            errorMessage.style.color = '#ef4444';
-            errorMessage.style.fontSize = '0.875rem';
-            errorMessage.style.marginTop = '0.5rem';
-            errorMessage.textContent = 'Passwords do not match';
-            
-            input.parentElement.appendChild(errorMessage);
-        } else {
-            input.style.borderColor = '#e7e7eb';
-        }
-    }
-
-    // Update password confirmation handler
-    inputs.passwordConfirm.addEventListener('input', function() {
-        validatePasswordConfirmation(this, inputs.password.value);
-    });
-
-    // Special handler for password confirmation
-    inputs.passwordConfirm.addEventListener('input', function() {
-        if (!this.value) {
-            this.style.borderColor = '#e7e7eb';
-            return;
-        }
-        this.style.borderColor = this.value === inputs.password.value ? 
-            '#e7e7eb' : '#ef4444';  // Only show red for mismatch
-    });
-
-    // Form submission handler
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        let hasError = false;
-
-        // Reset semua error sebelumnya
-        Object.entries(inputs).forEach(([key, input]) => {
-            input.style.borderColor = '#e7e7eb';
-            const existingError = input.parentElement.querySelector('.validation-error');
-            if (existingError) {
-                existingError.remove();
-            }
         });
-
-        // Validasi format hanya untuk field yang sudah diisi
-        Object.entries(inputs).forEach(([key, input]) => {
-            if (input.value.trim()) { // Hanya validasi jika field diisi
-                if (key !== 'passwordConfirm' && !validators[key](input.value)) {
-                    hasError = true;
-                    const errorMessages = {
-                        firstName: 'Nama depan harus minimal 2 karakter',
-                        lastName: 'Nama belakang harus minimal 2 karakter',
-                        email: 'Format email tidak valid',
-                        phone: 'Format nomor telepon tidak valid (contoh: 08123456789)',
-                        address: 'Alamat harus minimal 10 karakter',
-                        password: 'Password harus minimal 8 karakter'
-                    };
-                    showError(input, errorMessages[key]);
-                }
-            }
-        });
-
-        // Validasi konfirmasi password hanya jika kedua field password diisi
-        if (inputs.password.value && inputs.passwordConfirm.value) {
-            if (inputs.password.value !== inputs.passwordConfirm.value) {
-                hasError = true;
-                showError(inputs.passwordConfirm, 'Password tidak cocok');
-            }
-        }
-
-        // Jika tidak ada error, submit form
-        if (!hasError) {
-            this.submit();
-        } else {
-            // Reset password fields jika ada error
-            inputs.password.value = '';
-            inputs.passwordConfirm.value = '';
-        }
-    });
-
-    // Update showError function
-    function showError(input, message) {
-        input.style.borderColor = '#ef4444';
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'validation-error';
-        errorMessage.style.color = '#ef4444';
-        errorMessage.style.fontSize = '0.875rem';
-        errorMessage.style.marginTop = '0.5rem';
-        errorMessage.textContent = message;
-        input.parentElement.appendChild(errorMessage);
-    }
-});
     </script>
 </body>
 </html>

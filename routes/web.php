@@ -345,12 +345,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Penilaian routes
     Route::prefix('penilaian')->name('penilaian.')->group(function () {
-        Route::get('/', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'index'])->name('index');
-        Route::get('/{id}', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'show'])->name('show');
-        Route::delete('/{id}', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'destroy'])->name('destroy');
-        Route::post('/{id}/update-status', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'updateStatus'])->name('update-status');
-        Route::post('/{id}/toggle-status', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'toggleStatus'])->name('toggle-status');
-        Route::post('/{id}/verify', [App\Http\Controllers\Admin\AdminPenilaianController::class, 'verify'])->name('verify');
+        Route::get('/', [AdminPenilaianController::class, 'index'])->name('index');
+        Route::get('/{id}', [AdminPenilaianController::class, 'show'])->name('show');
+        Route::delete('/{id}', [AdminPenilaianController::class, 'destroy'])->name('destroy');
+        Route::patch('/{id}/status', [AdminPenilaianController::class, 'updateStatus'])->name('updateStatus');
+        Route::patch('/{id}/toggle', [AdminPenilaianController::class, 'toggleStatus'])->name('toggleStatus');
+        Route::patch('/{id}/verify', [AdminPenilaianController::class, 'verify'])->name('verify');
     });
 });
 

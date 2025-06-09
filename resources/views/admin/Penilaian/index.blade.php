@@ -570,10 +570,6 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn-view" onclick="viewReview({{ $penilaian->id }})" title="Lihat Detail">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        
                                         @if(($penilaian->status ?? 'active') === 'active')
                                             <button class="btn-hide" onclick="hideReview({{ $penilaian->id }})" title="Sembunyikan">
                                                 <i class="fas fa-eye-slash"></i>
@@ -777,9 +773,6 @@
                     if (newStatus === 'active') {
                         // Show hide button
                         actionButtons.innerHTML = `
-                            <button class="btn-view" onclick="viewReview(${reviewId})" title="Lihat Detail">
-                                <i class="fas fa-eye"></i>
-                            </button>
                             <button class="btn-hide" onclick="hideReview(${reviewId})" title="Sembunyikan">
                                 <i class="fas fa-eye-slash"></i>
                             </button>
@@ -790,9 +783,121 @@
                     } else if (newStatus === 'hidden') {
                         // Show verify button
                         actionButtons.innerHTML = `
-                            <button class="btn-view" onclick="viewReview(${reviewId})" title="Lihat Detail">
+                            <button class="btn-verify" onclick="showReview(${reviewId})" title="Tampilkan">
                                 <i class="fas fa-eye"></i>
                             </button>
+                            <button type="button" class="btn-danger" onclick="confirmDelete(${reviewId})" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                    }
+                }
+            }
+            
+            // Show success message
+            Swal.fire({
+                title: 'Berhasil!',
+                text: `Status review berhasil diubah menjadi ${newStatus === 'active' ? 'aktif' : 'disembunyikan'}.`,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Action functions
+        function hideReview(reviewId) {
+            Swal.fire({
+                title: 'Sembunyikan Review?',
+                text: 'Review ini akan disembunyikan dari tampilan publik.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#fd7e14',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Sembunyikan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateReviewStatus(reviewId, 'hidden');
+                }
+            });
+        }
+
+        function showReview(reviewId) {
+            Swal.fire({
+                title: 'Tampilkan Review?',
+                text: 'Review ini akan ditampilkan kembali untuk publik.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Tampilkan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateReviewStatus(reviewId, 'active');
+                }
+            });
+        }
+
+        function confirmDelete(reviewId) {
+            Swal.fire({
+                title: 'Hapus Review?',
+                text: 'Review ini akan dihapus secara permanen dan tidak dapat dikembalikan.',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteReview(reviewId);
+                }
+            });
+        }
+
+        function updateReviewStatus(reviewId, newStatus) {
+            // Find the row and update status
+            const rows = document.querySelectorAll('#reviewTable tr[data-rating]');
+            let targetRow = null;
+            
+            rows.forEach(row => {
+                const buttons = row.querySelectorAll('.btn-hide, .btn-verify');
+                if (buttons.length > 0) {
+                    targetRow = row;
+                }
+            });
+            
+            if (!targetRow) return;
+            
+            // Update status badge
+            const statusCell = targetRow.cells[8]; // Status column
+            if (statusCell) {
+                if (newStatus === 'active') {
+                    statusCell.innerHTML = '<span class="status-badge status-active">Aktif</span>';
+                } else if (newStatus === 'hidden') {
+                    statusCell.innerHTML = '<span class="status-badge status-hidden">Disembunyikan</span>';
+                }
+            }
+            
+            // Update action buttons
+            const actionCell = targetRow.cells[9]; // Action column
+            if (actionCell) {
+                const actionButtons = actionCell.querySelector('.action-buttons');
+                if (actionButtons) {
+                    if (newStatus === 'active') {
+                        // Show hide button
+                        actionButtons.innerHTML = `
+                            <button class="btn-hide" onclick="hideReview(${reviewId})" title="Sembunyikan">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                            <button type="button" class="btn-danger" onclick="confirmDelete(${reviewId})" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                    } else if (newStatus === 'hidden') {
+                        // Show verify button
+                        actionButtons.innerHTML = `
                             <button class="btn-verify" onclick="showReview(${reviewId})" title="Tampilkan">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -815,23 +920,116 @@
         }
 
         function deleteReview(reviewId) {
-            // Find and remove the row
-            const rows = document.querySelectorAll('#reviewTable tr[data-rating]');
-            rows.forEach(row => {
-                const deleteBtn = row.querySelector(`[onclick*="${reviewId}"]`);
-                if (deleteBtn && deleteBtn.onclick.toString().includes('confirmDelete')) {
-                    row.remove();
+            // Show loading state
+            const deleteBtn = document.querySelector(`[onclick*="confirmDelete(${reviewId})"]`);
+            if (deleteBtn) {
+                deleteBtn.disabled = true;
+                deleteBtn.classList.add('btn-loading');
+            }
+
+            // Make actual HTTP request to delete from database
+            fetch(`/admin/penilaian/${reviewId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Find and remove the row from UI
+                    const rows = document.querySelectorAll('#reviewTable tr[data-rating]');
+                    rows.forEach(row => {
+                        const deleteBtn = row.querySelector(`[onclick*="${reviewId}"]`);
+                        if (deleteBtn && deleteBtn.onclick.toString().includes('confirmDelete')) {
+                            row.remove();
+                        }
+                    });
+                    
+                    // Show success message
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Review berhasil dihapus.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    // Update statistics if needed
+                    updateStatistics();
+                } else {
+                    throw new Error(data.message || 'Gagal menghapus review');
+                }
+            })
+            .catch(error => {
+                console.error('Delete error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Gagal menghapus review: ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            })
+            .finally(() => {
+                // Reset button state
+                if (deleteBtn) {
+                    deleteBtn.disabled = false;
+                    deleteBtn.classList.remove('btn-loading');
                 }
             });
+        }
+
+        // Add function to update statistics after deletion
+        function updateStatistics() {
+            // Recalculate statistics based on remaining rows
+            const remainingRows = document.querySelectorAll('#reviewTable tr[data-rating]');
+            const totalReviews = remainingRows.length;
             
-            // Show success message
-            Swal.fire({
-                title: 'Terhapus!',
-                text: 'Review berhasil dihapus.',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
+            // Update total review count
+            const totalStatElement = document.querySelector('.stat-card:first-child .stat-number');
+            if (totalStatElement) {
+                totalStatElement.textContent = totalReviews;
+            }
+
+            // Update positive reviews count (≥4★)
+            let positiveCount = 0;
+            let totalRating = 0;
+            let photoCount = 0;
+
+            remainingRows.forEach(row => {
+                const rating = parseFloat(row.dataset.rating);
+                const hasPhotos = row.dataset.photos === 'yes';
+                
+                if (rating >= 4) positiveCount++;
+                totalRating += rating;
+                if (hasPhotos) photoCount++;
             });
+
+            // Update positive reviews stat
+            const positiveStatElement = document.querySelector('.stat-card:nth-child(2) .stat-number');
+            if (positiveStatElement) {
+                positiveStatElement.textContent = positiveCount;
+            }
+
+            // Update average rating
+            const avgRating = totalReviews > 0 ? (totalRating / totalReviews).toFixed(1) : '0.0';
+            const avgStatElement = document.querySelector('.stat-card:nth-child(3) .stat-number');
+            if (avgStatElement) {
+                avgStatElement.textContent = avgRating;
+            }
+
+            // Update photos count
+            const photoStatElement = document.querySelector('.stat-card:nth-child(4) .stat-number');
+            if (photoStatElement) {
+                photoStatElement.textContent = photoCount;
+            }
         }
     </script>
 </body>

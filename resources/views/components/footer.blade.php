@@ -77,22 +77,27 @@
     align-items: start;
 }
 
-/* Logo Section */
+/* Logo Section - UPDATED UNTUK CENTER VERTIKAL */
 .footer-logo-section {
     display: flex;
     align-items: center;
+    justify-content: center; /* Center horizontal */
     padding: 20px 0;
+    height: 100%; /* Ambil seluruh tinggi container */
 }
 
 .footer-brand {
     display: flex;
-    align-items: center;
+    align-items: center; /* Center vertikal untuk logo dan teks */
+    justify-content: center; /* Center horizontal untuk brand */
     gap: 15px;
+    height: 100%; /* Ambil seluruh tinggi parent */
+    transform: translateY(-30px);
 }
 
 .footer-logo {
-    width: 70px;
-    height: 70px;
+    width: 150px;
+    height: 150px;
     object-fit: contain;
 }
 
@@ -100,17 +105,18 @@
     display: flex;
     flex-direction: column;
     line-height: 1.1;
+    text-align: center; /* Center teks horizontal */
 }
 
 .brand-catering {
-    font-size: 26px;
+    font-size: 30px; /* Diperbesar dari 26px ke 30px */
     font-weight: bold;
     color: #FFA500;
     letter-spacing: 1px;
 }
 
 .brand-kita {
-    font-size: 26px;
+    font-size: 30px; /* Diperbesar dari 26px ke 30px */
     font-weight: bold;
     color: #333;
     letter-spacing: 1px;
@@ -122,6 +128,7 @@
     background: linear-gradient(to bottom, transparent 0%, #8B7355 20%, #8B7355 80%, transparent 100%);
     height: 120px;
     margin: 20px 0;
+    align-self: center; /* Center divider vertikal */
 }
 
 /* Content Sections */
@@ -137,7 +144,7 @@
 }
 
 .footer-title {
-    font-size: 22px;
+    font-size: 26px; /* Diperbesar dari 22px ke 26px */
     font-weight: 600;
     color: #2C5F41;
     margin-bottom: 15px;
@@ -147,8 +154,10 @@
 .footer-text {
     color: #FFFFFF;
     line-height: 1.6;
-    font-size: 14px;
+    font-size: 16px; /* Diperbesar dari 14px ke 16px */
     text-align: justify;
+    width: 100%; /* Pastikan mengambil full width */
+    max-width: 630px; /* Batasi lebar untuk teks */
     margin: 0;
 }
 
@@ -158,13 +167,17 @@
     flex-direction: column;
     gap: 20px;
     padding: 20px 0;
-    justify-content: center;
+    justify-content: center; /* Center vertikal */
+    align-items: flex-start; /* Align items ke kiri untuk mempertahankan icon di kiri */
+    height: 100%; /* Ambil tinggi penuh container */
+    min-height: 120px; /* Minimum height untuk konsistensi */
 }
 
 .contact-item {
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%; /* Pastikan mengambil full width */
 }
 
 .contact-icon-wrapper {
@@ -174,7 +187,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Mencegah icon mengecil */
 }
 
 .contact-icon-wrapper.location {
@@ -193,8 +206,10 @@
 
 .contact-text {
     color: #FFFFFF;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
+    flex: 1; /* Mengambil sisa ruang */
+    text-align: left; /* Pastikan teks align kiri */
 }
 
 /* Responsive Design */
@@ -212,7 +227,19 @@
     
     .brand-catering,
     .brand-kita {
-        font-size: 22px;
+        font-size: 26px; /* Diperbesar dari 22px ke 26px */
+    }
+    
+    .footer-title {
+        font-size: 24px; /* Diperbesar dari default */
+    }
+    
+    .footer-text {
+        font-size: 15px; /* Diperbesar dari default */
+    }
+    
+    .contact-text {
+        font-size: 15px; /* Diperbesar dari default */
     }
 }
 
@@ -229,6 +256,11 @@
     
     .footer-logo-section {
         justify-content: center;
+        height: auto; /* Reset height untuk responsive */
+    }
+    
+    .footer-brand {
+        height: auto; /* Reset height untuk responsive */
     }
     
     .footer-content {
@@ -261,19 +293,19 @@
     
     .brand-catering,
     .brand-kita {
-        font-size: 18px;
+        font-size: 22px; /* Diperbesar dari 18px ke 22px */
     }
     
     .footer-title {
-        font-size: 18px;
+        font-size: 22px; /* Diperbesar dari 18px ke 22px */
     }
     
     .footer-text {
-        font-size: 13px;
+        font-size: 15px; /* Diperbesar dari 13px ke 15px */
     }
     
     .contact-text {
-        font-size: 13px;
+        font-size: 15px; /* Diperbesar dari 13px ke 15px */
     }
 }
 
@@ -282,12 +314,30 @@
         flex-direction: column;
         gap: 10px;
         text-align: center;
+        height: auto; /* Reset height untuk mobile */
     }
     
     .contact-item {
         flex-direction: column;
         gap: 8px;
         text-align: center;
+    }
+    
+    .brand-catering,
+    .brand-kita {
+        font-size: 20px; /* Diperbesar untuk mobile */
+    }
+    
+    .footer-title {
+        font-size: 20px; /* Diperbesar untuk mobile */
+    }
+    
+    .footer-text {
+        font-size: 14px; /* Diperbesar untuk mobile */
+    }
+    
+    .contact-text {
+        font-size: 14px; /* Diperbesar untuk mobile */
     }
 }
 </style>
