@@ -271,7 +271,7 @@
                             <th>Bukti Transaksi</th>
                             <th>Status Transaksi</th>
                             <th>Deskripsi</th>
-                            <th>Action</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>

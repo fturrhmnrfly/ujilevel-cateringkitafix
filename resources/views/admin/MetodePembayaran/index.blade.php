@@ -140,7 +140,7 @@
                             <th>Status</th>
                             <th>Tanggal Ditambahkan</th>
                             <th>Admin</th>
-                            <th>Action</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
