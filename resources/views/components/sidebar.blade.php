@@ -144,7 +144,7 @@
     </a>
     <a href="{{ route('admin.karyawan.index') }}" class="menu-item active">
         <i class="fa-solid fa-users"></i>
-        Daftar Karyawan
+        Daftar Pengguna
     </a>
     <a href="{{ route('admin.kelolamakanan.index') }}" class="menu-item">
         <i class="fa-solid fa-cube"></i>

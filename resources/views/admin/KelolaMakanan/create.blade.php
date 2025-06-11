@@ -89,7 +89,7 @@
         }
 
         .btn-primary {
-            background-color: #26276B;
+            background-color: #B19370;
             color: white;
             padding: 12px 30px;
             border: none;

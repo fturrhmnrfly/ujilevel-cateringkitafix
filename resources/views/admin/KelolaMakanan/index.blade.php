@@ -42,6 +42,9 @@
             border: none;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
         }
 
         .search-container {
@@ -104,6 +107,9 @@
             margin-right: 5px;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
         }
 
         .btn-danger {
@@ -114,6 +120,9 @@
             text-decoration: none;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
         }
     </style>
 </head>
@@ -125,7 +134,9 @@
 
         <div class="content">
             <div class="content-header">
-                <a href="{{ route('admin.kelolamakanan.create') }}" class="btn-primary">Tambah Makanan</a>
+                <a href="{{ route('admin.kelolamakanan.create') }}" class="btn-primary">
+                    <i class="fas fa-plus"></i> Tambah Makanan
+                </a>
                 <div class="search-container">
                     <input type="text" class="search-input" placeholder="Cari makanan...">
                 </div>
@@ -160,11 +171,15 @@
                                 </td>
                                 <td>{{ Str::limit($item->deskripsi, 50) }}</td>
                                 <td>
-                                    <a href="{{ route('admin.kelolamakanan.edit', $item->id) }}" class="btn-warning">Edit</a>
+                                    <a href="{{ route('admin.kelolamakanan.edit', $item->id) }}" class="btn-warning">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
                                     <form action="{{ route('admin.kelolamakanan.destroy', $item->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                        <button type="submit" class="btn-danger" onclick="return confirm('Are you sure?')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
                                     </form>
                                 </td>
                             </tr>

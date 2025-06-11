@@ -190,7 +190,7 @@
         </div>
         <div class="feature-card">
             <img src="{{ asset('assets/homeassets12.png') }}" alt="Bersertifikat Halal" class="feature-icon">
-            <h3 class="feature-title">bersertifikat halal</h3>
+            <h3 class="feature-title">Bersertifikat Halal</h3>
         </div>
         <div class="feature-card">
             <img src="{{ asset('assets/freebox.png') }}" alt="Gratis Box" class="feature-icon">

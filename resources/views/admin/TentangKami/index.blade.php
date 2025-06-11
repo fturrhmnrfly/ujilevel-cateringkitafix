@@ -47,7 +47,7 @@
             border-radius: 4px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
             cursor: pointer;
             text-decoration: none;
             color: #333;
@@ -68,16 +68,29 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #eee;
+            vertical-align: middle; /* Menyelaraskan konten secara vertikal */
+            height: 60px; /* Memberikan tinggi minimum yang sama untuk semua sel */
         }
 
         th {
             background-color: #f8f9fa;
             font-weight: 500;
+            height: 50px; /* Tinggi khusus untuk header */
+        }
+
+        /* Khusus untuk sel yang berisi gambar */
+        td img {
+            vertical-align: middle;
+            display: block;
+            margin: 0 auto;
         }
 
         .action-buttons {
             display: flex;
             gap: 8px;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100%; /* Menggunakan full height dari parent */
         }
 
         .edit-btn {
@@ -87,6 +100,10 @@
             border-radius: 4px;
             text-decoration: none;
             font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
+            height: 28px; /* Tinggi tetap untuk button */
         }
 
         .delete-btn {
@@ -97,6 +114,17 @@
             border: none;
             cursor: pointer;
             font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
+            height: 28px; /* Tinggi tetap untuk button */
+        }
+
+        /* Styling untuk sel kosong */
+        .empty-cell {
+            text-align: center;
+            color: #666;
+            font-style: italic;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -135,18 +163,24 @@
                                     <img src="{{ Storage::url($item->foto) }}" alt="Foto" width="100">
                                 </td>
                                 <td>{{ $item->deskripsi }}</td>
-                                <td class="action-buttons">
-                                    <a href="{{ route('admin.tentangkami.edit', $item->id) }}" class="edit-btn">edit</a>
-                                    <form id="delete-form-{{ $item->id }}" action="{{ route('admin.tentangkami.destroy', $item->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="delete-btn" onclick="confirmDelete({{ $item->id }})">Delete</button>
-                                    </form>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{{ route('admin.tentangkami.edit', $item->id) }}" class="edit-btn">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <form id="delete-form-{{ $item->id }}" action="{{ route('admin.tentangkami.destroy', $item->id) }}" method="POST" style="margin: 0;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="delete-btn" onclick="confirmDelete({{ $item->id }})">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" style="text-align: center; padding: 20px; color: #666;">
+                                <td colspan="4" class="empty-cell" style="height: 80px;">
                                     Tidak ada data tersedia
                                 </td>
                             </tr>

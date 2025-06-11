@@ -126,7 +126,7 @@
 .footer-divider {
     width: 2px;
     background: linear-gradient(to bottom, transparent 0%, #8B7355 20%, #8B7355 80%, transparent 100%);
-    height: 120px;
+    height: 310px; /* Diperbesar dari 120px ke 200px */
     margin: 20px 0;
     align-self: center; /* Center divider vertikal */
 }
@@ -146,9 +146,23 @@
 .footer-title {
     font-size: 26px; /* Diperbesar dari 22px ke 26px */
     font-weight: 600;
-    color: #2C5F41;
-    margin-bottom: 15px;
+    color: #333333; /* Diubah dari #2C5F41 ke #333333 (abu-abu gelap) */
+    margin-bottom: 8px; /* Kurangi margin untuk divider */
     font-style: italic;
+    position: relative; /* Untuk positioning pseudo-element */
+    display: inline-block; /* Agar width mengikuti content */
+}
+
+/* Divider hitam di bawah footer-title */
+.footer-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0px; /* Jarak dari teks */
+    width: 100%; /* Mengikuti panjang teks */
+    height: 2px;
+    background-color: #333333; /* Warna hitam */
+    border-radius: 1px;
 }
 
 .footer-text {
@@ -220,6 +234,10 @@
         padding: 0 30px;
     }
     
+    .footer-divider {
+        height: 180px; /* Sesuaikan untuk responsive */
+    }
+    
     .footer-logo {
         width: 60px;
         height: 60px;
@@ -232,6 +250,11 @@
     
     .footer-title {
         font-size: 24px; /* Diperbesar dari default */
+    }
+    
+    .footer-title::after {
+        height: 2px; /* Tetap konsisten */
+        bottom: -4px; /* Sesuaikan jarak untuk ukuran font lebih kecil */
     }
     
     .footer-text {
@@ -271,8 +294,9 @@
         align-items: center;
     }
     
-    .footer-text {
-        text-align: center;
+    .footer-title::after {
+        left: 50%; /* Center divider */
+        transform: translateX(-50%); /* Center perfect */
     }
 }
 
@@ -298,6 +322,11 @@
     
     .footer-title {
         font-size: 22px; /* Diperbesar dari 18px ke 22px */
+    }
+    
+    .footer-title::after {
+        height: 1.5px; /* Lebih tipis untuk mobile */
+        bottom: -3px;
     }
     
     .footer-text {
@@ -330,6 +359,11 @@
     
     .footer-title {
         font-size: 20px; /* Diperbesar untuk mobile */
+    }
+    
+    .footer-title::after {
+        height: 1.5px;
+        bottom: -3px;
     }
     
     .footer-text {

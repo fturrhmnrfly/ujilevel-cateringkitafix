@@ -29,13 +29,13 @@
             <!-- Fast Delivery Feature -->
             <div class="feature-card">
                 <img src="{{ asset('assets/homeassets11.png') }}" alt="Fast Delivery" class="feature-icon">
-                <h3 class="feature-title">fast delivery</h3>
+                <h3 class="feature-title">Pengiriman Cepat</h3>
             </div>
 
             <!-- Halal Certificate Feature -->
             <div class="feature-card">
                 <img src="{{ asset('assets/homeassets12.png') }}" alt="Halal Certificate" class="feature-icon">
-                <h3 class="feature-title">bersertifikat halal</h3>
+                <h3 class="feature-title">Bersertifikat Halal</h3>
             </div>
 
             <!-- Free Box Feature -->

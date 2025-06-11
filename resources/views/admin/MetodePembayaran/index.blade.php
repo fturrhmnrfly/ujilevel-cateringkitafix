@@ -43,6 +43,9 @@
             border: none;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
         }
 
         .search-input {
@@ -88,6 +91,9 @@
             margin-right: 5px;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
         }
 
         .btn-danger {
@@ -98,6 +104,9 @@
             text-decoration: none;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* Tambahkan gap antara icon dan text */
         }
 
         .status-available {
@@ -115,7 +124,9 @@
 
         <div class="content">
             <div class="content-header">
-                <a href="{{ route('admin.metodepembayaran.create') }}" class="btn-primary">Tambah Metode Pembayaran</a>
+                <a href="{{ route('admin.metodepembayaran.create') }}" class="btn-primary">
+                    <i class="fas fa-plus"></i> Tambah Metode Pembayaran
+                </a>
                 <input type="text" class="search-input" placeholder="Cari metode pembayaran...">
             </div>
 
@@ -142,11 +153,15 @@
                             <td>{{ $item->created_at->format('d-m-Y') }}</td>
                             <td>{{ $item->admin }}</td>
                             <td>
-                                <a href="{{ route('admin.metodepembayaran.edit', $item->id) }}" class="btn-warning">Edit</a>
+                                <a href="{{ route('admin.metodepembayaran.edit', $item->id) }}" class="btn-warning">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
                                 <form id="delete-form-{{ $item->id }}" action="{{ route('admin.metodepembayaran.destroy', $item->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="btn-danger" onclick="confirmDelete({{ $item->id }})">Delete</button>
+                                    <button type="button" class="btn-danger" onclick="confirmDelete({{ $item->id }})">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
                                 </form>
                             </td>
                         </tr>

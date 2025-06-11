@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Karyawan - Admin</title>
+    <title>Tambah Pengguna - Admin</title>
     <style>
         .content {
             padding: 20px;
@@ -32,7 +32,7 @@
             margin-bottom: 10px;
         }
         .btn-submit {
-            background-color: #4040ff;
+            background-color: #B19370;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -55,7 +55,7 @@
 
     <div class="main-content">
         <div class="header">
-            <h1>Tambah Karyawan</h1>
+            <h1>Tambah Pengguna</h1>
         </div>
 
         <div class="content">
@@ -63,15 +63,15 @@
                 <form action="{{ route('admin.karyawan.store') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label for="nama_karyawan">Nama Karyawan</label>
+                        <label for="nama_karyawan">Nama Pengguna</label>
                         <input type="text" name="nama_karyawan" id="nama_karyawan" required 
-                               value="{{ old('nama_karyawan') }}" placeholder="Masukan nama karyawan">
+                               value="{{ old('nama_karyawan') }}" placeholder="Masukan nama pengguna">
                     </div>
 
                     <div class="form-group">
-                        <label for="username_karyawan">Username Karyawan</label>
+                        <label for="username_karyawan">Username Pengguna</label>
                         <input type="text" name="username_karyawan" id="username_karyawan" required 
-                               value="{{ old('username_karyawan') }}" placeholder="Masukan Username karyawan">
+                               value="{{ old('username_karyawan') }}" placeholder="Masukan Username pengguna">
                     </div>
 
                     <div class="form-group">
@@ -83,7 +83,7 @@
                     <div class="form-group">
                         <label for="kontak">Kontak</label>
                         <input type="text" name="kontak" id="kontak" required 
-                               value="{{ old('kontak') }}" placeholder="nomor karyawan">
+                               value="{{ old('kontak') }}" placeholder="nomor pengguna">
                     </div>
 
                     <div class="form-group">
@@ -105,7 +105,7 @@
                     <div class="form-group">
                         <label for="keahlian">Keahlian</label>
                         <input type="text" name="keahlian" id="keahlian" required 
-                               value="{{ old('keahlian') }}" placeholder="keahlian karyawannya apa">
+                               value="{{ old('keahlian') }}" placeholder="keahlian penggunanya apa">
                     </div>
 
                     <div class="form-group">
