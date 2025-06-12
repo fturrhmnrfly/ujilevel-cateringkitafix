@@ -150,6 +150,17 @@
             color: #fff;
         }
 
+        /* TAMBAHAN: Badge styling untuk status pembayaran */
+        .badge-paid {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .badge-failed {
+            background: #dc3545;
+            color: #fff;
+        }
+
         .btn-action {
             padding: 8px 16px;
             border-radius: 4px;
@@ -184,6 +195,19 @@
             color: white;
             cursor: not-allowed;
             opacity: 0.6;
+        }
+
+        /* TAMBAHAN: Style untuk button menunggu pembayaran */
+        .btn-payment-pending {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+            cursor: not-allowed !important;
+            opacity: 0.8 !important;
+        }
+
+        .btn-payment-pending:hover {
+            background-color: #ffc107 !important;
+            color: #000 !important;
         }
 
         /* Modal Styles - Updated to match existing style */
@@ -564,8 +588,17 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge badge-{{ $pesanan->status_pembayaran }}">
-                                    {{ strtoupper($pesanan->status_pembayaran) }}
+                                @php
+                                    // Mapping status pembayaran untuk tampilan
+                                    $paymentStatusDisplay = match($pesanan->status_pembayaran) {
+                                        'paid' => 'Berhasil',
+                                        'failed' => 'Ditolak',
+                                        'pending' => 'Pending',
+                                        default => strtoupper($pesanan->status_pembayaran)
+                                    };
+                                @endphp
+                                <span class="badge badge-{{ $pesanan->status_pembayaran }}" id="payment-status-badge-{{ $pesanan->id }}">
+                                    {{ $paymentStatusDisplay }}
                                 </span>
                             </td>
                             <td id="action-cell-{{ $pesanan->id }}">
@@ -578,9 +611,17 @@
                                         Menunggu Konfirmasi Pelanggan
                                     </button>
                                 @elseif($pesanan->status_pengiriman === 'diproses')
-                                    <button class="btn-action btn-next-status" onclick="showUpdateModal('{{ $pesanan->id }}', '{{ $pesanan->status_pengiriman }}', '{{ $pesanan->order_id }}')">
-                                        Kirim Pesanan
-                                    </button>
+                                    @if($pesanan->status_pembayaran === 'paid')
+                                        {{-- ✅ STATUS PEMBAYARAN PAID - BUTTON AKTIF ✅ --}}
+                                        <button class="btn-action btn-next-status" onclick="showUpdateModal('{{ $pesanan->id }}', '{{ $pesanan->status_pengiriman }}', '{{ $pesanan->order_id }}')">
+                                            Kirim Pesanan
+                                        </button>
+                                    @else
+                                        {{-- ✅ STATUS PEMBAYARAN BELUM PAID - BUTTON DISABLED ✅ --}}
+                                        <button class="btn-action btn-disabled btn-payment-pending" disabled title="Menunggu konfirmasi pembayaran">
+                                            <i class="fas fa-clock"></i> Menunggu Pembayaran
+                                        </button>
+                                    @endif
                                 @endif
                             </td>
                         </tr>
@@ -874,6 +915,62 @@
         }
 
         /**
+         * ✅ TAMBAHKAN FUNCTION updateStatistics() YANG HILANG ✅
+         */
+        function updateStatistics() {
+            try {
+                // Count orders by status from current table rows
+                const rows = document.querySelectorAll('tbody tr[data-order-id]');
+                
+                const stats = {
+                    total: rows.length,
+                    belum_bayar: 0,
+                    diproses: 0,
+                    dikirim: 0,
+                    selesai: 0 // diterima + dibatalkan
+                };
+
+                rows.forEach(row => {
+                    const orderStatus = row.getAttribute('data-order-status');
+                    const paymentStatusBadge = row.querySelector('[id^="payment-status-badge-"]');
+                    const paymentStatus = paymentStatusBadge ? 
+                        (paymentStatusBadge.classList.contains('badge-paid') ? 'paid' : 
+                         paymentStatusBadge.classList.contains('badge-failed') ? 'failed' : 'pending') : 'pending';
+                    
+                    // Count payment status
+                    if (paymentStatus === 'pending') {
+                        stats.belum_bayar++;
+                    }
+                    
+                    // Count order status
+                    switch (orderStatus) {
+                        case 'diproses':
+                            stats.diproses++;
+                            break;
+                        case 'dikirim':
+                            stats.dikirim++;
+                            break;
+                        case 'diterima':
+                        case 'dibatalkan':
+                            stats.selesai++;
+                            break;
+                    }
+                });
+
+                // Update UI
+                document.getElementById('stat-total').textContent = stats.total;
+                document.getElementById('stat-pending').textContent = stats.belum_bayar;
+                document.getElementById('stat-diproses').textContent = stats.diproses;
+                document.getElementById('stat-dikirim').textContent = stats.dikirim;
+                document.getElementById('stat-selesai').textContent = stats.selesai;
+
+                console.log('Statistics updated:', stats);
+            } catch (error) {
+                console.error('Error updating statistics:', error);
+            }
+        }
+
+        /**
          * Send status update request to server
          * @param {string} orderId - Order ID
          * @param {string} newStatus - New status
@@ -938,7 +1035,7 @@
                 if (data.success) {
                     // Update UI
                     updateOrderRowUI(orderId, newStatus);
-                    updateStatistics();
+                    updateStatistics(); // ✅ Sekarang function ini sudah ada
                     closeModal();
                     
                     // Show success message
@@ -1022,13 +1119,22 @@
             if (actionCell) {
                 const orderNumber = row.cells[1] ? row.cells[1].textContent : orderId;
                 
+                // ✅ TAMBAHKAN PENGECEKAN STATUS PEMBAYARAN ✅
+                const paymentStatusBadge = document.getElementById(`payment-status-badge-${orderId}`);
+                const isPaymentPaid = paymentStatusBadge && paymentStatusBadge.classList.contains('badge-paid');
+                
                 // Update button based on new status
                 if (newStatus === 'diterima' || newStatus === 'dibatalkan') {
                     actionCell.innerHTML = '<button class="btn-action btn-disabled" disabled>Selesai</button>';
                 } else if (newStatus === 'dikirim') {
                     actionCell.innerHTML = '<button class="btn-action btn-disabled" disabled>Menunggu Konfirmasi Pelanggan</button>';
                 } else if (newStatus === 'diproses') {
-                    actionCell.innerHTML = `<button class="btn-action btn-next-status" onclick="showUpdateModal('${orderId}', '${newStatus}', '${orderNumber}')">Kirim Pesanan</button>`;
+                    // ✅ CEK STATUS PEMBAYARAN UNTUK BUTTON KIRIM PESANAN ✅
+                    if (isPaymentPaid) {
+                        actionCell.innerHTML = `<button class="btn-action btn-next-status" onclick="showUpdateModal('${orderId}', '${newStatus}', '${orderNumber}')">Kirim Pesanan</button>`;
+                    } else {
+                        actionCell.innerHTML = `<button class="btn-action btn-disabled btn-payment-pending" disabled title="Menunggu konfirmasi pembayaran"><i class="fas fa-clock"></i> Menunggu Pembayaran</button>`;
+                    }
                 }
             }
             
@@ -1037,51 +1143,42 @@
         }
 
         /**
-         * Update statistics in real-time
+         * ✅ TAMBAHAN: Function untuk update status pembayaran secara real-time ✅
          */
-        function updateStatistics() {
-            const rows = document.querySelectorAll('tbody tr[data-order-status]');
-            const stats = {
-                total: rows.length,
-                pending: 0,
-                diproses: 0,
-                dikirim: 0,
-                selesai: 0
-            };
-            
-            rows.forEach(row => {
-                const status = row.getAttribute('data-order-status');
-                switch(status) {
-                    case 'pending':
-                        stats.pending++;
-                        break;
-                    case 'diproses':
-                        stats.diproses++;
-                        break;
-                    case 'dikirim':
-                        stats.dikirim++;
-                        break;
-                    case 'diterima':
-                        stats.selesai++;
-                        break;
+        function updatePaymentStatusUI(orderId, newPaymentStatus) {
+            const paymentStatusBadge = document.getElementById(`payment-status-badge-${orderId}`);
+            if (paymentStatusBadge) {
+                // Remove existing payment status classes
+                paymentStatusBadge.classList.remove('badge-paid', 'badge-failed', 'badge-pending');
+                
+                // Add new payment status class
+                paymentStatusBadge.classList.add(`badge-${newPaymentStatus}`);
+                
+                // Update text based on status
+                const statusText = {
+                    'paid': 'Berhasil',
+                    'failed': 'Ditolak',
+                    'pending': 'Pending'
+                };
+                paymentStatusBadge.textContent = statusText[newPaymentStatus] || newPaymentStatus.toUpperCase();
+                
+                // ✅ UPDATE BUTTON KIRIM PESANAN BERDASARKAN STATUS PEMBAYARAN ✅
+                const actionCell = document.getElementById(`action-cell-${orderId}`);
+                const row = document.querySelector(`tr[data-order-id="${orderId}"]`);
+                const currentOrderStatus = row ? row.getAttribute('data-order-status') : null;
+                
+                if (actionCell && currentOrderStatus === 'diproses') {
+                    const orderNumber = row.cells[1] ? row.cells[1].textContent : orderId;
+                    
+                    if (newPaymentStatus === 'paid') {
+                        // Payment berhasil - aktifkan button
+                        actionCell.innerHTML = `<button class="btn-action btn-next-status" onclick="showUpdateModal('${orderId}', 'diproses', '${orderNumber}')">Kirim Pesanan</button>`;
+                    } else {
+                        // Payment belum berhasil - disable button
+                        actionCell.innerHTML = `<button class="btn-action btn-disabled btn-payment-pending" disabled title="Menunggu konfirmasi pembayaran"><i class="fas fa-clock"></i> Menunggu Pembayaran</button>`;
+                    }
                 }
-            });
-            
-            // Update stat cards
-            const statElements = {
-                'stat-total': stats.total,
-                'stat-pending': stats.pending,
-                'stat-diproses': stats.diproses,
-                'stat-dikirim': stats.dikirim,
-                'stat-selesai': stats.selesai
-            };
-            
-            Object.entries(statElements).forEach(([elementId, value]) => {
-                const element = document.getElementById(elementId);
-                if (element) {
-                    element.textContent = value;
-                }
-            });
+            }
         }
 
         /**
@@ -1175,7 +1272,7 @@
          * Event Listeners
          */
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize statistics
+            // ✅ Initialize statistics saat halaman dimuat
             updateStatistics();
             
             // Close modal when clicking outside

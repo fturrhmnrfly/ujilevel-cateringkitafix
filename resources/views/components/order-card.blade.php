@@ -3,10 +3,13 @@
     $currentRoute = request()->route()->getName();
     $isUnpaidTab = $currentRoute === 'pesanan.unpaid';
     
-    if ($isUnpaidTab) {
-        $displayStatus = 'Belum Bayar';
+    // ✅ LOGIC BARU UNTUK BADGE STATUS PENGIRIMAN ✅
+    if ($order->status_pembayaran === 'pending') {
+        // Jika status pembayaran pending, tampilkan "Pending"
+        $displayStatus = 'Pending';
         $badgeClass = 'pending';
     } else {
+        // Jika status pembayaran selain pending, tampilkan status pengiriman asli
         $statusMap = [
             'diproses' => ['Diproses', 'diproses'],
             'dikirim' => ['Dikirim', 'dikirim'],
@@ -14,6 +17,12 @@
             'dibatalkan' => ['Dibatalkan', 'dibatalkan']
         ];
         [$displayStatus, $badgeClass] = $statusMap[$order->status_pengiriman] ?? [ucfirst($order->status_pengiriman), strtolower($order->status_pengiriman)];
+    }
+    
+    // ✅ OVERRIDE KHUSUS UNTUK TAB UNPAID ✅
+    if ($isUnpaidTab) {
+        $displayStatus = 'Belum Bayar';
+        $badgeClass = 'pending';
     }
     
     // Check apakah order sudah direview
@@ -71,6 +80,7 @@
             <span class="order-label">Order ID</span>
             <span class="order-id-value">{{ $order->order_id }}</span>
         </div>
+        {{-- ✅ BADGE DENGAN LOGIC BARU ✅ --}}
         <div class="status-badge-new {{ $badgeClass }}">{{ $displayStatus }}</div>
     </div>
     
@@ -184,7 +194,16 @@
                 <i class="fas fa-eye"></i> Lihat Detail
             </button>
         @else
-            @if($order->status_pengiriman == 'diproses')
+            {{-- ✅ UPDATE KONDISI ACTION BUTTONS BERDASARKAN STATUS PEMBAYARAN ✅ --}}
+            @if($order->status_pembayaran === 'pending')
+                {{-- Jika pembayaran pending, hanya tampilkan detail --}}
+                <button class="btn-detail-new" onclick="showOrderDetail({{ $order->id }})">
+                    <i class="fas fa-eye"></i> Lihat Detail
+                </button>
+                <button class="btn-payment-pending" disabled>
+                    <i class="fas fa-clock"></i> Menunggu Konfirmasi
+                </button>
+            @elseif($order->status_pengiriman == 'diproses')
                 <button class="btn-detail-new" onclick="showOrderDetail({{ $order->id }})">
                     <i class="fas fa-eye"></i> Lihat Detail
                 </button>
@@ -493,6 +512,19 @@
 
 .btn-cancel-new:hover {
     background: #c82333;
+}
+
+/* ✅ TAMBAHAN STYLE UNTUK BUTTON MENUNGGU PEMBAYARAN ✅ */
+.btn-payment-pending {
+    background: #ffc107 !important;
+    color: #000 !important;
+    cursor: not-allowed !important;
+    opacity: 0.8 !important;
+}
+
+.btn-payment-pending:hover {
+    background: #ffc107 !important;
+    color: #000 !important;
 }
 
 /* Responsive */

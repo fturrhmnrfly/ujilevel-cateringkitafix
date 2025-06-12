@@ -4,20 +4,31 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Laporan extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'tanggal',
-        'jenis_laporan',
         'laporan',
-        'deskripsi',
+        'jenis_laporan', 
+        'tanggal',
         'total',
-        'admin',
-        'status'
+        'deskripsi',
+        'admin'
     ];
 
-    protected $dates = ['tanggal'];
+    // ✅ TAMBAHKAN CAST UNTUK TANGGAL ✅
+    protected $casts = [
+        'tanggal' => 'date',
+        'total' => 'decimal:2'
+    ];
+
+    // ✅ ATAU GUNAKAN DATES (Laravel versi lama) ✅
+    protected $dates = [
+        'tanggal',
+        'created_at',
+        'updated_at'
+    ];
 }

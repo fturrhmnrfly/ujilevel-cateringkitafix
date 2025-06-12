@@ -305,6 +305,21 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     /*
     |--------------------------------------------------------------------------
+    | ✅ TAMBAHAN ROUTE UNTUK LAPORAN DENGAN DELETE ✅
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('laporan')->name('laporan.')->group(function () {
+        Route::get('/', [AdminLaporanController::class, 'index'])->name('index');
+        Route::get('/create', [AdminLaporanController::class, 'create'])->name('create');
+        Route::post('/', [AdminLaporanController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [AdminLaporanController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [AdminLaporanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [AdminLaporanController::class, 'destroy'])->name('destroy'); // ✅ ROUTE DELETE INI YANG DIBUTUHKAN ✅
+        Route::get('/export', [AdminLaporanController::class, 'export'])->name('export');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
     | System Configuration
     |--------------------------------------------------------------------------
     */
@@ -413,4 +428,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // ✅ ROUTE UNTUK UPDATE STATUS ✅
     Route::post('/daftarpesanan/{id}/update-status', [AdminDaftarPesananController::class, 'updateStatus'])->name('daftarpesanan.updateStatus');
+});
+
+// Admin Transaksi update status route
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::post('/transaksi/{id}/update-status', [AdminTransaksiController::class, 'updateStatus'])->name('admin.transaksi.updateStatus');
 });

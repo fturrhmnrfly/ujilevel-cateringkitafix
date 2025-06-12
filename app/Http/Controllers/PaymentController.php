@@ -480,7 +480,8 @@ public function confirmCodPayment(Request $request)
         ]);
 
         // Buat entri transaksi untuk sisa pembayaran
-        $transaksiSisa = Transaksi::create([
+        // ✅ PERBAIKAN: COD SISA TRANSACTION STATUS ✅
+        $codSisaTransaction = Transaksi::create([
             'nama_admin' => 'System',
             'nama_pelanggan' => auth()->user()->name ?? 'Guest',
             'tanggal_transaksi' => now(),
@@ -488,7 +489,7 @@ public function confirmCodPayment(Request $request)
             'jenis_tindakan' => 'Sisa Pembayaran COD',
             'deskripsi_tindakan' => 'Sisa pembayaran COD yang harus dibayar saat pengiriman',
             'total_harga' => $request->total - $request->dp_amount,
-            'status_transaksi' => 'Menunggu Pembayaran',
+            'status_transaksi' => 'Menunggu Pelunasan', // ✅ UBAH STATUS AWAL ✅
             'bukti_pembayaran' => null
         ]);
 
