@@ -40,6 +40,45 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.total {
+            background: #6c757d;
+        }
+
+        .stat-icon.pending {
+            background: #ffc107;
+        }
+
+        .stat-icon.diproses {
+            background: #17a2b8;
+        }
+
+        .stat-icon.dikirim {
+            background: #007bff;
+        }
+
+        .stat-icon.selesai {
+            background: #28a745;
+        }
+
+        .stat-content {
+            flex: 1;
         }
 
         .stat-card h3 {
@@ -435,24 +474,49 @@
             <!-- Real-time Statistics -->
             <div class="stats-container">
                 <div class="stat-card">
-                    <h3 id="stat-total">{{ $stats['total'] }}</h3>
-                    <p>Semua Pesanan</p>
+                    <div class="stat-icon total">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="stat-total">{{ $stats['total'] }}</h3>
+                        <p>Semua Pesanan</p>
+                    </div>
                 </div>
                 <div class="stat-card">
-                    <h3 id="stat-pending">{{ $stats['belum_bayar'] }}</h3>
-                    <p>Belum Bayar</p>
+                    <div class="stat-icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="stat-pending">{{ $stats['belum_bayar'] }}</h3>
+                        <p>Belum Bayar</p>
+                    </div>
                 </div>
                 <div class="stat-card">
-                    <h3 id="stat-diproses">{{ $stats['diproses'] }}</h3>
-                    <p>Diproses</p>
+                    <div class="stat-icon diproses">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="stat-diproses">{{ $stats['diproses'] }}</h3>
+                        <p>Diproses</p>
+                    </div>
                 </div>
                 <div class="stat-card">
-                    <h3 id="stat-dikirim">{{ $stats['dikirim'] }}</h3>
-                    <p>Dikirim</p>
+                    <div class="stat-icon dikirim">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="stat-dikirim">{{ $stats['dikirim'] }}</h3>
+                        <p>Dikirim</p>
+                    </div>
                 </div>
                 <div class="stat-card">
-                    <h3 id="stat-selesai">{{ $stats['selesai'] }}</h3>
-                    <p>Selesai</p>
+                    <div class="stat-icon selesai">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="stat-selesai">{{ $stats['selesai'] }}</h3>
+                        <p>Selesai</p>
+                    </div>
                 </div>
             </div>
 
