@@ -47,16 +47,27 @@ use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes
+| Public Routes (Tidak Perlu Login) - TAMBAHAN MENU ROUTES
 |--------------------------------------------------------------------------
 */
 
-// Landing page
-Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+// Landing page - GUNAKAN DASHBOARD CONTROLLER UNTUK SEMUA USER
+Route::get('/', [DashboardController::class, 'index'])->name('welcome');
 
 // Public search
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
+
+// ✅ TAMBAHAN: Menu routes yang bisa diakses guest ✅
+Route::prefix('menu')->group(function () {
+    // Prasmanan Menu - Guest bisa akses tapi tidak bisa add to cart
+    Route::get('/prasmanan', [MenuPrasmananController::class, 'index'])->name('menuprasmanan.index');
+    Route::get('/prasmanan/{id}', [MenuPrasmananController::class, 'show'])->name('menuprasmanan.show');
+    
+    // Nasi Box Menu - Guest bisa akses tapi tidak bisa add to cart
+    Route::get('/nasibox', [MenuNasiBoxController::class, 'index'])->name('menunasibox.index');
+    Route::get('/nasibox/{id}', [MenuNasiBoxController::class, 'show'])->name('menunasibox.show');
+});
 
 // File serving
 Route::get('/uploads/makanan/{filename}', function ($filename) {
@@ -75,9 +86,8 @@ Route::get('/uploads/makanan/{filename}', function ($filename) {
 
 Route::middleware('auth')->group(function () {
     
-    // Dashboard
+    // ✅ PERBAIKAN: Dashboard route dengan name yang benar ✅
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/', [DashboardController::class, 'index']);
 
     /*
     |--------------------------------------------------------------------------
@@ -119,7 +129,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Shopping Cart Routes
+    | Shopping Cart Routes - HANYA UNTUK USER LOGIN
     |--------------------------------------------------------------------------
     */
     Route::prefix('keranjang')->name('keranjang.')->group(function () {
@@ -127,7 +137,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/add', [KeranjangController::class, 'addToCart'])->name('add');
         Route::patch('/{id}', [KeranjangController::class, 'updateQuantity'])->name('update');
         Route::delete('/delete/{id}', [KeranjangController::class, 'removeItem'])->name('delete');
-        // Route::delete('/keranjang/delete/{id}', [KeranjangController::class, 'removeItem'])->name('keranjang.delete');
         Route::get('/count', [KeranjangController::class, 'getCartCount'])->name('count');
     });
 

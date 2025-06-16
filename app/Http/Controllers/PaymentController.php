@@ -10,6 +10,8 @@ use App\Models\Payment;
 use App\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller 
 {
@@ -315,198 +317,268 @@ class PaymentController extends Controller
         return view('payments.confirmation', compact('order', 'paymentMethod'));
     }
 
+    /**
+     * ✅ ENHANCED: Store payment proof dengan dual storage system
+     */
+    private function storePaymentProof(Request $request, $prefix = 'PAYMENT')
+    {
+        try {
+            if (!$request->hasFile('payment_proof')) {
+                throw new \Exception('File payment proof tidak ditemukan');
+            }
+
+            $file = $request->file('payment_proof');
+            
+            // Validate file
+            if (!$file->isValid()) {
+                throw new \Exception('File tidak valid');
+            }
+
+            // Check file size (max 2MB)
+            if ($file->getSize() > 2048000) {
+                throw new \Exception('Ukuran file terlalu besar (max 2MB)');
+            }
+
+            // Check file type
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            if (!in_array($file->getMimeType(), $allowedTypes)) {
+                throw new \Exception('Format file harus JPG, PNG, atau JPEG');
+            }
+
+            // Generate unique filename
+            $filename = $prefix . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            // ✅ DUAL STORAGE SYSTEM - STORE IN BOTH LOCATIONS ✅
+            
+            $storagePath = storage_path('app/public/payment_proofs');
+            $publicPath = public_path('storage/payment_proofs');
+            
+            // Ensure both directories exist
+            if (!file_exists($storagePath)) {
+                mkdir($storagePath, 0755, true);
+            }
+            if (!file_exists($publicPath)) {
+                mkdir($publicPath, 0755, true);
+            }
+            
+            $storageFile = $storagePath . '/' . $filename;
+            $publicFile = $publicPath . '/' . $filename;
+            
+            // Method 1: Try Laravel Storage first
+            try {
+                $path = $file->storeAs('payment_proofs', $filename, 'public');
+                
+                // Set correct permissions for storage file
+                if (file_exists($storageFile)) {
+                    chmod($storageFile, 0644);
+                }
+                
+                Log::info('Laravel Storage successful', [
+                    'storage_path' => $storageFile,
+                    'relative_path' => $path
+                ]);
+                
+            } catch (\Exception $e) {
+                Log::warning('Laravel Storage failed, trying manual method: ' . $e->getMessage());
+                
+                // Manual storage if Laravel Storage fails
+                if (move_uploaded_file($file->getPathname(), $storageFile)) {
+                    chmod($storageFile, 0644);
+                    $path = 'payment_proofs/' . $filename;
+                } else {
+                    throw new \Exception('Failed to store file manually');
+                }
+            }
+            
+            // ✅ ALWAYS COPY TO PUBLIC/STORAGE FOR DIRECT ACCESS ✅
+            try {
+                if (file_exists($storageFile)) {
+                    copy($storageFile, $publicFile);
+                    chmod($publicFile, 0644);
+                    
+                    Log::info('File copied to public storage', [
+                        'source' => $storageFile,
+                        'destination' => $publicFile
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::warning('Failed to copy to public storage: ' . $e->getMessage());
+            }
+            
+            // ✅ VERIFY FILE ACCESSIBILITY ✅
+            $accessiblePaths = [];
+            
+            // Check storage path
+            if (file_exists($storageFile) && is_readable($storageFile)) {
+                $accessiblePaths[] = 'storage: ' . $storageFile;
+            }
+            
+            // Check public path
+            if (file_exists($publicFile) && is_readable($publicFile)) {
+                $accessiblePaths[] = 'public: ' . $publicFile;
+            }
+            
+            Log::info('File accessibility check', [
+                'filename' => $filename,
+                'accessible_paths' => $accessiblePaths,
+                'storage_perms' => file_exists($storageFile) ? substr(sprintf('%o', fileperms($storageFile)), -4) : 'not found',
+                'public_perms' => file_exists($publicFile) ? substr(sprintf('%o', fileperms($publicFile)), -4) : 'not found'
+            ]);
+            
+            return $path;
+
+        } catch (\Exception $e) {
+            Log::error('Store payment proof error: ' . $e->getMessage());
+            throw new \Exception('Gagal menyimpan bukti pembayaran: ' . $e->getMessage());
+        }
+    }
+
+    // ✅ UPDATE SEMUA PAYMENT CONFIRMATION METHODS ✅
     public function confirmBcaPayment(Request $request)
-{
-    try {
-        // Validasi data request
-        $request->validate([
-            'payment_proof' => 'required|image|max:2048', // Memastikan hanya gambar yang diterima
-            'total' => 'required|numeric',
-            'order_data' => 'required'
-        ]);
+    {
+        try {
+            $request->validate([
+                'payment_proof' => 'required|image|max:2048',
+                'total' => 'required|numeric',
+                'order_data' => 'required'
+            ]);
 
-        DB::beginTransaction();
+            DB::beginTransaction();
+            $path = $this->storePaymentProof($request, 'BCA');
 
-        // Simpan bukti pembayaran ke storage
-        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+            $transaksi = Transaksi::create([
+                'nama_admin' => 'System',
+                'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+                'tanggal_transaksi' => now(),
+                'id_transaksi' => 'BCA-' . time(),
+                'jenis_tindakan' => 'Pembayaran BCA',
+                'deskripsi_tindakan' => 'Pembayaran via BCA',
+                'total_harga' => $request->total,
+                'status_transaksi' => 'Menunggu Konfirmasi',
+                'bukti_pembayaran' => $path
+            ]);
 
-        // Buat entri transaksi
-        $transaksi = Transaksi::create([
-            'nama_admin' => 'System',
-            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
-            'tanggal_transaksi' => now(),
-            'id_transaksi' => 'BCA-' . time(),
-            'jenis_tindakan' => 'Pembayaran BCA',
-            'deskripsi_tindakan' => 'Pembayaran via BCA',
-            'total_harga' => $request->total,
-            'status_transaksi' => 'Menunggu Konfirmasi',
-            'bukti_pembayaran' => $path // Menyimpan path bukti pembayaran
-        ]);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Pembayaran berhasil dikonfirmasi']);
 
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pembayaran berhasil dikonfirmasi'
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollback();
-        \Log::error('Payment Error: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('BCA Payment Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
-}
 
-public function confirmDanaPayment(Request $request)
-{
-    try {
-        // Validasi data request
-        $request->validate([
-            'payment_proof' => 'required|image|max:2048',
-            'total' => 'required|numeric',
-            'order_data' => 'required'
-        ]);
+    public function confirmDanaPayment(Request $request)
+    {
+        try {
+            $request->validate([
+                'payment_proof' => 'required|image|max:2048',
+                'total' => 'required|numeric',
+                'order_data' => 'required'
+            ]);
 
-        DB::beginTransaction();
+            DB::beginTransaction();
+            $path = $this->storePaymentProof($request, 'DANA');
 
-        // Simpan bukti pembayaran ke storage
-        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+            $transaksi = Transaksi::create([
+                'nama_admin' => 'System',
+                'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+                'tanggal_transaksi' => now(),
+                'id_transaksi' => 'DANA-' . time(),
+                'jenis_tindakan' => 'Pembayaran DANA',
+                'deskripsi_tindakan' => 'Pembayaran via DANA',
+                'total_harga' => $request->total,
+                'status_transaksi' => 'Menunggu Konfirmasi',
+                'bukti_pembayaran' => $path
+            ]);
 
-        // Buat entri transaksi
-        $transaksi = Transaksi::create([
-            'nama_admin' => 'System',
-            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
-            'tanggal_transaksi' => now(),
-            'id_transaksi' => 'DANA-' . time(),
-            'jenis_tindakan' => 'Pembayaran DANA',
-            'deskripsi_tindakan' => 'Pembayaran via DANA',
-            'total_harga' => $request->total,
-            'status_transaksi' => 'Menunggu Konfirmasi',
-            'bukti_pembayaran' => $path
-        ]);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Pembayaran berhasil dikonfirmasi']);
 
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pembayaran berhasil dikonfirmasi'
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollback();
-        \Log::error('Payment Error: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('DANA Payment Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
-}
 
-public function confirmGopayPayment(Request $request)
-{
-    try {
-        // Validasi data request
-        $request->validate([
-            'payment_proof' => 'required|image|max:2048',
-            'total' => 'required|numeric',
-            'order_data' => 'required'
-        ]);
+    public function confirmGopayPayment(Request $request)
+    {
+        try {
+            $request->validate([
+                'payment_proof' => 'required|image|max:2048',
+                'total' => 'required|numeric',
+                'order_data' => 'required'
+            ]);
 
-        DB::beginTransaction();
+            DB::beginTransaction();
+            $path = $this->storePaymentProof($request, 'GOPAY');
 
-        // Simpan bukti pembayaran ke storage
-        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+            $transaksi = Transaksi::create([
+                'nama_admin' => 'System',
+                'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+                'tanggal_transaksi' => now(),
+                'id_transaksi' => 'GOPAY-' . time(),
+                'jenis_tindakan' => 'Pembayaran GOPAY',
+                'deskripsi_tindakan' => 'Pembayaran via GOPAY',
+                'total_harga' => $request->total,
+                'status_transaksi' => 'Menunggu Konfirmasi',
+                'bukti_pembayaran' => $path
+            ]);
 
-        // Buat entri transaksi
-        $transaksi = Transaksi::create([
-            'nama_admin' => 'System',
-            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
-            'tanggal_transaksi' => now(),
-            'id_transaksi' => 'GOPAY-' . time(),
-            'jenis_tindakan' => 'Pembayaran GOPAY',
-            'deskripsi_tindakan' => 'Pembayaran via GOPAY',
-            'total_harga' => $request->total,
-            'status_transaksi' => 'Menunggu Konfirmasi',
-            'bukti_pembayaran' => $path
-        ]);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Pembayaran berhasil dikonfirmasi']);
 
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pembayaran berhasil dikonfirmasi'
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollback();
-        \Log::error('Payment Error: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('GOPAY Payment Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
-}
 
-public function confirmCodPayment(Request $request)
-{
-    try {
-        // Validasi data request
-        $request->validate([
-            'payment_proof' => 'required|image|max:2048',
-            'total' => 'required|numeric',
-            'order_data' => 'required',
-            'dp_amount' => 'required|numeric'
-        ]);
+    public function confirmCodPayment(Request $request)
+    {
+        try {
+            $request->validate([
+                'payment_proof' => 'required|image|max:2048',
+                'total' => 'required|numeric',
+                'dp_amount' => 'required|numeric'
+            ]);
 
-        DB::beginTransaction();
+            DB::beginTransaction();
+            $path = $this->storePaymentProof($request, 'COD-DP');
 
-        // Simpan bukti pembayaran DP ke storage
-        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+            $transaksi = Transaksi::create([
+                'nama_admin' => 'System',
+                'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+                'tanggal_transaksi' => now(),
+                'id_transaksi' => 'COD-DP-' . time(),
+                'jenis_tindakan' => 'Down Payment COD',
+                'deskripsi_tindakan' => 'Pembayaran DP untuk pesanan COD',
+                'total_harga' => $request->dp_amount,
+                'status_transaksi' => 'Menunggu Konfirmasi',
+                'bukti_pembayaran' => $path
+            ]);
 
-        // Buat entri transaksi untuk DP
-        $transaksi = Transaksi::create([
-            'nama_admin' => 'System',
-            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
-            'tanggal_transaksi' => now(),
-            'id_transaksi' => 'COD-DP-' . time(),
-            'jenis_tindakan' => 'Down Payment COD',
-            'deskripsi_tindakan' => 'Pembayaran DP untuk pesanan COD',
-            'total_harga' => $request->dp_amount,
-            'status_transaksi' => 'Menunggu Konfirmasi',
-            'bukti_pembayaran' => $path
-        ]);
+            $codSisaTransaction = Transaksi::create([
+                'nama_admin' => 'System',
+                'nama_pelanggan' => auth()->user()->name ?? 'Guest',
+                'tanggal_transaksi' => now(),
+                'id_transaksi' => 'COD-' . time(),
+                'jenis_tindakan' => 'Sisa Pembayaran COD',
+                'deskripsi_tindakan' => 'Sisa pembayaran COD yang harus dibayar saat pengiriman',
+                'total_harga' => $request->total - $request->dp_amount,
+                'status_transaksi' => 'Menunggu Pelunasan',
+                'bukti_pembayaran' => null
+            ]);
 
-        // Buat entri transaksi untuk sisa pembayaran
-        // ✅ PERBAIKAN: COD SISA TRANSACTION STATUS ✅
-        $codSisaTransaction = Transaksi::create([
-            'nama_admin' => 'System',
-            'nama_pelanggan' => auth()->user()->name ?? 'Guest',
-            'tanggal_transaksi' => now(),
-            'id_transaksi' => 'COD-' . time(),
-            'jenis_tindakan' => 'Sisa Pembayaran COD',
-            'deskripsi_tindakan' => 'Sisa pembayaran COD yang harus dibayar saat pengiriman',
-            'total_harga' => $request->total - $request->dp_amount,
-            'status_transaksi' => 'Menunggu Pelunasan', // ✅ UBAH STATUS AWAL ✅
-            'bukti_pembayaran' => null
-        ]);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Pembayaran DP berhasil dikonfirmasi']);
 
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pembayaran DP berhasil dikonfirmasi'
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollback();
-        \Log::error('Payment Error: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal memproses pembayaran: ' . $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('COD Payment Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
-}
 }

@@ -467,9 +467,72 @@
                             <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
                             <td>
                                 @if($transaksi->bukti_pembayaran)
-                                <button class="view-file-btn" onclick="viewImage('{{ asset('storage/' . $transaksi->bukti_pembayaran) }}', '{{ $transaksi->id_transaksi }}', '{{ $transaksi->nama_pelanggan }}', '{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d/m/Y') }}', '{{ number_format($transaksi->total_harga, 0, ',', '.') }}')">
-                                    <i class="fas fa-eye"></i> Lihat Bukti 
-                                </button>
+                                    @php
+                                        // ✅ ENHANCED: Multiple path checking untuk hosting environment
+                                        $imagePath = '';
+                                        $imageFound = false;
+                                        $debugInfo = [];
+                                        
+                                        // Method 1: Check Laravel storage path
+                                        if (Storage::disk('public')->exists($transaksi->bukti_pembayaran)) {
+                                            $imagePath = asset('storage/' . $transaksi->bukti_pembayaran);
+                                            $imageFound = true;
+                                            $debugInfo[] = 'Laravel Storage: ✅';
+                                        } else {
+                                            $debugInfo[] = 'Laravel Storage: ❌';
+                                        }
+                                        
+                                        // Method 2: Check direct public/storage path
+                                        $directPublicPath = public_path('storage/' . $transaksi->bukti_pembayaran);
+                                        if (file_exists($directPublicPath)) {
+                                            if (!$imageFound) {
+                                                $imagePath = asset('storage/' . $transaksi->bukti_pembayaran);
+                                                $imageFound = true;
+                                            }
+                                            $debugInfo[] = 'Direct Public: ✅';
+                                        } else {
+                                            $debugInfo[] = 'Direct Public: ❌';
+                                        }
+                                        
+                                        // Method 3: Check payment_proofs specific path
+                                        $specificPath = public_path('storage/payment_proofs/' . basename($transaksi->bukti_pembayaran));
+                                        if (file_exists($specificPath)) {
+                                            if (!$imageFound) {
+                                                $imagePath = asset('storage/payment_proofs/' . basename($transaksi->bukti_pembayaran));
+                                                $imageFound = true;
+                                            }
+                                            $debugInfo[] = 'Specific Path: ✅';
+                                        } else {
+                                            $debugInfo[] = 'Specific Path: ❌';
+                                        }
+                                        
+                                        // Fallback: Construct path anyway
+                                        if (!$imagePath) {
+                                            $imagePath = asset('storage/' . $transaksi->bukti_pembayaran);
+                                        }
+                                        
+                                        // Log untuk debugging (hanya di development)
+                                        if (config('app.debug')) {
+                                            Log::info('Image path detection for transaction ' . $transaksi->id, [
+                                                'bukti_pembayaran' => $transaksi->bukti_pembayaran,
+                                                'final_path' => $imagePath,
+                                                'image_found' => $imageFound,
+                                                'debug_info' => implode(', ', $debugInfo)
+                                            ]);
+                                        }
+                                    @endphp
+                                    
+                                    <button class="view-file-btn" 
+                                            onclick="viewImage('{{ $imagePath }}', '{{ $transaksi->id_transaksi }}', '{{ $transaksi->nama_pelanggan }}', '{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d/m/Y') }}', '{{ number_format($transaksi->total_harga, 0, ',', '.') }}')"
+                                            @if(!$imageFound) 
+                                                style="opacity: 0.7;" 
+                                                title="File mungkin tidak dapat diakses - {{ implode(', ', $debugInfo) }}"
+                                            @endif>
+                                        <i class="fas fa-eye"></i> Lihat Bukti 
+                                        @if(!$imageFound)
+                                            <small style="color: #fff;">⚠</small>
+                                        @endif
+                                    </button>
                                 @else
                                     -
                                 @endif

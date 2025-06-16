@@ -5,6 +5,7 @@ use App\Models\TentangKami;
 use App\Models\KelolaMakanan; // Gunakan model yang ada
 use App\Models\Review; // Gunakan model yang ada
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller 
 {
@@ -47,6 +48,7 @@ class DashboardController extends Controller
             'prasmanan_count' => $prasmananCount
         ];
 
+        // RETURN DASHBOARD VIEW UNTUK SEMUA USER (GUEST & AUTH)
         return view('dashboard', array_merge($data, compact('topReviews')));
     }
 }

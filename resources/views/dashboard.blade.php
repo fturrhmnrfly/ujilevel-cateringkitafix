@@ -67,11 +67,11 @@
                     tahun melayani area Jabodetabek, kami siap menerima pesanan besar maupun kecil dengan rasa lezat,
                     porsi pas,
                     dan harga terjangkau. Hubungi kami sekarang untuk hidangan terbaik di acara Anda!</p>
-                <a href="about" class="btn-shop">Selengkapnya</a>
+                <a href="{{ route('about.index') }}" class="btn-shop">Selengkapnya</a>
             </div>
         </div>
 
-        <section class="category-section">
+        <section class="category-section" id="categories">
             <h2 class="category-title">Kategori</h2>
             
             <div class="category-container">
@@ -245,7 +245,7 @@
                 <p class="promo-description">
                     Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi menu yang sesuai dengan acara Anda.
                 </p>
-                <a href="/contact" class="promo-button">Hubungi Kami</a>
+                <a href="{{ route('contact.index') }}" class="promo-button">Hubungi Kami</a>
             </div>
 
             <img src="{{ asset('assets/nasiayam.png') }}" alt="Nasi Ayam" class="promo-image right">

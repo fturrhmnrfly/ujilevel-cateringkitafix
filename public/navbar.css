@@ -553,6 +553,59 @@ nav.navbar {
     transform: scale(1.1);
 }
 
+/* Auth buttons styling */
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn-login, .btn-register {
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-login {
+    background-color: #4B3E2F;
+    color: white;
+    border-color: #4B3E2F;
+}
+
+.btn-login:hover {
+    background-color: transparent;
+    color: #4B3E2F;
+    border-color: #4B3E2F;
+}
+
+.btn-register {
+    background-color: #D9971E;
+    color: white;
+    border-color: #D9971E;
+}
+
+.btn-register:hover {
+    background-color: transparent;
+    color: #D9971E;
+    border-color: #D9971E;
+}
+
+/* Responsive design untuk auth buttons */
+@media (max-width: 768px) {
+    .auth-buttons {
+        gap: 10px;
+    }
+    
+    .btn-login, .btn-register {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+}
+
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
     nav.navbar {

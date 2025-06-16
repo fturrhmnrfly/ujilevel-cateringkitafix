@@ -344,6 +344,20 @@
         transform: none;
     }
 
+    /* ✅ TAMBAHAN: Style untuk disabled button guest ✅ */
+    .add-to-cart-btn.guest-disabled {
+        background: #6c757d !important;
+        color: #ffffff !important;
+        cursor: not-allowed !important;
+        opacity: 0.6 !important;
+        transform: none !important;
+    }
+
+    .add-to-cart-btn.guest-disabled:hover {
+        background: #6c757d !important;
+        transform: none !important;
+    }
+
     /* Animation keyframes */
     @keyframes fadeIn {
         from {
@@ -391,7 +405,7 @@
             <div class="breadcrumb">
                 <div class="breadcrumb-title">Catering</div>
                 <div class="breadcrumb-nav">
-                    <a href="{{ route('home') }}">Home</a> » Menu Prasmanan
+                    <a href="{{ route('welcome') }}">Home</a> » Menu Prasmanan
                 </div>
             </div>
         </div>
@@ -412,18 +426,32 @@
                         <p class="menu-item-description">{{ Str::limit($menu->deskripsi, 80, '...') }}</p>
                         <div class="menu-item-details">
                             <p class="menu-item-price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
-                            <div class="counter">
-                                <button class="minus">-</button>
-                                <input type="number" class="count" value="0" min="0">
-                                <button class="plus">+</button>
-                            </div>
+                            @auth
+                                {{-- Counter untuk user yang sudah login --}}
+                                <div class="counter">
+                                    <button class="minus">-</button>
+                                    <input type="number" class="count" value="0" min="0">
+                                    <button class="plus">+</button>
+                                </div>
+                            @else
+                                {{-- Placeholder untuk guest --}}
+                                <div style="width: 100px;"></div>
+                            @endauth
                         </div>
-                        <button class="add-to-cart-btn" data-menu-id="{{ $menu->id }}" 
-                                data-menu-name="{{ $menu->nama_makanan }}" 
-                                data-menu-price="{{ $menu->harga }}" 
-                                data-menu-image="{{ $menu->image ? Storage::url($menu->image) : asset('assets/default-food.png') }}">
-                            + Keranjang
-                        </button>
+                        @auth
+                            {{-- Button normal untuk user login --}}
+                            <button class="add-to-cart-btn" data-menu-id="{{ $menu->id }}" 
+                                    data-menu-name="{{ $menu->nama_makanan }}" 
+                                    data-menu-price="{{ $menu->harga }}" 
+                                    data-menu-image="{{ $menu->image ? Storage::url($menu->image) : asset('assets/default-food.png') }}">
+                                + Keranjang
+                            </button>
+                        @else
+                            {{-- Button disabled untuk guest --}}
+                            <button class="add-to-cart-btn guest-disabled" disabled>
+                                Login untuk Berbelanja
+                            </button>
+                        @endauth
                     </div>
                 </div>
                 @endforeach
@@ -432,6 +460,34 @@
 </body>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+    // ✅ CEK APAKAH USER SUDAH LOGIN ✅
+    const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+    
+    // ✅ JIKA GUEST, TAMPILKAN SWEET ALERT OTOMATIS ✅
+    if (!isAuthenticated) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Login Diperlukan',
+            html: `
+                <p>Untuk dapat berbelanja dan menambahkan item ke keranjang, silakan login terlebih dahulu.</p>
+                <div style="margin-top: 20px;">
+                    <a href="{{ route('login') }}" style="display: inline-block; background: #4B3E2F; color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none; margin-right: 10px;">Login</a>
+                    <a href="{{ route('register') }}" style="display: inline-block; background: #D9971E; color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none;">Register</a>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            allowOutsideClick: true,
+            customClass: {
+                popup: 'guest-login-alert'
+            }
+        });
+        
+        // Return early untuk guest - tidak perlu setup cart functionality
+        return;
+    }
+
+    // ✅ KODE UNTUK USER YANG SUDAH LOGIN - SAMA SEPERTI SEBELUMNYA ✅
     const cartIcon = document.querySelector('.cart-icon');
     let cartUpdateTimeout;
 

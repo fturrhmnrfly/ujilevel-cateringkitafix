@@ -11,62 +11,72 @@
             <p>KITA</p>
         </div>
     </div>
-
-    <!-- Hamburger Menu -->
-    <div class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-
-    <!-- Search Container with Suggestions -->
-    <div class="search-container" id="search-container">
-        <input type="text" 
-               class="search-bar" 
-               id="search-input" 
-               placeholder="Cari makanan..." 
-               autocomplete="off">
-        <button type="button" id="search-btn">
-            <i class="fas fa-search"></i>
-        </button>
-        
-        <div class="search-suggestions" id="search-suggestions">
-            <!-- Suggestions will be populated here -->
+    
+    @auth
+        <!-- Navbar untuk user yang sudah login -->
+        <!-- Hamburger Menu -->
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-    </div>
 
-    <!-- Navigation Links -->
-    <ul class="nav-links">
-        <li><a href="{{ route('dashboard') }}">Home</a></li>
-        <li><a href="{{ route('about.index') }}">Tentang Kami</a></li>
-        <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
-        <li><a href="{{ route('contact.index') }}">Contact</a></li>
-    </ul>
-
-    <div class="navbar-right">
-        <!-- Notification -->
-        <div class="notification-wrapper">
-            <div class="notification-icon" id="notification-bell">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge" id="notification-badge">0</span>
+        <!-- Search Container with Suggestions -->
+        <div class="search-container" id="search-container">
+            <input type="text" 
+                   class="search-bar" 
+                   id="search-input" 
+                   placeholder="Cari makanan..." 
+                   autocomplete="off">
+            <button type="button" id="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+            
+            <div class="search-suggestions" id="search-suggestions">
+                <!-- Suggestions will be populated here -->
             </div>
         </div>
 
-        <!-- Cart -->
-        <a href="{{ route('keranjang.index') }}" class="cart-icon">
-            <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
-        </a>
+        <!-- Navigation Links -->
+        <ul class="nav-links">
+            <li><a href="{{ route('welcome') }}">Home</a></li>
+            <li><a href="{{ route('about.index') }}">Tentang Kami</a></li>
+            <li><a href="{{ route('pesanan.index') }}">Pesanan</a></li>
+            <li><a href="{{ route('contact.index') }}">Contact</a></li>
+        </ul>
 
-        <!-- Profile Section -->
-        <div class="profile">
-            <a href="{{ route('profile.show') }}">
-                <img src="{{ asset('assets/profil.png') }}" alt="Profile">
+        <div class="navbar-right">
+            <!-- Notification -->
+            <div class="notification-wrapper">
+                <div class="notification-icon" id="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notification-badge">0</span>
+                </div>
+            </div>
+
+            <!-- Cart -->
+            <a href="{{ route('keranjang.index') }}" class="cart-icon">
+                <img src="{{ asset('assets/keranjang.png') }}" alt="cart-icon">
             </a>
+
+            <!-- Profile Section -->
+            <div class="profile">
+                <a href="{{ route('profile.show') }}">
+                    <img src="{{ asset('assets/profil.png') }}" alt="Profile">
+                </a>
+            </div>
         </div>
-    </div>
+    @else
+        <!-- Navbar untuk user yang belum login (guest) -->
+        <div class="auth-buttons">
+            <a href="{{ route('login') }}" class="btn-login">Login</a>
+            <a href="{{ route('register') }}" class="btn-register">Register</a>
+        </div>
+    @endauth
 </nav>
 
-<!-- Notification Modal -->
+@auth
+<!-- Notification Modal - hanya untuk user yang sudah login -->
 <div class="notification-modal" id="notification-modal">
     <div class="notification-modal-content">
         <div class="notification-modal-header">
@@ -85,3 +95,4 @@
 
 <!-- Pastikan script di-load setelah HTML -->
 <script src="{{ asset('navbar.js') }}"></script>
+@endauth

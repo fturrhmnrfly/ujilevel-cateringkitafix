@@ -28,12 +28,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Redirect berdasarkan role user
         if ($request->user()->usertype == 'admin') {
             return redirect('admin/dashboard');
         }
 
         if ($request->user()->usertype == 'user') {
-            return redirect('dashboard');
+            return redirect()->route('dashboard'); // ✅ Menggunakan route name yang benar
         }
 
         return redirect()->intended(route('dashboard', absolute: false));
@@ -50,6 +51,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
+        // Redirect ke root (dashboard dengan navbar guest) setelah logout
         return redirect('/');
     }
 }
