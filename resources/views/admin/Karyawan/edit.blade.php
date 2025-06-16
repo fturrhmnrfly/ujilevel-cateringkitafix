@@ -48,6 +48,27 @@
             text-decoration: none;
             margin-right: 10px;
         }
+        
+        /* Tambahan styling untuk form yang lebih baik */
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .required {
+            color: red;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -64,55 +85,43 @@
                     @csrf
                     @method('PUT')
                     
-                    <div class="form-group">
-                        <label for="nama_karyawan">Nama Karyawan</label>
-                        <input type="text" name="nama_karyawan" id="nama_karyawan" required 
-                               value="{{ old('nama_karyawan', $karyawan->nama_karyawan) }}" 
-                               placeholder="Masukan nama karyawan">
+                    <!-- ✅ HANYA FIELD YANG ADA DI INDEX ✅ -->
+                    
+                    <!-- Nama dan Email dalam satu baris -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nama_karyawan">Nama Karyawan <span class="required">*</span></label>
+                            <input type="text" name="nama_karyawan" id="nama_karyawan" required 
+                                   value="{{ old('nama_karyawan', $karyawan->nama_karyawan) }}" 
+                                   placeholder="Masukan nama karyawan">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" name="email" id="email" required 
+                                   value="{{ old('email', $karyawan->email) }}" 
+                                   placeholder="contoh@email.com">
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="username_karyawan">Username Karyawan</label>
-                        <input type="text" name="username_karyawan" id="username_karyawan" required 
-                               value="{{ old('username_karyawan', $karyawan->username_karyawan) }}" 
-                               placeholder="Masukan Username karyawan">
-                    </div>
+                    <!-- Kontak dan Tipe Pengguna dalam satu baris -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="kontak">Kontak <span class="required">*</span></label>
+                            <input type="text" name="kontak" id="kontak" required 
+                                   value="{{ old('kontak', $karyawan->kontak) }}" 
+                                   placeholder="nomor karyawan">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="posisi">Posisi</label>
-                        <input type="text" name="posisi" id="posisi" required 
-                               value="{{ old('posisi', $karyawan->posisi) }}" 
-                               placeholder="Posisi nya bagian apa">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="kontak">Kontak</label>
-                        <input type="text" name="kontak" id="kontak" required 
-                               value="{{ old('kontak', $karyawan->kontak) }}" 
-                               placeholder="nomor karyawan">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tanggal_bergabung">Tanggal Bergabung</label>
-                        <input type="date" name="tanggal_bergabung" id="tanggal_bergabung" required 
-                               value="{{ old('tanggal_bergabung', $karyawan->tanggal_bergabung) }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select name="status" id="status" required>
-                            <option value="">Pilih Status</option>
-                            <option value="Aktif" {{ $karyawan->status == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                            <option value="Cuti" {{ $karyawan->status == 'Cuti' ? 'selected' : '' }}>Cuti</option>
-                            <option value="Nonaktif" {{ $karyawan->status == 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="keahlian">Keahlian</label>
-                        <input type="text" name="keahlian" id="keahlian" required 
-                               value="{{ old('keahlian', $karyawan->keahlian) }}" 
-                               placeholder="keahlian karyawannya apa">
+                        <div class="form-group">
+                            <label for="tipe_pengguna">Tipe Pengguna <span class="required">*</span></label>
+                            <select name="tipe_pengguna" id="tipe_pengguna" required>
+                                <option value="">Pilih Tipe Pengguna</option>
+                                <option value="admin" {{ (old('tipe_pengguna', $karyawan->tipe_pengguna) == 'admin') ? 'selected' : '' }}>Admin</option>
+                                <option value="karyawan" {{ (old('tipe_pengguna', $karyawan->tipe_pengguna) == 'karyawan') ? 'selected' : '' }}>Karyawan</option>
+                                <option value="user" {{ (old('tipe_pengguna', $karyawan->tipe_pengguna) == 'user') ? 'selected' : '' }}>User</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
