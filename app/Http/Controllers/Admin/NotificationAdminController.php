@@ -12,7 +12,8 @@ class NotificationAdminController extends Controller
 {
     public function index()
     {
-        $notifications = NotificationAdmin::where('admin_id', Auth::id())
+        // ✅ GUNAKAN SCOPE forAdmin ✅
+        $notifications = NotificationAdmin::forAdmin(Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
             
@@ -27,7 +28,8 @@ class NotificationAdminController extends Controller
         try {
             Log::info('Admin notifications API called', ['admin_id' => Auth::id()]);
             
-            $notifications = NotificationAdmin::where('admin_id', Auth::id())
+            // ✅ GUNAKAN SCOPE forAdmin DAN FILTER YANG BENAR ✅
+            $notifications = NotificationAdmin::forAdmin(Auth::id())
                 ->orderBy('created_at', 'desc')
                 ->limit(50)
                 ->get();
@@ -35,7 +37,7 @@ class NotificationAdminController extends Controller
             Log::info('Admin notifications found', [
                 'admin_id' => Auth::id(),
                 'count' => $notifications->count(),
-                'notifications' => $notifications->toArray()
+                'sample_notifications' => $notifications->take(3)->toArray()
             ]);
             
             return response()->json([
@@ -43,7 +45,11 @@ class NotificationAdminController extends Controller
                 'notifications' => $notifications
             ]);
         } catch (\Exception $e) {
-            Log::error('Error fetching admin notifications: ' . $e->getMessage());
+            Log::error('Error fetching admin notifications', [
+                'admin_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'success' => false,
                 'notifications' => []
@@ -57,7 +63,8 @@ class NotificationAdminController extends Controller
     public function getUnreadCount() 
     {
         try {
-            $count = NotificationAdmin::where('admin_id', Auth::id())
+            // ✅ GUNAKAN SCOPE forAdmin ✅
+            $count = NotificationAdmin::forAdmin(Auth::id())
                 ->where('is_read', false)
                 ->count();
                 
@@ -71,7 +78,10 @@ class NotificationAdminController extends Controller
                 'count' => $count
             ]);
         } catch (\Exception $e) {
-            Log::error('Error getting admin notification count: ' . $e->getMessage());
+            Log::error('Error getting admin notification count', [
+                'admin_id' => Auth::id(),
+                'error' => $e->getMessage()
+            ]);
             return response()->json([
                 'success' => false,
                 'count' => 0
@@ -82,8 +92,9 @@ class NotificationAdminController extends Controller
     public function markAsRead($id)
     {
         try {
-            $notification = NotificationAdmin::where('id', $id)
-                ->where('admin_id', Auth::id())
+            // ✅ GUNAKAN SCOPE forAdmin ✅
+            $notification = NotificationAdmin::forAdmin(Auth::id())
+                ->where('id', $id)
                 ->first();
                 
             if (!$notification) {
@@ -93,7 +104,10 @@ class NotificationAdminController extends Controller
                 ], 404);
             }
             
-            $notification->update(['is_read' => true]);
+            $notification->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -111,9 +125,13 @@ class NotificationAdminController extends Controller
     public function markAllAsRead()
     {
         try {
-            $updated = NotificationAdmin::where('admin_id', Auth::id())
+            // ✅ GUNAKAN SCOPE forAdmin ✅
+            $updated = NotificationAdmin::forAdmin(Auth::id())
                 ->where('is_read', false)
-                ->update(['is_read' => true]);
+                ->update([
+                    'is_read' => true,
+                    'read_at' => now()
+                ]);
 
             return response()->json([
                 'success' => true,
@@ -137,10 +155,11 @@ class NotificationAdminController extends Controller
         try {
             $validated = $request->validate([
                 'notification_ids' => 'required|array',
-                'notification_ids.*' => 'integer|exists:notification_admins,id'
+                'notification_ids.*' => 'integer'
             ]);
 
-            $deleted = NotificationAdmin::where('admin_id', Auth::id())
+            // ✅ GUNAKAN SCOPE forAdmin ✅
+            $deleted = NotificationAdmin::forAdmin(Auth::id())
                 ->whereIn('id', $validated['notification_ids'])
                 ->delete();
 
@@ -164,8 +183,9 @@ class NotificationAdminController extends Controller
     public function delete($id)
     {
         try {
-            $notification = NotificationAdmin::where('id', $id)
-                ->where('admin_id', Auth::id())
+            // ✅ GUNAKAN SCOPE forAdmin ✅
+            $notification = NotificationAdmin::forAdmin(Auth::id())
+                ->where('id', $id)
                 ->first();
                 
             if (!$notification) {

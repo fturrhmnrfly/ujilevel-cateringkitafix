@@ -7,7 +7,8 @@
             <a href="#" class="notification-icon" id="admin-notification-bell">
                 <i class="fa-solid fa-bell"></i>
                 @php
-                    $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())
+                    // ✅ GUNAKAN SCOPE YANG BENAR UNTUK HITUNG ADMIN NOTIFICATIONS ✅
+                    $unreadCount = \App\Models\NotificationAdmin::forAdmin(auth()->id())
                         ->where('is_read', false)
                         ->count();
                 @endphp
@@ -354,7 +355,7 @@
 <script src="{{ asset('admin-notifications.js') }}"></script>
 
 <script>
-// Debug notification count on page load
+// ✅ DEBUG DAN AUTO UPDATE BADGE ✅
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Admin header loaded');
     const badge = document.getElementById('admin-notification-badge');
@@ -365,5 +366,25 @@ document.addEventListener('DOMContentLoaded', function() {
             badge.classList.add('show');
         }
     }
+    
+    // ✅ AUTO UPDATE BADGE SETIAP 10 DETIK ✅
+    setInterval(async function() {
+        try {
+            const response = await fetch('/admin/notifications/count');
+            if (response.ok) {
+                const data = await response.json();
+                if (badge) {
+                    badge.textContent = data.count || 0;
+                    if (data.count > 0) {
+                        badge.classList.add('show');
+                    } else {
+                        badge.classList.remove('show');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error updating admin notification badge:', error);
+        }
+    }, 10000); // Update setiap 10 detik
 });
 </script>

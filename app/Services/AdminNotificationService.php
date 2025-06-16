@@ -17,26 +17,55 @@ class AdminNotificationService
     {
         try {
             $order = DaftarPesanan::find($orderId);
-            if (!$order) return false;
+            if (!$order) {
+                Log::warning('Order not found for admin notification', ['order_id' => $orderId]);
+                return false;
+            }
 
-            // Get all admin users
+            // ✅ GET ALL ADMIN USERS ✅
             $adminUsers = User::where('usertype', 'admin')->get();
+            
+            Log::info('Creating admin notifications for new order', [
+                'order_id' => $orderId,
+                'order_number' => $order->order_id,
+                'admin_count' => $adminUsers->count()
+            ]);
 
+            $createdCount = 0;
             foreach ($adminUsers as $admin) {
-                NotificationAdmin::create([
-                    'admin_id' => $admin->id,
+                $notification = NotificationAdmin::create([
+                    'user_id' => $admin->id, // Gunakan user_id untuk admin_id
                     'title' => 'Pesanan Baru Masuk',
                     'message' => "Pesanan baru #{$order->order_id} dari {$order->nama_pelanggan} senilai Rp " . number_format($order->total_harga, 0, ',', '.'),
-                    'type' => 'new_order',
+                    'type' => 'admin_new_order', // ✅ PREFIX admin_ ✅
                     'icon_type' => 'box',
                     'order_id' => $orderId,
                     'is_read' => false
                 ]);
+                
+                if ($notification) {
+                    $createdCount++;
+                    Log::info('Admin notification created', [
+                        'notification_id' => $notification->id,
+                        'admin_id' => $admin->id,
+                        'order_id' => $orderId
+                    ]);
+                }
             }
+            
+            Log::info('Admin notifications creation completed', [
+                'order_id' => $orderId,
+                'total_admins' => $adminUsers->count(),
+                'notifications_created' => $createdCount
+            ]);
 
-            return true;
+            return $createdCount > 0;
         } catch (\Exception $e) {
-            Log::error('Failed to create new order admin notification: ' . $e->getMessage());
+            Log::error('Failed to create new order admin notification', [
+                'order_id' => $orderId,
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return false;
         }
     }
@@ -48,26 +77,55 @@ class AdminNotificationService
     {
         try {
             $order = DaftarPesanan::find($orderId);
-            if (!$order) return false;
+            if (!$order) {
+                Log::warning('Order not found for completed notification', ['order_id' => $orderId]);
+                return false;
+            }
 
-            // Get all admin users
+            // ✅ GET ALL ADMIN USERS ✅
             $adminUsers = User::where('usertype', 'admin')->get();
+            
+            Log::info('Creating admin notifications for completed order', [
+                'order_id' => $orderId,
+                'order_number' => $order->order_id,
+                'admin_count' => $adminUsers->count()
+            ]);
 
+            $createdCount = 0;
             foreach ($adminUsers as $admin) {
-                NotificationAdmin::create([
-                    'admin_id' => $admin->id,
+                $notification = NotificationAdmin::create([
+                    'user_id' => $admin->id, // Gunakan user_id untuk admin_id
                     'title' => 'Pesanan Telah Diterima',
                     'message' => "Pesanan #{$order->order_id} telah diterima oleh {$order->nama_pelanggan}. Transaksi selesai.",
-                    'type' => 'order_completed',
+                    'type' => 'admin_order_completed', // ✅ PREFIX admin_ ✅
                     'icon_type' => 'truck',
                     'order_id' => $orderId,
                     'is_read' => false
                 ]);
+                
+                if ($notification) {
+                    $createdCount++;
+                    Log::info('Admin completed notification created', [
+                        'notification_id' => $notification->id,
+                        'admin_id' => $admin->id,
+                        'order_id' => $orderId
+                    ]);
+                }
             }
+            
+            Log::info('Admin completed notifications creation completed', [
+                'order_id' => $orderId,
+                'total_admins' => $adminUsers->count(),
+                'notifications_created' => $createdCount
+            ]);
 
-            return true;
+            return $createdCount > 0;
         } catch (\Exception $e) {
-            Log::error('Failed to create order completed admin notification: ' . $e->getMessage());
+            Log::error('Failed to create order completed admin notification', [
+                'order_id' => $orderId,
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return false;
         }
     }
@@ -86,10 +144,10 @@ class AdminNotificationService
 
             foreach ($adminUsers as $admin) {
                 NotificationAdmin::create([
-                    'admin_id' => $admin->id,
+                    'user_id' => $admin->id,
                     'title' => 'Ulasan Baru',
                     'message' => "Ulasan baru dari {$review->user->name} untuk pesanan #{$review->order->order_id} dengan rating {$review->average_rating}/5",
-                    'type' => 'new_review',
+                    'type' => 'admin_new_review', // ✅ PREFIX admin_ ✅
                     'icon_type' => 'star',
                     'order_id' => $review->order_id,
                     'is_read' => false
