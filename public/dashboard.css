@@ -143,6 +143,56 @@ img {
     overflow: hidden;
 }
 
+/* ✅ UPDATE: Section title dengan variasi alignment ✅ */
+.section-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center; /* Default tetap center */
+}
+
+/* ✅ NEW: Class untuk section title yang align kiri ✅ */
+.section-title-left {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: left; /* Align kiri untuk Paket Nasi Box dan Prasmanan */
+    padding-left: 0; /* Tambahkan padding jika diperlukan */
+}
+
+/* ✅ NEW: Style khusus untuk Menu Baru dengan dekorasi ✅ */
+.section-title-menu-baru {
+    font-size: 48px; /* Lebih besar dari section title biasa */
+    font-weight: bold;
+    color: #4B3E2F; /* Warna coklat seperti category title */
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
+    font-family: 'Poppins', serif;
+}
+
+/* ✅ OPTIONAL: Tambahkan dekorasi garis bawah untuk Menu Baru ✅ */
+.section-title-menu-baru::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, #D38524, #FFB800);
+    border-radius: 2px;
+}
+
+/* Menu Section - EXISTING, JANGAN DIUBAH */
+.menu-section {
+    padding: 40px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
 .section-title {
     font-size: 32px;
     font-weight: bold;

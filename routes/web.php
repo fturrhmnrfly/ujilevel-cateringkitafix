@@ -305,26 +305,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     /*
     |--------------------------------------------------------------------------
-    | Financial Management
+    | Financial Management - ✅ FIXED ROUTES CONFLICT ✅
     |--------------------------------------------------------------------------
     */
     Route::resource('transaksi', AdminTransaksiController::class);
-    Route::resource('laporan', AdminLaporanController::class);
-    Route::get('laporan/export', [AdminLaporanController::class, 'export'])->name('laporan.export');
-
-    /*
-    |--------------------------------------------------------------------------
-    | ✅ TAMBAHAN ROUTE UNTUK LAPORAN DENGAN DELETE ✅
-    |--------------------------------------------------------------------------
-    */
+    
+    // ✅ PERBAIKAN: GUNAKAN MANUAL ROUTES UNTUK LAPORAN (TANPA RESOURCE) ✅
     Route::prefix('laporan')->name('laporan.')->group(function () {
+        // ✅ EXPORT ROUTES HARUS DIDAHULUKAN SEBELUM ROUTES DENGAN PARAMETER ✅
+        Route::get('/export', [AdminLaporanController::class, 'export'])->name('export');
+        Route::get('/export-summary', [AdminLaporanController::class, 'exportSummary'])->name('export.summary');
+        
+        // CRUD routes
         Route::get('/', [AdminLaporanController::class, 'index'])->name('index');
         Route::get('/create', [AdminLaporanController::class, 'create'])->name('create');
         Route::post('/', [AdminLaporanController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [AdminLaporanController::class, 'edit'])->name('edit');
         Route::put('/{id}', [AdminLaporanController::class, 'update'])->name('update');
-        Route::delete('/{id}', [AdminLaporanController::class, 'destroy'])->name('destroy'); // ✅ ROUTE DELETE INI YANG DIBUTUHKAN ✅
-        Route::get('/export', [AdminLaporanController::class, 'export'])->name('export');
+        Route::delete('/{id}', [AdminLaporanController::class, 'destroy'])->name('destroy');
     });
 
     /*

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Laporan;
 use App\Exports\LaporanExport;
+use App\Exports\LaporanSummaryExport; // ✅ TAMBAHKAN IMPORT ✅
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
@@ -112,8 +113,15 @@ class AdminLaporanController extends Controller
         }
     }
 
+    // ✅ EXISTING EXPORT (DETAIL) ✅
     public function export()
     {
-        return Excel::download(new LaporanExport, 'laporan-keuangan.xlsx');
+        return Excel::download(new LaporanExport, 'laporan-keuangan-detail.xlsx');
+    }
+
+    // ✅ NEW: EXPORT SUMMARY ✅
+    public function exportSummary()
+    {
+        return Excel::download(new LaporanSummaryExport, 'ringkasan-keuangan.xlsx');
     }
 }

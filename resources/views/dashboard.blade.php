@@ -93,9 +93,14 @@
             </div>
         </section>
 
+        <!-- ✅ NEW: Menu Baru Section Title ✅ -->
+        <div style="padding: 40px; background-color: #f8f8f8;">
+            <h2 class="section-title-menu-baru">Menu Baru</h2>
+        </div>
+
         <div class="menu-section">
-            <!-- Popular Menu Section -->
-            <h2 class="section-title">Paket Nasi Box</h2>
+            <!-- ✅ UPDATE: Paket Nasi Box dengan align kiri ✅ -->
+            <h2 class="section-title-left">Paket Nasi Box</h2>
             <div class="menu-grid" id="nasi-box">
                 @foreach($menunasibox as $menu)
                     <div class="menu-item-p">
@@ -113,24 +118,26 @@
             </div>
         </div>
 
-        <!-- Prasmanan Section -->
-        <h2 class="section-title">Prasmanan</h2>
-        <div class="menu-grid" id="prasmanan">
-            @foreach($menuprasmanan as $menu)
-                <div class="menu-item">
-                    @if($menu->image && Storage::disk('public')->exists($menu->image))
-                        <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->nama_makanan }}">
-                    @else
-                        <img src="{{ asset('assets/default-food.png') }}" alt="Default food image">
-                    @endif
-                    <div class="menu-item-content">
-                        <h3 class="menu-item-title">{{ $menu->nama_makanan }}</h3>
-                        <div class="menu-item-details">
-                            <p class="menu-item-price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
+        <!-- ✅ UPDATE: Prasmanan dengan align kiri ✅ -->
+        <div class="menu-section">
+            <h2 class="section-title-left">Prasmanan</h2>
+            <div class="menu-grid" id="prasmanan">
+                @foreach($menuprasmanan as $menu)
+                    <div class="menu-item">
+                        @if($menu->image && Storage::disk('public')->exists($menu->image))
+                            <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->nama_makanan }}">
+                        @else
+                            <img src="{{ asset('assets/default-food.png') }}" alt="Default food image">
+                        @endif
+                        <div class="menu-item-content">
+                            <h3 class="menu-item-title">{{ $menu->nama_makanan }}</h3>
+                            <div class="menu-item-details">
+                                <p class="menu-item-price">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
 
         <!-- Dynamic Reviews Section dengan Avatar Generator -->

@@ -170,6 +170,26 @@
             background: #9A7209;
         }
 
+        /* ✅ NEW: STYLE UNTUK EXPORT SUMMARY ✅ */
+        .btn-export-summary {
+            background: #17a2b8;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-export-summary:hover {
+            background: #138496;
+        }
+
         /* Table Styles */
         .table-container {
             background: #D2B48C;
@@ -344,8 +364,13 @@
                     <a href="{{ route('admin.laporan.create') }}" class="btn-add">
                         <i class="fas fa-plus"></i> Tambah Laporan Baru
                     </a>
+                    <!-- ✅ EXISTING EXPORT (DETAIL) ✅ -->
                     <a href="{{ route('admin.laporan.export') }}" class="btn-export">
-                        <i class="fas fa-chart-bar"></i> Export Excel
+                        <i class="fas fa-chart-bar"></i> Export Detail
+                    </a>
+                    <!-- ✅ NEW: EXPORT SUMMARY ✅ -->
+                    <a href="{{ route('admin.laporan.export.summary') }}" class="btn-export-summary">
+                        <i class="fas fa-file-excel"></i> Export Ringkasan
                     </a>
                 </div>
             </div>
