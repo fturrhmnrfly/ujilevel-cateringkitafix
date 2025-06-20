@@ -383,15 +383,18 @@
             <h1 class="page-title">{{ $title ?? 'Dashboard' }}</h1>
             <div class="admin-controls">
                 <div class="notification-wrapper">
-                    <a href="{{ route('notifications.index') }}" class="notification-icon">
+                    <a href="#" class="notification-icon" id="admin-notification-bell">
                         <i class="fa-solid fa-bell"></i>
                         @php
-                            $unreadCount = \App\Models\NotificationAdmin::where('admin_id', auth()->id())
+                            // ✅ GUNAKAN SCOPE YANG BENAR TANPA admin_id ✅
+                            $unreadCount = \App\Models\NotificationAdmin::forAdmin(auth()->id())
                                 ->where('is_read', false)
                                 ->count();
                         @endphp
                         @if ($unreadCount > 0)
-                            <span class="notification-badge">{{ $unreadCount }}</span>
+                            <span class="notification-badge show" id="admin-notification-badge">{{ $unreadCount }}</span>
+                        @else
+                            <span class="notification-badge" id="admin-notification-badge">0</span>
                         @endif
                     </a>
                 </div>

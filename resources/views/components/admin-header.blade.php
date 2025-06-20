@@ -7,7 +7,7 @@
             <a href="#" class="notification-icon" id="admin-notification-bell">
                 <i class="fa-solid fa-bell"></i>
                 @php
-                    // ✅ GUNAKAN SCOPE YANG BENAR UNTUK HITUNG ADMIN NOTIFICATIONS ✅
+                    // ✅ GUNAKAN SCOPE YANG BENAR - TANPA admin_id ✅
                     $unreadCount = \App\Models\NotificationAdmin::forAdmin(auth()->id())
                         ->where('is_read', false)
                         ->count();

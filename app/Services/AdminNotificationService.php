@@ -34,10 +34,10 @@ class AdminNotificationService
             $createdCount = 0;
             foreach ($adminUsers as $admin) {
                 $notification = NotificationAdmin::create([
-                    'user_id' => $admin->id, // Gunakan user_id untuk admin_id
+                    'user_id' => $admin->id, // ✅ GUNAKAN user_id KONSISTEN ✅
                     'title' => 'Pesanan Baru Masuk',
                     'message' => "Pesanan baru #{$order->order_id} dari {$order->nama_pelanggan} senilai Rp " . number_format($order->total_harga, 0, ',', '.'),
-                    'type' => 'admin_new_order', // ✅ PREFIX admin_ ✅
+                    'type' => 'admin_new_order',
                     'icon_type' => 'box',
                     'order_id' => $orderId,
                     'is_read' => false
@@ -94,10 +94,10 @@ class AdminNotificationService
             $createdCount = 0;
             foreach ($adminUsers as $admin) {
                 $notification = NotificationAdmin::create([
-                    'user_id' => $admin->id, // Gunakan user_id untuk admin_id
+                    'user_id' => $admin->id, // ✅ GUNAKAN user_id KONSISTEN ✅
                     'title' => 'Pesanan Telah Diterima',
                     'message' => "Pesanan #{$order->order_id} telah diterima oleh {$order->nama_pelanggan}. Transaksi selesai.",
-                    'type' => 'admin_order_completed', // ✅ PREFIX admin_ ✅
+                    'type' => 'admin_order_completed',
                     'icon_type' => 'truck',
                     'order_id' => $orderId,
                     'is_read' => false
@@ -144,10 +144,10 @@ class AdminNotificationService
 
             foreach ($adminUsers as $admin) {
                 NotificationAdmin::create([
-                    'user_id' => $admin->id,
+                    'user_id' => $admin->id, // ✅ GUNAKAN user_id KONSISTEN ✅
                     'title' => 'Ulasan Baru',
                     'message' => "Ulasan baru dari {$review->user->name} untuk pesanan #{$review->order->order_id} dengan rating {$review->average_rating}/5",
-                    'type' => 'admin_new_review', // ✅ PREFIX admin_ ✅
+                    'type' => 'admin_new_review',
                     'icon_type' => 'star',
                     'order_id' => $review->order_id,
                     'is_read' => false
@@ -162,12 +162,12 @@ class AdminNotificationService
     }
 
     /**
-     * Get unread count for admin
+     * ✅ PERBAIKI: Get unread count menggunakan user_id ✅
      */
     public static function getUnreadCount($adminId)
     {
         try {
-            return NotificationAdmin::where('admin_id', $adminId)
+            return NotificationAdmin::forAdmin($adminId)
                 ->where('is_read', false)
                 ->count();
         } catch (\Exception $e) {
@@ -177,18 +177,18 @@ class AdminNotificationService
     }
 
     /**
-     * Mark notification as read
+     * ✅ PERBAIKI: Mark notification as read menggunakan user_id ✅
      */
     public static function markAsRead($notificationId, $adminId)
     {
         try {
-            $notification = NotificationAdmin::where('id', $notificationId)
-                ->where('admin_id', $adminId)
+            $notification = NotificationAdmin::forAdmin($adminId)
+                ->where('id', $notificationId)
                 ->first();
 
             if (!$notification) return false;
 
-            return $notification->update(['is_read' => true]);
+            return $notification->update(['is_read' => true, 'read_at' => now()]);
         } catch (\Exception $e) {
             Log::error('Failed to mark admin notification as read: ' . $e->getMessage());
             return false;
@@ -196,14 +196,14 @@ class AdminNotificationService
     }
 
     /**
-     * Mark all notifications as read for admin
+     * ✅ PERBAIKI: Mark all notifications as read menggunakan user_id ✅
      */
     public static function markAllAsRead($adminId)
     {
         try {
-            return NotificationAdmin::where('admin_id', $adminId)
+            return NotificationAdmin::forAdmin($adminId)
                 ->where('is_read', false)
-                ->update(['is_read' => true]);
+                ->update(['is_read' => true, 'read_at' => now()]);
         } catch (\Exception $e) {
             Log::error('Failed to mark all admin notifications as read: ' . $e->getMessage());
             return 0;
@@ -211,13 +211,13 @@ class AdminNotificationService
     }
 
     /**
-     * Delete notification
+     * ✅ PERBAIKI: Delete notification menggunakan user_id ✅
      */
     public static function deleteNotification($notificationId, $adminId)
     {
         try {
-            $notification = NotificationAdmin::where('id', $notificationId)
-                ->where('admin_id', $adminId)
+            $notification = NotificationAdmin::forAdmin($adminId)
+                ->where('id', $notificationId)
                 ->first();
 
             if (!$notification) return false;
